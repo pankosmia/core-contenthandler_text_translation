@@ -1,18 +1,21 @@
 {
-  "id": "contenthandler-template",
+  "id": "core-contenthandler_text_translation",
   "require": {
     "net": false,
     "debug": true
   },
   "i18n": {
     "title": {
-      "en": "contenthandler-template"
+      "en": "core-contenthandler_text_translation"
     },
     "summary": {
-      "en": "contenthandler-template"
+      "en": "core-contenthandler_text_translation"
     },
     "stub_content": {
       "en": "Content goes here"
+    },
+    "new_text_translation_content": {
+      "en": "New text translation"
     }
   }
 }
