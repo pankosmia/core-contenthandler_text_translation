@@ -17,14 +17,19 @@ import { i18nContext, debugContext, postJson, doI18n, getJson } from "pithekos-l
 import sx from "./Selection.styles";
 import ListMenuItem from "./ListMenuItem";
 
-export default function NewTextTranslationBook(repoInfo) {
+export default function NewTextTranslationBook() {
 
     const [addCV, setAddCV] = useState(true);
     const [bookCode, setBookCode] = useState("");
     const [bookTitle, setBookTitle] = useState("");
     const [bookAbbr, setBookAbbr] = useState("");
     const [open,setOpen] = useState(true);
-
+    const hash = window.location.hash;
+    const query = hash.includes('?') ? hash.split('?')[1] : '';
+    const params = new URLSearchParams(query);
+    const repoPath = params.get('repopath');
+    const repoBC = params.get('repoBC');
+   
     useEffect(
         () => {
             const doFetch = async () => {
@@ -41,7 +46,7 @@ export default function NewTextTranslationBook(repoInfo) {
                 doFetch().then()
             };
         },
-        [open, repoInfo]
+        [open]
     );
 
     const handleClose = () => {
@@ -81,7 +86,7 @@ export default function NewTextTranslationBook(repoInfo) {
             add_cv: addCV
         };
         const response = await postJson(
-            `/git/new-scripture-book/${repoInfo.path}`,
+            `/git/new-scripture-book/${repoPath}`,
             JSON.stringify(payload),
             debugRef.current
         );
@@ -150,7 +155,7 @@ export default function NewTextTranslationBook(repoInfo) {
                                         key={n}
                                         value={listItem}
                                         dense
-                                        disabled={repoInfo.book_codes.includes(listItem)}
+                                        disabled={repoBC.includes(listItem)}
                                     >
                                         <ListMenuItem
                                             listItem={`${listItem} - ${doI18n(`scripture:books:${listItem}`, i18nRef.current)}`}
