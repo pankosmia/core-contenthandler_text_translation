@@ -226,7 +226,8 @@ export default function NewTextTranslationBook() {
                 </Button>
                 <Button
                     autoFocus
-                    color="inherit"
+                    variant='contained'
+                    color="primary"
                     disabled={
                         !(
                             bookCode.trim().length === 3 &&
