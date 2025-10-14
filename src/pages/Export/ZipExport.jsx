@@ -132,6 +132,7 @@ function ZipExport() {
                 component: 'form',
             },
         }}
+        
     >
         <DialogTitle sx={{ backgroundColor: 'secondary.main' }}><b>{doI18n("pages:content:export_as_zip", i18nRef.current)}</b></DialogTitle>
         <DialogContent sx={{ mt: 1 }}>
