@@ -1,5 +1,6 @@
 import {useContext, useState, useEffect} from 'react';
 import {
+    AppBar,
     Box,
     Button,
     Dialog,
@@ -10,6 +11,7 @@ import {
     List,
     ListItem,
     ListItemText,
+    Toolbar,
     Typography,
     useTheme,
 } from "@mui/material";
@@ -18,15 +20,43 @@ import {enqueueSnackbar} from "notistack";
 import {saveAs} from 'file-saver';
 import Color from 'color';
 
-function UsfmExport({bookNames, repoSourcePath, open, closeFn}) {
+function UsfmExport({ repoSourcePath, closeFn}) {
 
+    const hash = window.location.hash;
+    const query = hash.includes('?') ? hash.split('?')[1] : '';
+    const params = new URLSearchParams(query);
+    const repoPath = params.get('repoPath');
+    const repoBookCode = params.get('repoBookCode');
     const {i18nRef} = useContext(i18nContext);
     const {debugRef} = useContext(debugContext);
     const [selectedBooks, setSelectedBooks] = useState([]);
     const [bookCodes, setBookCodes] = useState([]);
+    const [bookCode,setBookCode] = useState("");
+    const [bookNames, setBookNames] = useState([]);
+    const [open,setOpen] = useState(true);
+    console.log("bc",bookCodes);
+
+    const getProjectSummaries = async () => {
+        const summariesResponse = await getJson(`/burrito/metadata/summaries`, debugRef.current);
+        if (summariesResponse.ok) {
+            const data = summariesResponse.json;
+            const keys = Object.keys(data);
+            const firstKey = keys[0];
+            const book_Codes = data[firstKey].book_codes[0];
+            setBookCode(book_Codes);
+            setBookNames(book_Codes);
+        }
+    }
+
+    useEffect(
+        () => {
+            getProjectSummaries().then();
+        },
+        [bookCodes,bookNames]
+    );
 
     const usfmExportOneBook = async bookCode => {
-        const bookUrl = `/burrito/ingredient/raw/${repoSourcePath}?ipath=${bookCode}.usfm`;
+        const bookUrl = `/burrito/ingredient/raw/${repoPath}?ipath=${bookCode}.usfm`;
         const bookUsfmResponse = await getText(bookUrl, debugRef.current);
         if (!bookUsfmResponse.ok) {
             enqueueSnackbar(
@@ -55,6 +85,14 @@ function UsfmExport({bookNames, repoSourcePath, open, closeFn}) {
       );
     };
 
+    const handleClose = () => {
+        setOpen(false);
+    }
+
+    const handleCloseCreate = async () => {
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        window.location.href = "/clients/content"
+    }
     useEffect(
         () => {
             const doFetch = async () => {
@@ -70,16 +108,23 @@ function UsfmExport({bookNames, repoSourcePath, open, closeFn}) {
         []
     );
     
+
     return <Dialog
         open={open}
-        onClose={closeFn}
+        onClose={handleClose}
         slotProps={{
             paper: {
                 component: 'form',
             },
         }}
     >
-        <DialogTitle sx={{ backgroundColor: 'secondary.main' }}><b>{doI18n("pages:content:export_as_usfm", i18nRef.current)}</b></DialogTitle>
+        <AppBar color='secondary' sx={{ position: 'relative', borderTopLeftRadius: 4, borderTopRightRadius: 4 }}>
+                <Toolbar>
+                    <Typography variant="h6" component="div">
+                        {doI18n("pages:content:export_as_usfm", i18nRef.current)}
+                    </Typography>
+                </Toolbar>
+        </AppBar>
         <DialogContent sx={{ mt: 1 }} style={{ overflow: "hidden"}}>
           <Box sx={{ maxHeight: '269px' }}>
             <DialogContentText>
@@ -121,8 +166,8 @@ function UsfmExport({bookNames, repoSourcePath, open, closeFn}) {
                 variant="text"
                 color="primary"
                 onClick={() => {
-                  closeFn()
-                  setSelectedBooks([]);
+                    setSelectedBooks([]);
+                    handleCloseCreate()
                 }}
             >
                 {doI18n("pages:content:cancel", i18nRef.current)}
@@ -140,7 +185,7 @@ function UsfmExport({bookNames, repoSourcePath, open, closeFn}) {
                     } else {
                         selectedBooks.forEach(usfmExportOneBook);
                     }
-                    closeFn();
+                    handleClose();
                 }}
             >
                 {doI18n("pages:content:export_label", i18nRef.current)}

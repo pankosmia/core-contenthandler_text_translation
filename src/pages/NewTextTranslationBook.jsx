@@ -27,8 +27,8 @@ export default function NewTextTranslationBook() {
     const hash = window.location.hash;
     const query = hash.includes('?') ? hash.split('?')[1] : '';
     const params = new URLSearchParams(query);
-    const repoPath = params.get('repopath');
-    const repoBC = params.get('repoBC');
+    const repoPath = params.get('repoPath');
+    const repoBookCode = params.get('repoBookCode');
    
     useEffect(
         () => {
@@ -155,7 +155,7 @@ export default function NewTextTranslationBook() {
                                         key={n}
                                         value={listItem}
                                         dense
-                                        disabled={repoBC.includes(listItem)}
+                                        disabled={repoBookCode.includes(listItem)}
                                     >
                                         <ListMenuItem
                                             listItem={`${listItem} - ${doI18n(`scripture:books:${listItem}`, i18nRef.current)}`}
