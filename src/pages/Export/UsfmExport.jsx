@@ -31,7 +31,6 @@ function UsfmExport({ repoSourcePath, closeFn}) {
     const {debugRef} = useContext(debugContext);
     const [selectedBooks, setSelectedBooks] = useState([]);
     const [bookCodes, setBookCodes] = useState([]);
-    const [bookCode,setBookCode] = useState("");
     const [bookNames, setBookNames] = useState([]);
     const [open,setOpen] = useState(true);
     console.log("bc",bookCodes);
@@ -43,7 +42,6 @@ function UsfmExport({ repoSourcePath, closeFn}) {
             const keys = Object.keys(data);
             const firstKey = keys[0];
             const book_Codes = data[firstKey].book_codes[0];
-            setBookCode(book_Codes);
             setBookNames(book_Codes);
         }
     }
