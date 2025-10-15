@@ -1,5 +1,6 @@
-import {useRef, useContext, useState, useEffect} from 'react';
+import { useRef, useContext, useState, useEffect } from 'react';
 import {
+    AppBar,
     Box,
     Button,
     Dialog,
@@ -13,10 +14,12 @@ import {
     OutlinedInput,
     Radio,
     RadioGroup,
-    Select
+    Select,
+    Toolbar,
+    Typography
 } from "@mui/material";
-import {getText, debugContext, i18nContext, doI18n, getJson} from "pithekos-lib";
-import {enqueueSnackbar} from "notistack";
+import { getText, debugContext, i18nContext, doI18n, getJson, Header } from "pithekos-lib";
+import { enqueueSnackbar } from "notistack";
 import { useExportUsfmZip } from 'zip-project';
 
 function ZipExport() {
@@ -25,26 +28,26 @@ function ZipExport() {
     const query = hash.includes('?') ? hash.split('?')[1] : '';
     const params = new URLSearchParams(query);
     const repoPath = params.get('repoPath');
-    const [open,setOpen] = useState(true);
-    const {i18nRef} = useContext(i18nContext);
-    const {debugRef} = useContext(debugContext);
+    const [open, setOpen] = useState(true);
+    const { i18nRef } = useContext(i18nContext);
+    const { debugRef } = useContext(debugContext);
     const fileExport = useRef();
     const [bookNames, setBookNames] = useState([]);
     const [selectedBooks, setSelectedBooks] = useState(bookNames);
     const [bookCodes, setBookCodes] = useState([]);
     const [zipSet, setZipSet] = useState('all');
-   
+
     let newZip = [];
-    const usfmExportZip = async () =>{
-      for (const bookCode of zipSetBooks) {
-        await usfmExportZipContents(bookCode);
-      }
-      const zippedFiles = newZip.map(item => item.filename).join(', ');
-      handleExportZip();
-      enqueueSnackbar(
-          `${doI18n("pages:content:saved", i18nRef.current)} usfm_files.zip ${doI18n("pages:content:to_download_folder", i18nRef.current)}. ${doI18n("pages:content:contents", i18nRef.current)}: ${zippedFiles}`,
-          {variant: "success"}
-      );
+    const usfmExportZip = async () => {
+        for (const bookCode of zipSetBooks) {
+            await usfmExportZipContents(bookCode);
+        }
+        const zippedFiles = newZip.map(item => item.filename).join(', ');
+        handleExportZip();
+        enqueueSnackbar(
+            `${doI18n("pages:content:saved", i18nRef.current)} usfm_files.zip ${doI18n("pages:content:to_download_folder", i18nRef.current)}. ${doI18n("pages:content:contents", i18nRef.current)}: ${zippedFiles}`,
+            { variant: "success" }
+        );
     }
 
     const usfmExportZipContents = async bookCode => {
@@ -53,15 +56,18 @@ function ZipExport() {
         if (!bookUsfmResponse.ok) {
             enqueueSnackbar(
                 `${doI18n("pages:content:could_not_fetch", i18nRef.current)} ${bookCode}`,
-                {variant: "error"}
+                { variant: "error" }
             );
+            setTimeout(() => {
+                window.location.href = '/clients/content';
+        },  500);
             return false;
         }
-        const usfmFile = {filename: `${bookCode}.usfm`, usfmText: `${bookUsfmResponse.text}`};
+        const usfmFile = { filename: `${bookCode}.usfm`, usfmText: `${bookUsfmResponse.text}` };
         newZip.push(usfmFile);
         return true;
     }
-    
+
     const { handleExportZip } = useExportUsfmZip(newZip);
 
     const handleBooksChange = (event) => {
@@ -74,12 +80,12 @@ function ZipExport() {
     const zipSetBooks = (zipSet === 'all' ? bookNames : fileExport.current)
 
     const handleZipSetChange = (event, newValue) => {
-      setZipSet(newValue);
-      if (newValue === 'all') {
-        setSelectedBooks(bookNames);
-      } else {
-        setSelectedBooks([]);
-      }
+        setZipSet(newValue);
+        if (newValue === 'all') {
+            setSelectedBooks(bookNames);
+        } else {
+            setSelectedBooks([]);
+        }
     };
 
     const getProjectSummaries = async () => {
@@ -97,7 +103,7 @@ function ZipExport() {
         () => {
             getProjectSummaries().then();
         },
-        [bookCodes,bookNames]
+        [bookCodes, bookNames]
     );
 
     useEffect(
@@ -117,6 +123,7 @@ function ZipExport() {
 
     const handleClose = () => {
         setOpen(false);
+        return window.location.href = "/clients/content"
     }
 
     const handleCloseCreate = async () => {
@@ -124,105 +131,140 @@ function ZipExport() {
         window.location.href = "/clients/content"
     }
 
-    return <Dialog
-        open={open}
-        onClose={handleClose}
-        slotProps={{
-            paper: {
-                component: 'form',
-            },
-        }}
-        
-    >
-        <DialogTitle sx={{ backgroundColor: 'secondary.main' }}><b>{doI18n("pages:content:export_as_zip", i18nRef.current)}</b></DialogTitle>
-        <DialogContent sx={{ mt: 1 }}>
-            {
-            zipSet !== 'all' &&
-                <Select
-                    variant="standard"
-                    multiple
-                    displayEmpty
-                    disabled={zipSet === 'all'}
-                    value={selectedBooks}
-                    onChange={handleBooksChange}
-                    input={<OutlinedInput/>}
-                    renderValue={(selected) => {
-                        if (selected.length === 0) {
-                            return <em>{doI18n("pages:content:books", i18nRef.current)}</em>;
-                        }
-                        fileExport.current = selected;
-                        return (
-                            <Box sx={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>
-                              {selected
-                                  .map(s=>doI18n(`scripture:books:${s}`, i18nRef.current))
-                                  .join(', ')}
-                            </Box>
-                        );
-                    }}
-                    MenuProps={{
-                        PaperProps: {
-                            style: {
-                                maxHeight: 224,
-                                width: 250,
-                            },
-                        }
-                    }}
-                    inputProps={{'aria-label': 'Without label'}}
-                >
-                    <MenuItem disabled value="">
-                        <em>{doI18n("pages:content:books", i18nRef.current)}</em>
-                    </MenuItem>
-                    {bookCodes.filter(item => bookNames.includes(item)).map((bookName) => (
-                        <MenuItem
-                            key={bookName}
-                            value={bookName}
-                        >
-                            {`${bookName} - ` + doI18n(`scripture:books:${bookName}`, i18nRef.current)}
-                        </MenuItem>
-                    ))}
-                </Select>
-            }
-            <DialogContentText>
-                <FormControl>
-                  <RadioGroup
-                    aria-labelledby="radio-buttons-group-label"
-                    defaultValue="all"
-                    name="radio-buttons-group"
-                    onChange={handleZipSetChange}
-                  >
-                    <FormControlLabel value="pick" control={<Radio />} label={doI18n("pages:content:pick_one_or_more_books_export", i18nRef.current)} />
-                    <FormControlLabel value="all" control={<Radio />} label={doI18n("pages:content:export_all", i18nRef.current)} />
-                  </RadioGroup>
-                </FormControl>
-            </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-            <Button 
-                variant="text"
-                color="primary"
-                onClick={handleCloseCreate}
-             >
-                {doI18n("pages:content:cancel", i18nRef.current)}
-            </Button>
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                    if (!zipSetBooks || zipSetBooks.length === 0) {
-                        enqueueSnackbar(
-                            doI18n("pages:content:no_books_selected", i18nRef.current),
-                            {variant: "warning"}
-                        );
-                    } else {
-                        usfmExportZip(zipSetBooks);
-                    }
-                    handleClose();
+    return (
+        <Box>
+            <Box
+                sx={{
+                    position: "absolute",
+                    width: "100%",
+                    height: "100%",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    zIndex: -1,
+                    backgroundImage:
+                        'url("/app-resources/pages/content/background_blur.png")',
+                    backgroundRepeat: "no-repeat",
+                    backdropFilter: "blur(3px)",
                 }}
+            />
+            <Header
+                titleKey="pages:content:title"
+                currentId="content"
+                requireNet={false}
+            />
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                slotProps={{
+                    paper: {
+                        component: 'form',
+                    },
+                }}
+                sx={{
+                    backdropFilter: "blur(3px)",
+                }}
+
             >
-                {doI18n("pages:content:export_label", i18nRef.current)}
-            </Button>
-        </DialogActions>
-    </Dialog>;
+                <AppBar color='secondary' sx={{ position: 'relative', borderTopLeftRadius: 4, borderTopRightRadius: 4 }}>
+                    <Toolbar>
+                        <Typography variant="h6" component="div">
+                            {doI18n("pages:content:export_as_zip", i18nRef.current)}
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+                <DialogContent sx={{ mt: 1 }}>
+                    {
+                        zipSet !== 'all' &&
+                        <Select
+                            variant="standard"
+                            multiple
+                            displayEmpty
+                            disabled={zipSet === 'all'}
+                            value={selectedBooks}
+                            onChange={handleBooksChange}
+                            input={<OutlinedInput />}
+                            renderValue={(selected) => {
+                                if (selected.length === 0) {
+                                    return <em>{doI18n("pages:content:books", i18nRef.current)}</em>;
+                                }
+                                fileExport.current = selected;
+                                return (
+                                    <Box sx={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>
+                                        {selected
+                                            .map(s => doI18n(`scripture:books:${s}`, i18nRef.current))
+                                            .join(', ')}
+                                    </Box>
+                                );
+                            }}
+                            MenuProps={{
+                                PaperProps: {
+                                    style: {
+                                        maxHeight: 224,
+                                        width: 250,
+                                    },
+                                }
+                            }}
+                            inputProps={{ 'aria-label': 'Without label' }}
+                        >
+                            <MenuItem disabled value="">
+                                <em>{doI18n("pages:content:books", i18nRef.current)}</em>
+                            </MenuItem>
+                            {bookCodes.filter(item => bookNames.includes(item)).map((bookName) => (
+                                <MenuItem
+                                    key={bookName}
+                                    value={bookName}
+                                >
+                                    {`${bookName} - ` + doI18n(`scripture:books:${bookName}`, i18nRef.current)}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    }
+                    <DialogContentText>
+                        <FormControl>
+                            <RadioGroup
+                                aria-labelledby="radio-buttons-group-label"
+                                defaultValue="all"
+                                name="radio-buttons-group"
+                                onChange={handleZipSetChange}
+                            >
+                                <FormControlLabel value="pick" control={<Radio />} label={doI18n("pages:content:pick_one_or_more_books_export", i18nRef.current)} />
+                                <FormControlLabel value="all" control={<Radio />} label={doI18n("pages:content:export_all", i18nRef.current)} />
+                            </RadioGroup>
+                        </FormControl>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="text"
+                        color="primary"
+                        onClick={handleClose}
+                    >
+                        {doI18n("pages:content:cancel", i18nRef.current)}
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => {
+                            if (!zipSetBooks || zipSetBooks.length === 0) {
+                                setTimeout(() => {
+                                   window.location.href = '/clients/content';
+                               }, 1000);
+                                enqueueSnackbar(
+                                    doI18n("pages:content:no_books_selected", i18nRef.current),
+                                    { variant: "warning" }
+                                );
+                            } else {
+                                usfmExportZip(zipSetBooks);
+                            }
+                            handleCloseCreate();
+                        }}
+                    >
+                        {doI18n("pages:content:export_label", i18nRef.current)}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Box>
+    );
 }
 
 export default ZipExport;

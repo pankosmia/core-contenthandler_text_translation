@@ -73,8 +73,10 @@ export default function NewTextTranslationBook() {
     };
 
     const handleCloseCreate = async () => {
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        window.location.href = "/clients/content";
+        setOpen(false);
+        setTimeout(() => {
+            window.location.href = '/clients/content';
+        }, 500);
     };
 
     const { i18nRef } = useContext(i18nContext);
@@ -106,7 +108,7 @@ export default function NewTextTranslationBook() {
                 { variant: "error" }
             );
         }
-        handleClose();
+        handleCloseCreate();
     };
 
     return (
