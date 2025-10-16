@@ -35,30 +35,20 @@ function ZipExport() {
     const [repoPath, setRepoPath] = useState([])
 
     const getProjectSummaries = async () => {
-    const hash = window.location.hash;
-    const query = hash.includes('?') ? hash.split('?')[1] : '';
-    const params = new URLSearchParams(query);
-    const path = params.get('repoPath');
-    setRepoPath(path);
-    const summariesResponse = await getJson(`/burrito/metadata/summaries`);
-    if (summariesResponse.ok) {
-        const data = summariesResponse.json;
-        console.log(data);
-        const matchingKey = Object.keys(data).find(key =>
-            key.includes(path)
-        );
-        if (matchingKey) {
-            const depot = data[matchingKey];
-            const bookCode = depot.book_codes?.[0];
-
+        const hash = window.location.hash;
+        const query = hash.includes('?') ? hash.split('?')[1] : '';
+        const params = new URLSearchParams(query);
+        const path = params.get('repoPath');
+        setRepoPath(path);
+        const summariesResponse = await getJson(`/burrito/metadata/summary/${path}`, debugContext.current);
+        if (summariesResponse.ok) {
+            const data = summariesResponse.json;
+            const bookCode = data.book_codes;
             setBookNames(bookCode);
         } else {
-            console.log("Aucun dépôt trouvé correspondant à :", path);
+            console.error(" Erreur lors de la récupération des données.");
         }
-    } else {
-        console.error(" Erreur lors de la récupération des données.");
-    }
-};
+    };
     useEffect(
         () => {
             getProjectSummaries();
@@ -89,7 +79,7 @@ function ZipExport() {
             );
             setTimeout(() => {
                 window.location.href = '/clients/content';
-        },  500);
+            }, 500);
             return false;
         }
         const usfmFile = { filename: `${bookCode}.usfm`, usfmText: `${bookUsfmResponse.text}` };
@@ -258,8 +248,8 @@ function ZipExport() {
                         onClick={() => {
                             if (!zipSetBooks || zipSetBooks.length === 0) {
                                 setTimeout(() => {
-                                   window.location.href = '/clients/content';
-                               }, 1000);
+                                    window.location.href = '/clients/content';
+                                }, 1000);
                                 enqueueSnackbar(
                                     doI18n("pages:content:no_books_selected", i18nRef.current),
                                     { variant: "warning" }
