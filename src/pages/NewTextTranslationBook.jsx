@@ -36,11 +36,34 @@ export default function NewTextTranslationBook() {
     const [bookTitle, setBookTitle] = useState("");
     const [bookAbbr, setBookAbbr] = useState("");
     const [open, setOpen] = useState(true);
-    const hash = window.location.hash;
-    const query = hash.includes("?") ? hash.split("?")[1] : "";
-    const params = new URLSearchParams(query);
-    const repoPath = params.get("repoPath");
-    const repoBookCode = params.get("repoBookCode");
+    const [repoPath, setRepoPath] = useState([])
+    const { i18nRef } = useContext(i18nContext);
+    const { debugRef } = useContext(debugContext);
+    const [bookCodes, setBookCodes] = useState([]);
+    const [protestantOnly, setProtestantOnly] = useState(true);
+    const [bookName,setBookName] = useState([]);
+
+     const getProjectSummaries = async () => {
+        const hash = window.location.hash;
+        const query = hash.includes('?') ? hash.split('?')[1] : '';
+        const params = new URLSearchParams(query);
+        const path = params.get('repoPath');
+        setRepoPath(path);
+        const summariesResponse = await getJson(`/burrito/metadata/summary/${path}`, debugContext.current);
+        if (summariesResponse.ok) {
+            const data = summariesResponse.json;
+            const bookCode = data.book_codes;
+            setBookName(bookCode);
+        } else {
+            console.error(" Erreur lors de la récupération des données.");
+        }
+    };
+    useEffect(
+        () => {
+            getProjectSummaries();
+        },
+        []
+    );
 
     useEffect(() => {
         const doFetch = async () => {
@@ -78,11 +101,6 @@ export default function NewTextTranslationBook() {
             window.location.href = '/clients/content';
         }, 500);
     };
-
-    const { i18nRef } = useContext(i18nContext);
-    const { debugRef } = useContext(debugContext);
-    const [bookCodes, setBookCodes] = useState([]);
-    const [protestantOnly, setProtestantOnly] = useState(true);
 
     const handleCreate = async () => {
         const payload = {
@@ -209,7 +227,7 @@ export default function NewTextTranslationBook() {
                                                 key={n}
                                                 value={listItem}
                                                 dense
-                                                disabled={repoBookCode.includes(listItem)}
+                                                disabled={bookName.includes(listItem)}
                                             >
                                                 <ListMenuItem
                                                     listItem={`${listItem} - ${doI18n(
