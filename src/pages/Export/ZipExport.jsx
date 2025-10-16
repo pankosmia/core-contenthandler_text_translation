@@ -24,19 +24,47 @@ import { useExportUsfmZip } from 'zip-project';
 
 function ZipExport() {
 
-    const hash = window.location.hash;
-    const query = hash.includes('?') ? hash.split('?')[1] : '';
-    const params = new URLSearchParams(query);
-    const repoPath = params.get('repoPath');
-    const repoBookCode = params.get('repoBookCode');
     const [open, setOpen] = useState(true);
     const { i18nRef } = useContext(i18nContext);
     const { debugRef } = useContext(debugContext);
     const fileExport = useRef();
-    const [bookNames, setBookNames] = useState([repoBookCode]);
+    const [bookNames, setBookNames] = useState();
     const [selectedBooks, setSelectedBooks] = useState(bookNames);
     const [bookCodes, setBookCodes] = useState([]);
     const [zipSet, setZipSet] = useState('all');
+    const [repoPath, setRepoPath] = useState([])
+
+    const getProjectSummaries = async () => {
+    const hash = window.location.hash;
+    const query = hash.includes('?') ? hash.split('?')[1] : '';
+    const params = new URLSearchParams(query);
+    const path = params.get('repoPath');
+    setRepoPath(path);
+    const summariesResponse = await getJson(`/burrito/metadata/summaries`);
+    if (summariesResponse.ok) {
+        const data = summariesResponse.json;
+        console.log(data);
+        const matchingKey = Object.keys(data).find(key =>
+            key.includes(path)
+        );
+        if (matchingKey) {
+            const depot = data[matchingKey];
+            const bookCode = depot.book_codes?.[0];
+
+            setBookNames(bookCode);
+        } else {
+            console.log("Aucun dépôt trouvé correspondant à :", path);
+        }
+    } else {
+        console.error(" Erreur lors de la récupération des données.");
+    }
+};
+    useEffect(
+        () => {
+            getProjectSummaries();
+        },
+        []
+    );
 
     let newZip = [];
     const usfmExportZip = async () => {
