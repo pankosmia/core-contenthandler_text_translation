@@ -41,6 +41,7 @@ function PdfGenerate() {
     const query = hash.includes('?') ? hash.split('?')[1] : '';
     const params = new URLSearchParams(query);
     const repoPath = params.get('repoPath');
+    const repoBookCode = params.get('repoBookCode')
     const { typographyRef } = useContext(typographyContext);
     const { i18nRef } = useContext(i18nContext);
     const { debugRef } = useContext(debugContext);
@@ -60,26 +61,8 @@ function PdfGenerate() {
     const [showVersesLabels, setShowVersesLabels] = useState(true);
     const [showFirstVerseLabel, setShowFirstVerseLabel] = useState(true);
     const [selectedColumns, setSelectedColumns] = useState(2);
-    const [bookNames, setBookNames] = useState([]);
+    const [bookNames, setBookNames] = useState([repoBookCode]);
     const [open, setOpen] = useState(true);
-
-    const getProjectSummaries = async () => {
-        const summariesResponse = await getJson(`/burrito/metadata/summaries`, debugRef.current);
-        if (summariesResponse.ok) {
-            const data = summariesResponse.json;
-            const keys = Object.keys(data);
-            const firstKey = keys[0];
-            const book_Codes = data[firstKey].book_codes[0];
-            setBookNames(book_Codes);
-        }
-    }
-
-    useEffect(
-        () => {
-            getProjectSummaries().then();
-        },
-        [bookCodes, bookNames]
-    );
 
     const handleCloseCreate = async () => {
         await new Promise(resolve => setTimeout(resolve, 1500));

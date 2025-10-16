@@ -28,11 +28,12 @@ function ZipExport() {
     const query = hash.includes('?') ? hash.split('?')[1] : '';
     const params = new URLSearchParams(query);
     const repoPath = params.get('repoPath');
+    const repoBookCode = params.get('repoBookCode');
     const [open, setOpen] = useState(true);
     const { i18nRef } = useContext(i18nContext);
     const { debugRef } = useContext(debugContext);
     const fileExport = useRef();
-    const [bookNames, setBookNames] = useState([]);
+    const [bookNames, setBookNames] = useState([repoBookCode]);
     const [selectedBooks, setSelectedBooks] = useState(bookNames);
     const [bookCodes, setBookCodes] = useState([]);
     const [zipSet, setZipSet] = useState('all');
@@ -87,24 +88,6 @@ function ZipExport() {
             setSelectedBooks([]);
         }
     };
-
-    const getProjectSummaries = async () => {
-        const summariesResponse = await getJson(`/burrito/metadata/summaries`, debugRef.current);
-        if (summariesResponse.ok) {
-            const data = summariesResponse.json;
-            const keys = Object.keys(data);
-            const firstKey = keys[0];
-            const book_Codes = data[firstKey].book_codes[0];
-            setBookNames(book_Codes);
-        }
-    }
-
-    useEffect(
-        () => {
-            getProjectSummaries().then();
-        },
-        [bookCodes, bookNames]
-    );
 
     useEffect(
         () => {
