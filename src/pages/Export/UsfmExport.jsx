@@ -31,27 +31,9 @@ function UsfmExport() {
     const { debugRef } = useContext(debugContext);
     const [selectedBooks, setSelectedBooks] = useState([]);
     const [bookCodes, setBookCodes] = useState([]);
-    const [bookNames, setBookNames] = useState([]);
-    const [open, setOpen] = useState(true);
-    console.log("bn", bookNames);
+    const [bookNames, setBookNames] = useState([repoBookCode]);
+    const [open,setOpen] = useState(true);
 
-    const getProjectSummaries = async () => {
-        const summariesResponse = await getJson(`/burrito/metadata/summaries`, debugRef.current);
-        if (summariesResponse.ok) {
-            const data = summariesResponse.json;
-            const keys = Object.keys(data);
-            const firstKey = keys[0];
-            const book_Codes = data[firstKey].book_codes[0];
-            setBookNames(book_Codes);
-        }
-    }
-
-    useEffect(
-        () => {
-            getProjectSummaries().then();
-        },
-        [bookCodes, bookNames]
-    );
 
     const usfmExportOneBook = async bookCode => {
         const bookUrl = `/burrito/ingredient/raw/${repoPath}?ipath=${bookCode}.usfm`;
