@@ -34,6 +34,7 @@ import { enqueueSnackbar } from "notistack";
 import { useAssumeGraphite } from "font-detect-rhl";
 import { getCVTexts, getBookName } from "../helpers/cv";
 import GraphiteTest from './GraphiteTest';
+import TextDir from '../helpers/TextDir';
 
 function PdfGenerate() {
 
@@ -91,6 +92,20 @@ function PdfGenerate() {
     const isGraphite = GraphiteTest()
     /** adjSelectedFontClass reshapes selectedFontClass if Graphite is absent. */
     const adjSelectedFontClass = isGraphite ? typographyRef.current.font_set : typographyRef.current.font_set.replace(/Pankosmia-AwamiNastaliq(.*)Pankosmia-NotoNastaliqUrdu/ig, 'Pankosmia-NotoNastaliqUrdu');
+
+    // Eliminating _webfonts.css pdf load by getting computed font styles.
+    // If/when we use adjSelectedFontClass on an element, then reduce to `const computedStyles = window.getComputedStyle(elementRef.current);`
+    const [adjSelectedFontFamilies, setAdjSelectedFontFamilies] = useState(null);
+    useEffect(() => {
+      const tempElement = document.createElement('div'); // Temporary element with adjSelectedFontClass className
+      tempElement.className = adjSelectedFontClass;
+      document.body.appendChild(tempElement);
+
+      const computedStyles = window.getComputedStyle(tempElement); // Get font-family from adjSelectedFontClass
+      setAdjSelectedFontFamilies(computedStyles.fontFamily);
+
+      document.body.removeChild(tempElement); // Remove temporary element
+    }, [adjSelectedFontClass]);
 
     const generatePdf = async (bookCode, pdfType = "para") => {
         let pdfHtml;
@@ -212,22 +227,56 @@ function PdfGenerate() {
         } else {
             throw new Error(`Unexpected pdfType '${pdfType}'`);
         }
-        const newPage = isFirefox ? window.open("", "_self") : window.open('about:blank', '_blank');
+
+        const textDir = await TextDir(pdfHtml);
+
+        const cssFile = () => {
+          if (pdfType === "para") {
+            return (textDir === "ltr" ? "/app-resources/pdf/para_bible_page_styles.css" : "/app-resources/pdf/para_bible_page_styles_rtl.css");
+          } else {
+            return (textDir === "ltr" ? "/app-resources/pdf/bcv_bible_page_styles.css" : "/app-resources/pdf/bcv_bible_page_styles_rtl.css");
+          }
+        }
+
+        // Extract names of font css files called by the font class
+        const parts = adjSelectedFontClass.replace("fonts-", "").split("Pankosmia-");
+        const formatPart = (part) => {
+            return part.replace(/([a-z])(?=[A-Z])/g, '$1_').replace(/SILSR/g, 'SIL_SR'); // Insert underscores between lowercase and uppercase letters and handle SILSR
+        };
+        const fontUrlFilenames = parts.map((part) => {
+            const formattedPart = formatPart(part);
+            return formattedPart ? `/webfonts/pankosmia-${formattedPart}.css` : '';
+        }).filter(Boolean); // Remove empty values
+
+        const adjSelectedFontFamiliesStr = adjSelectedFontFamilies.replace(/"/g, "'");
+
+        const newPage = window.open('about:blank', '_blank');
         const server = window.location.origin;
-        if (!isFirefox) newPage.document.body.innerHTML = `<div class="${adjSelectedFontClass}">${pdfHtml}</div>`
-        isFirefox && newPage.document.write(`<div class="${adjSelectedFontClass}">${pdfHtml}</div>`);
+        const dirAttr = textDir === 'rtl' ? ' dir="rtl"' : '';
+        const contentHtml = `<div id="content"${dirAttr} style="font-family: ${adjSelectedFontFamiliesStr};">${pdfHtml}</div>`;
+        newPage.document.write(contentHtml);
+        newPage.document.close();
         newPage.document.head.innerHTML = '<title>PDF Preview</title>'
-        const script = document.createElement('script')
-        script.src = `${server}/app-resources/pdf/paged.polyfill.js`;
-        newPage.document.head.appendChild(script)
-        const fontSetLink = document.createElement('link');
-        fontSetLink.rel = "stylesheet";
-        fontSetLink.href = "/webfonts/_webfonts.css";
-        newPage.document.head.appendChild(fontSetLink);
-        const link = document.createElement('link');
-        link.rel = "stylesheet";
-        link.href = pdfType === "para" ? `${server}/app-resources/pdf/para_bible_page_styles.css` : `${server}/app-resources/pdf/bcv_bible_page_styles.css`;
-        newPage.document.head.appendChild(link)
+
+        if (textDir === 'rtl') {
+          newPage.document.documentElement.setAttribute('dir', 'rtl');
+        } else {
+          const script = document.createElement('script')
+          script.src = `${server}/app-resources/pdf/paged.polyfill.js`;
+          newPage.document.head.appendChild(script)
+        }
+
+        const loadStyles = (href) => {
+            const link = newPage.document.createElement('link');
+            link.rel = "stylesheet";
+            link.href = href;
+            newPage.document.head.appendChild(link);
+        };
+
+        // Load styles
+        loadStyles(`${server}${cssFile()}`);
+        fontUrlFilenames.forEach(loadStyles);
+        
         return true;
     }
 
