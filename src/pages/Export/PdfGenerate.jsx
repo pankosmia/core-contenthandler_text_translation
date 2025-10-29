@@ -31,7 +31,6 @@ import { Proskomma } from 'proskomma-core';
 import { SofriaRenderFromProskomma, render } from "proskomma-json-tools";
 import { getText, debugContext, i18nContext, doI18n, typographyContext, getJson, Header } from "pithekos-lib";
 import { enqueueSnackbar } from "notistack";
-import { useAssumeGraphite } from "font-detect-rhl";
 import { getCVTexts, getBookName } from "../helpers/cv";
 import GraphiteTest from './GraphiteTest';
 import TextDir from '../helpers/TextDir';
@@ -87,7 +86,6 @@ function PdfGenerate() {
         await new Promise(resolve => setTimeout(resolve, 1500));
         window.location.href = "/clients/content"
     }
-    const isFirefox = useAssumeGraphite({});
 
     const isGraphite = GraphiteTest()
     /** adjSelectedFontClass reshapes selectedFontClass if Graphite is absent. */
@@ -250,33 +248,126 @@ function PdfGenerate() {
 
         const adjSelectedFontFamiliesStr = adjSelectedFontFamilies.replace(/"/g, "'");
 
-        const newPage = window.open('about:blank', '_blank');
-        const server = window.location.origin;
-        const dirAttr = textDir === 'rtl' ? ' dir="rtl"' : '';
-        const contentHtml = `<div id="content"${dirAttr} style="font-family: ${adjSelectedFontFamiliesStr};">${pdfHtml}</div>`;
-        newPage.document.write(contentHtml);
-        newPage.document.close();
-        newPage.document.head.innerHTML = '<title>PDF Preview</title>'
+        const openPagedPreviewForPdf = async () => {
+          const server = window.location.origin;
+          const dirAttr = textDir === 'rtl' ? ' dir="rtl"' : '';
+          const contentHtml = `<div id="content"${dirAttr} style="font-family: ${adjSelectedFontFamiliesStr};">${pdfHtml}</div>`;
 
-        if (textDir === 'rtl') {
-          newPage.document.documentElement.setAttribute('dir', 'rtl');
-        } else {
-          const script = document.createElement('script')
+          // Electronite uses previewBridge; Web Browsers fall back to window.open
+          const openFn = (window.previewBridge && window.previewBridge.openPreview) || (url => window.open(url, '_blank'));
+          const previewWin = openFn('about:blank');
+          if (!previewWin) return console.error('failed to open preview');
+
+          // Initial Content
+          previewWin.document.open();
+          previewWin.document.write(contentHtml);
+          previewWin.document.close();
+
+          // Ensure head exists and set title. Do not replace head.innerHTML
+          if (!previewWin.document.head) {
+            const head = previewWin.document.createElement('head');
+            previewWin.document.documentElement.insertBefore(head, previewWin.document.documentElement.firstChild);
+          }
+          previewWin.document.title = 'PDF Preview';
+
+          // Wait until body is present (poll, short timeout)
+          const waitForBody = (win, timeout = 3000) => {
+            return new Promise((resolve, reject) => {
+              const start = Date.now();
+              const check = () => {
+                try {
+                  if (win.document && win.document.body) return resolve();
+                } catch (e) { /* cross-origin/access not ready */ }
+                if (Date.now() - start > timeout) return reject(new Error('preview body timeout'));
+                setTimeout(check, 25);
+              };
+              check();
+            });
+          };
+          await waitForBody(previewWin);
+
+          // Append PagedJS
+          const script = previewWin.document.createElement('script');
           script.src = `${server}/app-resources/pdf/paged.polyfill.js`;
-          newPage.document.head.appendChild(script)
-        }
+          script.onload = () => {
+            // Add print button only when running inside Electron
+            const isElectron = Boolean(window.previewBridge || window.electronPrinter || navigator.userAgent.toLowerCase().includes('electron'));
+            if (!isElectron) return;
 
-        const loadStyles = (href) => {
-            const link = newPage.document.createElement('link');
-            link.rel = "stylesheet";
-            link.href = href;
-            newPage.document.head.appendChild(link);
+            // Inject the print button
+            const setupPreviewPrint = () => {
+              const doc = document;
+              const win = window;
+              const ID = 'electron-print';
+
+              const style = doc.createElement('style');
+              style.textContent = `@media print { #electron-print { display: none !important; } }`;
+              doc.head.appendChild(style);
+
+              const ensureButton = () => {
+                // remove duplicates
+                Array.from(doc.querySelectorAll('#' + ID)).slice(1).forEach(n => n.remove());
+                let btn = doc.getElementById(ID);
+                if (!btn) {
+                  btn = doc.createElement('button');
+                  btn.id = ID;
+                  btn.type = 'button';
+                  btn.textContent = 'Print';
+                  btn.style.position = 'fixed';
+                  btn.style.top = '8px';
+                  btn.style.left = '50%';
+                  btn.style.transform = 'translateX(-50%)';
+                  btn.style.zIndex = '99999';
+                  doc.body.appendChild(btn);
+                }
+                btn.disabled = false;
+                if (btn._h) btn.removeEventListener('click', btn._h);
+                btn._h = (e) => {
+                  e && e.preventDefault();
+                  // Allow for UI settling
+                  setTimeout(() => {
+                    if (typeof win.print === 'function') win.print();
+                    else if (win.opener && !win.opener.closed) {
+                      win.opener.postMessage({ type: 'print-request', options: { printBackground: true }, ts: Date.now() }, win.location.origin);
+                    }
+                  }, 50);
+                };
+                btn.addEventListener('click', btn._h);
+              };
+
+              // Recreate if removed by PagedJS re-render(s)
+              const mo = new (win.MutationObserver || win.WebKitMutationObserver)(() => {
+                if (!doc.getElementById(ID)) ensureButton();
+              });
+              mo.observe(doc.body, { childList: true, subtree: true });
+
+              // close preview after print finishes or cancelled
+              win.addEventListener('afterprint', () => { try { win.close(); } catch (e) {} });
+
+              ensureButton();
+            };
+
+            const fn = setupPreviewPrint;
+            previewWin.eval('(' + fn.toString() + ')()');
+          };
+          script.onerror = () => {};
+          previewWin.document.head.appendChild(script);
+
+          const loadStyles = (href) => {
+              const link = previewWin.document.createElement('link');
+              link.rel = "stylesheet";
+              link.href = href;
+              previewWin.document.head.appendChild(link);
+          };
+
+          // Load styles
+          loadStyles(`${server}${cssFile()}`);
+          fontUrlFilenames.forEach(loadStyles);
+
         };
 
-        // Load styles
-        loadStyles(`${server}${cssFile()}`);
-        fontUrlFilenames.forEach(loadStyles);
-        
+        openPagedPreviewForPdf();
+
         return true;
     }
 
