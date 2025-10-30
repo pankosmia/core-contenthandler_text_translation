@@ -306,56 +306,63 @@ function PdfGenerate() {
 
             // Inject the print button
             const setupPreviewPrint = () => {
-              const doc = document;
-              const win = window;
-              const ID = 'electron-print';
-              const buttonText = win.__electronPrintButtonText || 'print';
+                const getButtonText = () => {
+                    const v = window.__electronPrintButtonText;
+                    return (typeof v !== 'undefined' && v !== null) ? String(v) : 'Print'; // Fallback
+                };
+                const buttonText = getButtonText()
 
-              const style = doc.createElement('style');
-              style.textContent = `@media print { #electron-print { display: none !important; } }`;
-              doc.head.appendChild(style);
+                const doc = document;
+                const win = window;
+                const ID = 'electron-print';
 
-              const ensureButton = () => {
+                const style = doc.createElement('style');
+                style.textContent = `@media print { #electron-print { display: none !important; } }`;
+                doc.head.appendChild(style);
+
+                const ensureButton = () => {
                 // remove duplicates
                 Array.from(doc.querySelectorAll('#' + ID)).slice(1).forEach(n => n.remove());
                 let btn = doc.getElementById(ID);
                 if (!btn) {
-                  btn = doc.createElement('button');
-                  btn.id = ID;
-                  btn.type = 'button';
-                  btn.textContent = String(buttonText);
-                  btn.style.position = 'fixed';
-                  btn.style.top = '8px';
-                  btn.style.left = '50%';
-                  btn.style.transform = 'translateX(-50%)';
-                  btn.style.zIndex = '99999';
-                  doc.body.appendChild(btn);
+                    btn = doc.createElement('button');
+                    btn.id = ID;
+                    btn.type = 'button';
+                    btn.textContent = String(buttonText);
+                    btn.style.position = 'fixed';
+                    btn.style.top = '8px';
+                    btn.style.left = '50%';
+                    btn.style.transform = 'translateX(-50%)';
+                    btn.style.zIndex = '99999';
+                    doc.body.appendChild(btn);
+                } else {
+                    btn.textContent = String(buttonText);
                 }
                 btn.disabled = false;
                 if (btn._h) btn.removeEventListener('click', btn._h);
                 btn._h = (e) => {
-                  e && e.preventDefault();
-                  // Allow for UI settling
-                  setTimeout(() => {
+                    e && e.preventDefault();
+                    // Allow for UI settling
+                    setTimeout(() => {
                     if (typeof win.print === 'function') win.print();
                     else if (win.opener && !win.opener.closed) {
-                      win.opener.postMessage({ type: 'print-request', options: { printBackground: true }, ts: Date.now() }, win.location.origin);
+                        win.opener.postMessage({ type: 'print-request', options: { printBackground: true }, ts: Date.now() }, win.location.origin);
                     }
-                  }, 50);
+                    }, 50);
                 };
                 btn.addEventListener('click', btn._h);
-              };
+                };
 
-              // Recreate if removed by PagedJS re-render(s)
-              const mo = new (win.MutationObserver || win.WebKitMutationObserver)(() => {
+                // Recreate if removed by PagedJS re-render(s)
+                const mo = new (win.MutationObserver || win.WebKitMutationObserver)(() => {
                 if (!doc.getElementById(ID)) ensureButton();
-              });
-              mo.observe(doc.body, { childList: true, subtree: true });
+                });
+                mo.observe(doc.body, { childList: true, subtree: true });
 
-              // close preview after print finishes or cancelled
-              win.addEventListener('afterprint', () => { try { win.close(); } catch (e) {} });
+                // close preview after print finishes or cancelled
+                win.addEventListener('afterprint', () => { try { win.close(); } catch (e) {} });
 
-              ensureButton();
+                ensureButton();
             };
 
             previewWin.eval('(' + setupPreviewPrint.toString() + ')()');
