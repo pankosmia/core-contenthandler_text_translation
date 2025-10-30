@@ -260,7 +260,7 @@ function PdfGenerate() {
           try {
              void previewWin.document; // attempt to read document property
           } catch (e) {
-            return; // window currently inaccessible, or is cross‑origin, or is not yet initialized
+            return; // window currently inaccessible (e.g., not yet initialized or cross‑origin)
           }
 
           // Initial Content
@@ -273,9 +273,9 @@ function PdfGenerate() {
             const head = previewWin.document.createElement('head');
             previewWin.document.documentElement.insertBefore(head, previewWin.document.documentElement.firstChild);
           }
-          previewWin.document.title = 'PDF Preview';
+          previewWin.document.title = doI18n("pages:content:pdf_preview", i18nRef.current);
 
-          // Wait until document.body is actually present, tolerating transient failures retrying until body exists or timeout.
+          // Wait until document.body is present, retrying until body exists or timeout.
           const waitForBody = (win, timeout = 3000) => {
             return new Promise((resolve, reject) => {
               const start = Date.now();
@@ -283,8 +283,7 @@ function PdfGenerate() {
                 try {
                   if (win.document && win.document.body) return resolve();
                 } catch (e) {
-                    // Access may throw while the new window is not ready or is cross-origin;
-                    // Swallow and retry until timeout.
+                    // Access may throw while the new window is not ready or is cross-origin; Retry until timeout.
                 }
                 if (Date.now() - start > timeout) return reject(new Error('preview body timeout'));
                 setTimeout(check, 25);
@@ -302,11 +301,15 @@ function PdfGenerate() {
             const isElectron = Boolean(window.previewBridge || window.electronPrinter || navigator.userAgent.toLowerCase().includes('electron'));
             if (!isElectron) return;
 
+            // Pass i18n to the preview window
+            previewWin.__electronPrintButtonText = doI18n("pages:content:print", i18nRef.current);
+
             // Inject the print button
             const setupPreviewPrint = () => {
               const doc = document;
               const win = window;
               const ID = 'electron-print';
+              const buttonText = win.__electronPrintButtonText || 'print';
 
               const style = doc.createElement('style');
               style.textContent = `@media print { #electron-print { display: none !important; } }`;
@@ -320,7 +323,7 @@ function PdfGenerate() {
                   btn = doc.createElement('button');
                   btn.id = ID;
                   btn.type = 'button';
-                  btn.textContent = 'Print';
+                  btn.textContent = String(buttonText);
                   btn.style.position = 'fixed';
                   btn.style.top = '8px';
                   btn.style.left = '50%';
@@ -355,10 +358,9 @@ function PdfGenerate() {
               ensureButton();
             };
 
-            const fn = setupPreviewPrint;
-            previewWin.eval('(' + fn.toString() + ')()');
+            previewWin.eval('(' + setupPreviewPrint.toString() + ')()');
           };
-          script.onerror = () => {};
+          script.onerror = (e) => console.error('PagedJS failed to load', e);
           previewWin.document.head.appendChild(script);
 
           const loadStyles = (href) => {
