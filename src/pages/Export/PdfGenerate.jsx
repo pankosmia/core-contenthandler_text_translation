@@ -256,7 +256,12 @@ function PdfGenerate() {
           // Electronite uses previewBridge; Web Browsers fall back to window.open
           const openFn = (window.previewBridge && window.previewBridge.openPreview) || (url => window.open(url, '_blank'));
           const previewWin = openFn('about:blank');
-          if (!previewWin) return console.error('failed to open preview');
+          if (!previewWin) return; // window.open failed or was blocked
+          try {
+             void previewWin.document; // attempt to read document property
+          } catch (e) {
+            return; // window currently inaccessible, or is cross‑origin, or is not yet initialized
+          }
 
           // Initial Content
           previewWin.document.open();
@@ -270,14 +275,17 @@ function PdfGenerate() {
           }
           previewWin.document.title = 'PDF Preview';
 
-          // Wait until body is present (poll, short timeout)
+          // Wait until document.body is actually present, tolerating transient failures retrying until body exists or timeout.
           const waitForBody = (win, timeout = 3000) => {
             return new Promise((resolve, reject) => {
               const start = Date.now();
               const check = () => {
                 try {
                   if (win.document && win.document.body) return resolve();
-                } catch (e) { /* cross-origin/access not ready */ }
+                } catch (e) {
+                    // Access may throw while the new window is not ready or is cross-origin;
+                    // Swallow and retry until timeout.
+                }
                 if (Date.now() - start > timeout) return reject(new Error('preview body timeout'));
                 setTimeout(check, 25);
               };
