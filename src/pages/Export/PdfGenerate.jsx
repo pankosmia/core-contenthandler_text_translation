@@ -296,22 +296,22 @@ function PdfGenerate() {
           script.src = `${server}/app-resources/pdf/paged.polyfill.js`;
           script.onload = () => {
             // Pass i18n to the preview window
-            previewWin.__electronPrintButtonText = doI18n("pages:content:print", i18nRef.current);
+            previewWin.__printButtonText = doI18n("pages:content:print", i18nRef.current);
 
             // Inject the print button
             const setupPreviewPrint = () => {
                 const getButtonText = () => {
-                    const v = window.__electronPrintButtonText;
+                    const v = window.__printButtonText;
                     return (typeof v !== 'undefined' && v !== null) ? String(v) : 'Print'; // Fallback
                 };
                 const buttonText = getButtonText()
 
                 const doc = document;
                 const win = window;
-                const ID = 'electron-print';
+                const ID = 'preview-print';
 
                 const style = doc.createElement('style');
-                style.textContent = `@media print { #electron-print { display: none !important; } }`;
+                style.textContent = `@media print { #preview-print { display: none !important; } }`;
                 doc.head.appendChild(style);
 
                 const ensureButton = () => {
