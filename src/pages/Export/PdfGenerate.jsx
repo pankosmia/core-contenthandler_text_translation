@@ -5,7 +5,6 @@ import {
     DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle,
     FormControl,
     Select,
     Menu,
@@ -253,8 +252,7 @@ function PdfGenerate() {
           const dirAttr = textDir === 'rtl' ? ' dir="rtl"' : '';
           const contentHtml = `<div id="content"${dirAttr} style="font-family: ${adjSelectedFontFamiliesStr};">${pdfHtml}</div>`;
 
-          // Electronite uses previewBridge; Web Browsers fall back to window.open
-          const openFn = (window.previewBridge && window.previewBridge.openPreview) || (url => window.open(url, '_blank'));
+          const openFn = (url => window.open(url, '_blank'));
           const previewWin = openFn('about:blank');
           if (!previewWin) return; // window.open failed or was blocked
           try {
