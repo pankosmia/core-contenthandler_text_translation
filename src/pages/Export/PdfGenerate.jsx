@@ -297,10 +297,6 @@ function PdfGenerate() {
           const script = previewWin.document.createElement('script');
           script.src = `${server}/app-resources/pdf/paged.polyfill.js`;
           script.onload = () => {
-            // Add print button only when running inside Electron
-            const isElectron = Boolean(window.previewBridge || window.electronPrinter || navigator.userAgent.toLowerCase().includes('electron'));
-            if (!isElectron) return;
-
             // Pass i18n to the preview window
             previewWin.__electronPrintButtonText = doI18n("pages:content:print", i18nRef.current);
 
