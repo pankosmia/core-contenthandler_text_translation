@@ -324,8 +324,6 @@ function PdfGenerate() {
                 doc.head.appendChild(style);
 
                 const ensureButton = () => {
-                // remove duplicates
-                Array.from(doc.querySelectorAll('#' + ID)).slice(1).forEach(n => n.remove());
                 let btn = doc.getElementById(ID);
                 if (!btn) {
                     btn = doc.createElement('button');
