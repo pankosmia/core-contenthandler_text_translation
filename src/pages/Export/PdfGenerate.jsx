@@ -20,7 +20,8 @@ import {
     Switch,
     Toolbar,
     AppBar,
-    Box
+    Box,
+    useTheme
 } from "@mui/material";
 import LooksOneOutlinedIcon from '@mui/icons-material/LooksOneOutlined';
 import LooksTwoOutlinedIcon from '@mui/icons-material/LooksTwoOutlined';
@@ -103,6 +104,8 @@ function PdfGenerate() {
 
       document.body.removeChild(tempElement); // Remove temporary element
     }, [adjSelectedFontClass]);
+
+    const theme = useTheme(); // used for DOM preview print button style
 
     const generatePdf = async (bookCode, pdfType = "para") => {
         let pdfHtml;
@@ -295,16 +298,22 @@ function PdfGenerate() {
           const script = previewWin.document.createElement('script');
           script.src = `${server}/app-resources/pdf/paged.polyfill.js`;
           script.onload = () => {
-            // Pass i18n to the preview window
+            // Pass to preview window
             previewWin.__printButtonText = doI18n("pages:content:print", i18nRef.current);
+            previewWin.__printButtonBackgroundColor = theme.palette.primary.main;
+            previewWin.__printButtonColor = theme.palette.primary.contrastText;
+            previewWin.__printButtonFont = '"Roboto", "Helvetica", "Arial", sans-serif' // TBD?: adjSelectedFontFamiliesStr;
 
             // Inject the print button
             const setupPreviewPrint = () => {
-                const getButtonText = () => {
-                    const v = window.__printButtonText;
-                    return (typeof v !== 'undefined' && v !== null) ? String(v) : 'Print'; // Fallback
+                const getButtonStyle = (name, defaultValue = '') => {
+                    const v =  window[`__${name}`];
+                    return (typeof v !== 'undefined' && v !== null) ? String(v) : defaultValue; // Fallback
                 };
-                const buttonText = getButtonText()
+                const buttonText = getButtonStyle('printButtonText', 'Print');
+                const buttonBackgroundColor = getButtonStyle('printButtonBackgroundColor', '#696969');
+                const buttonColor = getButtonStyle('printButtonColor', '#fff');
+                const buttonFont = getButtonStyle('printButtonFont', '"Roboto", "Helvetica", "Arial", sans-serif');
 
                 const doc = document;
                 const win = window;
@@ -323,6 +332,19 @@ function PdfGenerate() {
                     btn.id = ID;
                     btn.type = 'button';
                     btn.textContent = String(buttonText);
+                    btn.style.fontFamily = String(buttonFont);
+                    btn.style.backgroundColor = String(buttonBackgroundColor);
+                    btn.style.color = String(buttonColor);
+                    btn.style.fontWeight = '500';
+                    btn.style.fontSize = `0.875rem`;
+                    btn.style.letterSpacing = '0.02857em';
+                    btn.style.lineHeight = '1.75';
+                    btn.style.textTransform = 'uppercase';
+                    btn.style.height = '34px';
+                    btn.style.cursor = 'pointer';
+                    btn.style.border = 'none';
+                    btn.style.padding = '0px 8px';
+                    btn.style.borderRadius = '17px';
                     btn.style.position = 'fixed';
                     btn.style.top = '8px';
                     btn.style.left = '50%';
@@ -331,6 +353,9 @@ function PdfGenerate() {
                     doc.body.appendChild(btn);
                 } else {
                     btn.textContent = String(buttonText);
+                    btn.style.fontFamily = String(buttonFont);
+                    btn.style.backgroundColor = String(buttonBackgroundColor);
+                    btn.style.color = String(buttonColor);
                 }
                 btn.disabled = false;
                 if (btn._h) btn.removeEventListener('click', btn._h);
@@ -347,9 +372,9 @@ function PdfGenerate() {
                 btn.addEventListener('click', btn._h);
                 };
 
-                // Recreate if removed by PagedJS re-render(s)
-                const mo = new (win.MutationObserver || win.WebKitMutationObserver)(() => {
-                if (!doc.getElementById(ID)) ensureButton();
+                // Recreate print button if removed by PagedJS re-render(s)
+                const mo = new win.MutationObserver(() => {
+                  if (!doc.getElementById(ID)) ensureButton();
                 });
                 mo.observe(doc.body, { childList: true, subtree: true });
 
@@ -357,7 +382,8 @@ function PdfGenerate() {
                 win.addEventListener('afterprint', () => { try { win.close(); } catch (e) {} });
 
                 ensureButton();
-            };
+
+              };
 
             previewWin.eval('(' + setupPreviewPrint.toString() + ')()');
           };
