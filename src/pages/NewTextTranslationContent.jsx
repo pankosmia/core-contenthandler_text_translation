@@ -21,9 +21,26 @@ import sx from "./Selection.styles";
 import ListMenuItem from "./ListMenuItem";
 
 export default function NewBibleContent() {
+
     const [open, setOpen] = useState(true)
     const [errorDialogOpen, setErrorDialogOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const { i18nRef } = useContext(i18nContext);
+    const { debugRef } = useContext(debugContext);
+    const [contentName, setContentName] = useState("");
+    const [contentAbbr, setContentAbbr] = useState("");
+    const [contentType, setContentType] = useState("text_translation");
+    const [contentLanguageCode, setContentLanguageCode] = useState("und");
+    const [showBookFields, setShowBookFields] = useState(true);
+    const [bookCode, setBookCode] = useState("TIT");
+    const [bookTitle, setBookTitle] = useState("Tit");
+    const [bookAbbr, setBookAbbr] = useState("Ti");
+    const [postCount, setPostCount] = useState(0);
+    const [showVersification, setShowVersification] = useState(true);
+    const [versification, setVersification] = useState("eng");
+    const [versificationCodes, setVersificationCodes] = useState([]);
+    const [bookCodes, setBookCodes] = useState([]);
+    const [protestantOnly, setProtestantOnly] = useState(true);
 
     const handleClose = () => {
         const url = window.location.search;
@@ -43,24 +60,6 @@ export default function NewBibleContent() {
             window.location.href = '/clients/content';
         });
     };
-
-    const { i18nRef } = useContext(i18nContext);
-    const { debugRef } = useContext(debugContext);
-    const [contentName, setContentName] = useState("");
-    const [contentAbbr, setContentAbbr] = useState("");
-    const [contentType, setContentType] = useState("text_translation");
-    const [contentLanguageCode, setContentLanguageCode] = useState("und");
-    const [showBookFields, setShowBookFields] = useState(true);
-    const [bookCode, setBookCode] = useState("TIT");
-    const [bookTitle, setBookTitle] = useState("Tit");
-    const [bookAbbr, setBookAbbr] = useState("Ti");
-    const [postCount, setPostCount] = useState(0);
-    const [showVersification, setShowVersification] = useState(true);
-    const [versification, setVersification] = useState("eng");
-
-    const [versificationCodes, setVersificationCodes] = useState([]);
-    const [bookCodes, setBookCodes] = useState([]);
-    const [protestantOnly, setProtestantOnly] = useState(true);
 
     useEffect(() => {
         if (open) {
