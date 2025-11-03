@@ -12,7 +12,8 @@ import {
     InputLabel, Grid2,
     DialogActions,
     Dialog,
-    Box
+    Box,
+    DialogContent
 } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
 import { i18nContext, debugContext, postJson, doI18n, getAndSetJson, getJson, Header } from "pithekos-lib";
@@ -21,6 +22,8 @@ import ListMenuItem from "./ListMenuItem";
 
 export default function NewBibleContent() {
     const [open, setOpen] = useState(true)
+    const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const handleClose = () => {
         const url = window.location.search;
@@ -38,7 +41,7 @@ export default function NewBibleContent() {
         setOpen(false);
         setTimeout(() => {
             window.location.href = '/clients/content';
-        }, 500);
+        });
     };
 
     const { i18nRef } = useContext(i18nContext);
@@ -130,10 +133,16 @@ export default function NewBibleContent() {
                 `${doI18n("pages:content:content_creation_error", i18nRef.current)}: ${response.status}`,
                 { variant: "error" }
             );
+            setErrorMessage(`${doI18n("pages:content:book_creation_error", i18nRef.current)}: ${response.status
+                }`);
+            setErrorDialogOpen(true);
         }
-        handleCloseCreate();
     };
 
+    const handleCloseErrorDialog = () => {
+        setErrorDialogOpen(false);
+        handleClose();
+    };
     return (
         <Box>
             <Box
@@ -376,6 +385,17 @@ export default function NewBibleContent() {
                         onClick={handleCreate}
                     >
                         {doI18n("pages:content:create", i18nRef.current)}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            {/* Error Dialog*/}
+            <Dialog open={errorDialogOpen} onClose={handleCloseErrorDialog}>
+                <DialogContent>
+                    <Typography color="error">{errorMessage}</Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseErrorDialog} variant="contained" color="primary">
+                        {doI18n("pages:content:close", i18nRef.current)}
                     </Button>
                 </DialogActions>
             </Dialog>
