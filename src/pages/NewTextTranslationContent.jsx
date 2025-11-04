@@ -41,6 +41,8 @@ export default function NewBibleContent() {
     const [versificationCodes, setVersificationCodes] = useState([]);
     const [bookCodes, setBookCodes] = useState([]);
     const [protestantOnly, setProtestantOnly] = useState(true);
+    const [localRepos, setLocalRepos] = useState([]);
+    const [repoExists, setRepoExists] = useState(false);
 
     const handleClose = () => {
         const url = window.location.search;
@@ -84,6 +86,18 @@ export default function NewBibleContent() {
                 doFetch().then();
             }
         }, [open]
+    );
+
+    useEffect(
+        () => {
+            if (open){
+                getAndSetJson({
+                    url: "/git/list-local-repos",
+                    setter: setLocalRepos
+                }).then()  
+            }  
+        },
+        [open]
     );
 
     useEffect(
@@ -142,6 +156,7 @@ export default function NewBibleContent() {
         setErrorDialogOpen(false);
         handleClose();
     };
+
     return (
         <Box>
             <Box
@@ -197,6 +212,11 @@ export default function NewBibleContent() {
                         label={doI18n("pages:content:abbreviation", i18nRef.current)}
                         value={contentAbbr}
                         onChange={(event) => {
+                            if (localRepos.map(l => l.split("/")[2]).includes(event.target.value)){
+                                setRepoExists(true);
+                            } else {
+                                setRepoExists(false);
+                            }
                             setContentAbbr(event.target.value);
                         }}
                     />
@@ -380,6 +400,8 @@ export default function NewBibleContent() {
                                     )
                                 )
                             )
+                            ||
+                            repoExists
                         }
                         onClick={handleCreate}
                     >
