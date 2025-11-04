@@ -13,7 +13,8 @@ import {
     DialogActions,
     Dialog,
     Box,
-    DialogContent
+    DialogContent,
+    Tooltip
 } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
 import { i18nContext, debugContext, postJson, doI18n, getAndSetJson, getJson, Header } from "pithekos-lib";
@@ -206,20 +207,26 @@ export default function NewBibleContent() {
                             setContentName(event.target.value);
                         }}
                     />
-                    <TextField
-                        id="abbr"
-                        required
-                        label={doI18n("pages:content:abbreviation", i18nRef.current)}
-                        value={contentAbbr}
-                        onChange={(event) => {
-                            if (localRepos.map(l => l.split("/")[2]).includes(event.target.value)){
-                                setRepoExists(true);
-                            } else {
-                                setRepoExists(false);
-                            }
-                            setContentAbbr(event.target.value);
-                        }}
-                    />
+                    <Tooltip 
+                        open={repoExists} 
+                        slotProps={{popper: {modifiers: [{name: 'offset', options: {offset: [0, -10]}}]}}}
+                        title="Repo already exists" placement="bottom-start"
+                    >
+                        <TextField
+                            id="abbr"
+                            required
+                            label={doI18n("pages:content:abbreviation", i18nRef.current)}
+                            value={contentAbbr}
+                            onChange={(event) => {
+                                if (localRepos.map(l => l.split("/")[2]).includes(event.target.value)){
+                                    setRepoExists(true);
+                                } else {
+                                    setRepoExists(false);
+                                }
+                                setContentAbbr(event.target.value);
+                            }}
+                        />
+                    </Tooltip>
                     <TextField
                         id="type"
                         required
