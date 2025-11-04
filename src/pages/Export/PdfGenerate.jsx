@@ -253,7 +253,168 @@ function PdfGenerate() {
         const openPagedPreviewForPdf = async () => {
           const server = window.location.origin;
           const dirAttr = textDir === 'rtl' ? ' dir="rtl"' : '';
-          const contentHtml = `<div id="content"${dirAttr} style="font-family: ${adjSelectedFontFamiliesStr};">${pdfHtml}</div>`;
+          const contentHtml = `
+              <div id="content"${dirAttr} style="font-family: ${adjSelectedFontFamiliesStr};">
+                  ${pdfHtml}
+              </div>
+              <div id="preview-print-host">
+                  <button id="preview-print" type="button">${doI18n("pages:content:print", i18nRef.current) || 'Print'}</button>
+              </div>
+              <script>
+                  (function(){
+                    // Get values passed in to previewWin
+                    const getPreviewVal = (name, fallback) => {
+                      try {
+                        const v = window['__' + name];
+                        if (v === undefined || v === null) return fallback;
+                        const s = String(v).trim();
+                        if (/^__\w+$/.test(s)) return fallback; // Catch absent and "__printButtonText"-like cases
+                        return s;
+                      } catch (e) { return fallback; }
+                    };
+                    const BUTTON_TEXT = getPreviewVal('printButtonText', 'Print');
+                    const BTN_BG = getPreviewVal('printButtonBackgroundColor', '#1976d2');
+                    const BTN_COLOR = getPreviewVal('printButtonColor', '#fff');
+
+                    const win = window;
+                    const doc = document;
+                    const ID = 'preview-print';
+                    const HOST_ID = 'preview-print-host';
+                    const STYLE_ID = HOST_ID + '-print-style';
+                    const SETUP_FLAG = '_preview_print_setup';
+
+                    const clickHandler = (e) => {
+                    e && e.preventDefault();
+                    setTimeout(() => {
+                      try {
+                        if (typeof win.print === 'function') win.print();
+                        else if (win.opener && !win.opener.closed) {
+                          try { win.opener.postMessage({ type: 'print-request', options: { printBackground: true }, ts: Date.now() }, win.location.origin); } catch (err) {}
+                        }
+                      } catch (err) {}
+                      }, 50);
+                    };
+
+                    // Ensure the @media print style exists
+                    const ensurePrintHideStyle = () => {
+                      if (doc.getElementById(STYLE_ID)) return;
+                      const s = doc.createElement('style');
+                      s.id = STYLE_ID;
+                      s.textContent = '@media print { #preview-print { display: none !important; } }';
+                      const host = doc.getElementById(HOST_ID);
+                      if (host && host.appendChild) host.appendChild(s);
+                      else if (doc.head && doc.head.appendChild) doc.head.appendChild(s);
+                      else if (doc.body && doc.body.appendChild) doc.body.appendChild(s);
+                      else doc.documentElement.appendChild(s);
+                    };
+
+                    // Dedupe helper: keep only one final button after PagedJS re-render
+                    const dedupeButtons = () => {
+                      const all = Array.from(doc.querySelectorAll('#' + ID));
+                      if (all.length <= 1) return;
+                      const host = doc.getElementById(HOST_ID);
+                      let keeper = all.find(el => host && host.contains(el)) || all[0];
+                      if (keeper) {
+                        if (keeper._preview_click) keeper.removeEventListener('click', keeper._preview_click);
+                        keeper._preview_click = clickHandler;
+                        keeper.addEventListener('click', keeper._preview_click);
+                        keeper.style.pointerEvents = 'auto';
+                        if (host && keeper.parentNode !== host) host.appendChild(keeper);
+                      }
+                      all.forEach(el => {
+                        if (el !== keeper) {
+                          try { el.parentNode && el.parentNode.removeChild(el); } catch (e) {}
+                        }
+                      });
+                    };
+
+                    // Create/ensure host + button, attach handler and inline visuals
+                    const ensureButtonExists = () => {
+                      let host = doc.getElementById(HOST_ID);
+                      if (!host) {
+                        host = doc.createElement('div');
+                        host.id = HOST_ID;
+                        host.style.position = 'fixed';
+                        host.style.top = '0';
+                        host.style.left = '0';
+                        host.style.width = '100%';
+                        host.style.pointerEvents = 'none';
+                        host.style.zIndex = '99999';
+                        // If body not present yet, append to documentElement as fallback, observer will move it
+                        (doc.body || doc.documentElement).appendChild(host);
+                      }
+                      ensurePrintHideStyle();
+
+                      let btn = doc.getElementById(ID);
+                      if (!btn) {
+                        btn = doc.createElement('button');
+                        btn.id = ID;
+                        btn.type = 'button';
+                        btn.textContent = BUTTON_TEXT;
+                        btn.style.fontFamily = '"Roboto", "Helvetica", "Arial", sans-serif';
+                        btn.style.backgroundColor = BTN_BG;
+                        btn.style.color = BTN_COLOR;
+                        btn.style.fontWeight = '500';
+                        btn.style.fontSize = '0.875rem';
+                        btn.style.letterSpacing = '0.02857em';
+                        btn.style.lineHeight = '1.75';
+                        btn.style.textTransform = 'uppercase';
+                        btn.style.height = '34px';
+                        btn.style.cursor = 'pointer';
+                        btn.style.border = 'none';
+                        btn.style.padding = '0px 8px';
+                        btn.style.borderRadius = '17px';
+                        btn.style.position = 'fixed';
+                        btn.style.top = '8px';
+                        btn.style.left = '50%';
+                        btn.style.transform = 'translateX(-50%)';
+                        btn.style.zIndex = '99999';
+                        btn.style.pointerEvents = 'auto';
+
+                        host.appendChild(btn);
+
+                        if (btn._preview_click) btn.removeEventListener('click', btn._preview_click);
+                        btn._preview_click = clickHandler;
+                        btn.addEventListener('click', btn._preview_click);
+                      } else {
+                        if (btn._preview_click) btn.removeEventListener('click', btn._preview_click);
+                        btn._preview_click = clickHandler;
+                        btn.addEventListener('click', btn._preview_click);
+                        btn.style.pointerEvents = 'auto';
+                        if (host && btn.parentNode !== host) host.appendChild(btn);
+                      }
+
+                      dedupeButtons();
+                      return btn;
+
+                    };
+
+                    // Ensure routine
+                    const ensureAll = () => {
+                      try {
+                        if (doc[SETUP_FLAG]) return;
+                        ensureButtonExists();
+                        try { win.addEventListener('afterprint', () => { try { win.close(); } catch (e) {} }); } catch (e) {}
+                        doc[SETUP_FLAG] = true;
+                      } catch (e) {}
+                    };
+
+                    // MutationObserver to recreate missing pieces and dedupe duplicate from PagedJS re-render
+                    const startObserver = () => {
+                      const mo = new win.MutationObserver(() => {
+                        if (!doc.getElementById(STYLE_ID)) ensurePrintHideStyle();
+                        if (!doc.getElementById(HOST_ID) || !doc.getElementById(ID)) ensureButtonExists();
+                        dedupeButtons();
+                      });
+                      mo.observe(doc.documentElement || doc, { childList: true, subtree: true });
+                    };
+
+                    ensureAll();
+                    startObserver();
+                    setTimeout(() => { ensureAll(); dedupeButtons(); }, 50);
+                  })();
+                </script>
+          `;
 
           const openFn = (url => window.open(url, '_blank'));
           const previewWin = openFn('about:blank');
@@ -263,17 +424,23 @@ function PdfGenerate() {
           } catch (e) {
             return; // window currently inaccessible (e.g., not yet initialized or cross‑origin)
           }
+          // Pass values to previewWin
+          previewWin.__printButtonText = doI18n("pages:content:print", i18nRef.current);
+          previewWin.__printButtonBackgroundColor = theme.palette.primary.main;
+          previewWin.__printButtonColor = theme.palette.primary.contrastText;
 
           // Initial Content
           previewWin.document.open();
           previewWin.document.write(contentHtml);
           previewWin.document.close();
 
-          // Ensure head exists and set title. Do not replace head.innerHTML
+          // Ensure head exists
           if (!previewWin.document.head) {
             const head = previewWin.document.createElement('head');
             previewWin.document.documentElement.insertBefore(head, previewWin.document.documentElement.firstChild);
           }
+
+          // Set the page title.
           previewWin.document.title = doI18n("pages:content:pdf_preview", i18nRef.current);
 
           // Wait until document.body is present, retrying until body exists or timeout.
@@ -297,95 +464,6 @@ function PdfGenerate() {
           // Append PagedJS
           const script = previewWin.document.createElement('script');
           script.src = `${server}/app-resources/pdf/paged.polyfill.js`;
-          script.onload = () => {
-            // Pass to preview window
-            previewWin.__printButtonText = doI18n("pages:content:print", i18nRef.current);
-            previewWin.__printButtonBackgroundColor = theme.palette.primary.main;
-            previewWin.__printButtonColor = theme.palette.primary.contrastText;
-            previewWin.__printButtonFont = '"Roboto", "Helvetica", "Arial", sans-serif' // TBD?: adjSelectedFontFamiliesStr;
-
-            // Inject the print button
-            const setupPreviewPrint = () => {
-                const getButtonStyle = (name, defaultValue = '') => {
-                    const v =  window[`__${name}`];
-                    return (typeof v !== 'undefined' && v !== null) ? String(v) : defaultValue; // Fallback
-                };
-                const buttonText = getButtonStyle('printButtonText', 'Print');
-                const buttonBackgroundColor = getButtonStyle('printButtonBackgroundColor', '#696969');
-                const buttonColor = getButtonStyle('printButtonColor', '#fff');
-                const buttonFont = getButtonStyle('printButtonFont', '"Roboto", "Helvetica", "Arial", sans-serif');
-
-                const doc = document;
-                const win = window;
-                const ID = 'preview-print';
-
-                const style = doc.createElement('style');
-                style.textContent = `@media print { #preview-print { display: none !important; } }`;
-                doc.head.appendChild(style);
-
-                const ensureButton = () => {
-                let btn = doc.getElementById(ID);
-                if (!btn) {
-                    btn = doc.createElement('button');
-                    btn.id = ID;
-                    btn.type = 'button';
-                    btn.textContent = String(buttonText);
-                    btn.style.fontFamily = String(buttonFont);
-                    btn.style.backgroundColor = String(buttonBackgroundColor);
-                    btn.style.color = String(buttonColor);
-                    btn.style.fontWeight = '500';
-                    btn.style.fontSize = `0.875rem`;
-                    btn.style.letterSpacing = '0.02857em';
-                    btn.style.lineHeight = '1.75';
-                    btn.style.textTransform = 'uppercase';
-                    btn.style.height = '34px';
-                    btn.style.cursor = 'pointer';
-                    btn.style.border = 'none';
-                    btn.style.padding = '0px 8px';
-                    btn.style.borderRadius = '17px';
-                    btn.style.position = 'fixed';
-                    btn.style.top = '8px';
-                    btn.style.left = '50%';
-                    btn.style.transform = 'translateX(-50%)';
-                    btn.style.zIndex = '99999';
-                    doc.body.appendChild(btn);
-                } else {
-                    btn.textContent = String(buttonText);
-                    btn.style.fontFamily = String(buttonFont);
-                    btn.style.backgroundColor = String(buttonBackgroundColor);
-                    btn.style.color = String(buttonColor);
-                }
-                btn.disabled = false;
-                if (btn._h) btn.removeEventListener('click', btn._h);
-                btn._h = (e) => {
-                    e && e.preventDefault();
-                    // Allow for UI settling
-                    setTimeout(() => {
-                    if (typeof win.print === 'function') win.print();
-                    else if (win.opener && !win.opener.closed) {
-                        win.opener.postMessage({ type: 'print-request', options: { printBackground: true }, ts: Date.now() }, win.location.origin);
-                    }
-                    }, 50);
-                };
-                btn.addEventListener('click', btn._h);
-                };
-
-                // Recreate print button if removed by PagedJS re-render(s)
-                const mo = new win.MutationObserver(() => {
-                  if (!doc.getElementById(ID)) ensureButton();
-                });
-                mo.observe(doc.body, { childList: true, subtree: true });
-
-                // close preview after print finishes or cancelled
-                win.addEventListener('afterprint', () => { try { win.close(); } catch (e) {} });
-
-                ensureButton();
-
-              };
-
-            previewWin.eval('(' + setupPreviewPrint.toString() + ')()');
-          };
-          script.onerror = (e) => console.error('PagedJS failed to load', e);
           previewWin.document.head.appendChild(script);
 
           const loadStyles = (href) => {
