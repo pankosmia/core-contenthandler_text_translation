@@ -22,6 +22,10 @@
     "name_is_taken": {
       "en": "The name is already taken",
       "es": "El nombre ya está en uso"
+    },
+    "error_data":{
+      "en":"Error fetching data",
+      "fr":"Erreur lors de la récupération des données"
     }
   }
 }

@@ -62,24 +62,24 @@ export default function NewTextTranslationBook() {
             const bookCode = data.book_codes;
             setBookName(bookCode);
         } else {
-            console.error(" Erreur lors de la récupération des données.");
+            console.error(`${doI18n("pages:core-contenthandler_text_translation:error_data", i18nRef.current)}`);
         }
 
     };
 
-    const getRepoProject = async () => {
+    const getProjectFiles = async () => {
         const hash = window.location.hash;
         const query = hash.includes('?') ? hash.split('?')[1] : '';
         const params = new URLSearchParams(query);
         const path = params.get('repoPath');
-        const summariesResponse = await getJson(`/burrito/paths/${path}`, debugContext.current);
-        if (summariesResponse.ok) {
-            const data = await summariesResponse.json;
+        const filesResponse = await getJson(`/burrito/paths/${path}`, debugContext.current);
+        if (filesResponse.ok) {
+            const data = await filesResponse.json;
             if (data.includes("vrs.json")) {
                 setFileVrs(true);
             }
         } else {
-            console.error(" Erreur lors de la récupération des données.");
+            console.error(`${doI18n("pages:core-contenthandler_text_translation:error_data", i18nRef.current)}`);
         }
 
     };
@@ -87,7 +87,7 @@ export default function NewTextTranslationBook() {
     useEffect(
         () => {
             getProjectSummaries();
-            getRepoProject();
+            getProjectFiles();
         },
         []
     );
