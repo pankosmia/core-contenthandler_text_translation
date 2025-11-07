@@ -139,7 +139,7 @@ export default function NewTextTranslationBook() {
         setOpen(false);
         setTimeout(() => {
             window.location.href = '/clients/content';
-        }, 500);
+        },500);
     };
 
     const handleCreate = async () => {
@@ -148,7 +148,7 @@ export default function NewTextTranslationBook() {
             book_title: bookTitle,
             book_abbr: bookAbbr,
             add_cv: addCV,
-         ...(fileVrs === false ? { versification } : {}),
+         ...(fileVrs === false ? { vrs_name : versification } : {}),
         };
         const response = await postJson(
             `/git/new-scripture-book/${repoPath}`,
