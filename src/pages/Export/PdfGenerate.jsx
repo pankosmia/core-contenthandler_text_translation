@@ -516,6 +516,11 @@ function PdfGenerate() {
         }, 500);
     };
 
+    const handleCloseColumns = () => {
+        setAnchorEl(null);
+    };
+
+
     function columnIcon(selectedColumns) {
         let content;
 
@@ -740,11 +745,11 @@ function PdfGenerate() {
                                         id="basic-menu"
                                         anchorEl={anchorEl}
                                         open={openAnchor}
-                                        onClose={handleClose}
+                                        onClose={handleCloseColumns}
                                     >
-                                        <MenuItem onClick={() => { setSelectedColumns(1); handleClose() }}>1</MenuItem>
-                                        <MenuItem onClick={() => { setSelectedColumns(2); handleClose() }}>2</MenuItem>
-                                        <MenuItem onClick={() => { setSelectedColumns(3); handleClose() }}>3</MenuItem>
+                                        <MenuItem onClick={() => { setSelectedColumns(1); handleCloseColumns() }}>1</MenuItem>
+                                        <MenuItem onClick={() => { setSelectedColumns(2); handleCloseColumns() }}>2</MenuItem>
+                                        <MenuItem onClick={() => { setSelectedColumns(3); handleCloseColumns() }}>3</MenuItem>
                                     </Menu>
                                 </ListItem>
                             </List>
