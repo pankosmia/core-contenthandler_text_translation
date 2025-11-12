@@ -593,7 +593,7 @@ function PdfGenerate() {
                         </Typography>
                     </Toolbar>
                 </AppBar>
-                <DialogContent  >
+                <DialogContent sx={{ mt: 1, pt: 0 }}>
                     <DialogContentText>
                         <Typography>
                             {doI18n("pages:content:pick_one_book_export", i18nRef.current)}
@@ -610,7 +610,8 @@ function PdfGenerate() {
                             MenuProps={{
                                 PaperProps: {
                                     style: {
-                                        maxHeight: 200,
+                                        maxHeight: 224,
+                                        minWidth: 250,
                                     },
                                 },
                             }}
