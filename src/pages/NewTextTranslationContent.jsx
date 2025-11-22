@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import {useState, useContext, useEffect} from 'react';
 import {
     AppBar,
     Button, Checkbox,
@@ -14,10 +14,12 @@ import {
     Dialog,
     Box,
     DialogContent,
-    Tooltip
+    Tooltip,
+    FormLabel,
+    RadioGroup, Radio
 } from "@mui/material";
-import { enqueueSnackbar } from "notistack";
-import { i18nContext, debugContext, postJson, doI18n, getAndSetJson, getJson, Header } from "pithekos-lib";
+import {enqueueSnackbar} from "notistack";
+import {i18nContext, debugContext, postJson, doI18n, getAndSetJson, getJson, Header} from "pithekos-lib";
 import sx from "./Selection.styles";
 import ListMenuItem from "./ListMenuItem";
 
@@ -26,13 +28,15 @@ export default function NewBibleContent() {
     const [open, setOpen] = useState(true)
     const [errorDialogOpen, setErrorDialogOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
-    const { i18nRef } = useContext(i18nContext);
-    const { debugRef } = useContext(debugContext);
+    const {i18nRef} = useContext(i18nContext);
+    const {debugRef} = useContext(debugContext);
     const [contentName, setContentName] = useState("");
     const [contentAbbr, setContentAbbr] = useState("");
     const [contentType, setContentType] = useState("text_translation");
     const [contentLanguageCode, setContentLanguageCode] = useState("und");
-    const [showBookFields, setShowBookFields] = useState(true);
+    const [contentOption, setContentOption] = useState("book");
+    const [metadataSummaries, setMetadataSummaries] = useState({});
+    const [selectedPlan, setSelectedPlan] = useState(null);
     const [bookCode, setBookCode] = useState("TIT");
     const [bookTitle, setBookTitle] = useState("Tit");
     const [bookAbbr, setBookAbbr] = useState("Ti");
@@ -65,13 +69,24 @@ export default function NewBibleContent() {
     };
 
     useEffect(() => {
-        if (open) {
-            getAndSetJson({
-                url: "/content-utils/versifications",
-                setter: setVersificationCodes
-            }).then()
-        }
-    },
+            if (open) {
+                getAndSetJson({
+                    url: "/content-utils/versifications",
+                    setter: setVersificationCodes
+                }).then()
+            }
+        },
+        [open]
+    );
+
+    useEffect(() => {
+            if (open) {
+                getAndSetJson({
+                    url: "/burrito/metadata/summaries",
+                    setter: setMetadataSummaries
+                }).then()
+            }
+        },
         [open]
     );
 
@@ -91,12 +106,12 @@ export default function NewBibleContent() {
 
     useEffect(
         () => {
-            if (open){
+            if (open) {
                 getAndSetJson({
                     url: "/git/list-local-repos",
                     setter: setLocalRepos
-                }).then()  
-            }  
+                }).then()
+            }
         },
         [open]
     );
@@ -110,7 +125,6 @@ export default function NewBibleContent() {
             setBookCode("TIT");
             setBookTitle("Titus");
             setBookAbbr("Ti");
-            setShowBookFields(true);
             setShowVersification(true);
             setVersification("eng");
         },
@@ -124,11 +138,11 @@ export default function NewBibleContent() {
             content_type: contentType,
             content_language_code: contentLanguageCode,
             versification: versification,
-            add_book: showBookFields,
-            book_code: showBookFields ? bookCode : null,
-            book_title: showBookFields ? bookTitle : null,
-            book_abbr: showBookFields ? bookAbbr : null,
-            add_cv: showBookFields ? showVersification : null,
+            add_book: contentOption === "book",
+            book_code: contentOption === "book" ? bookCode : null,
+            book_title: contentOption === "book" ? bookTitle : null,
+            book_abbr: contentOption === "book" ? bookAbbr : null,
+            add_cv: contentOption === "book" ? showVersification : null,
         };
         const response = await postJson(
             "/git/new-text-translation",
@@ -139,16 +153,16 @@ export default function NewBibleContent() {
             setPostCount(postCount + 1);
             enqueueSnackbar(
                 doI18n("pages:content:content_created", i18nRef.current),
-                { variant: "success" }
+                {variant: "success"}
             );
             handleCloseCreate();
         } else {
             enqueueSnackbar(
                 `${doI18n("pages:content:content_creation_error", i18nRef.current)}: ${response.status}`,
-                { variant: "error" }
+                {variant: "error"}
             );
             setErrorMessage(`${doI18n("pages:content:book_creation_error", i18nRef.current)}: ${response.status
-                }`);
+            }`);
             setErrorDialogOpen(true);
         }
     };
@@ -188,7 +202,7 @@ export default function NewBibleContent() {
                 }}
             >
 
-                <AppBar color='secondary' sx={{ position: 'relative', borderTopLeftRadius: 4, borderTopRightRadius: 4 }}>
+                <AppBar color='secondary' sx={{position: 'relative', borderTopLeftRadius: 4, borderTopRightRadius: 4}}>
                     <Toolbar>
                         <Typography variant="h6" component="div">
                             {doI18n("pages:core-contenthandler_text_translation:new_text_translation_content", i18nRef.current)}
@@ -196,8 +210,9 @@ export default function NewBibleContent() {
 
                     </Toolbar>
                 </AppBar>
-                <Typography variant='subtitle2' sx={{ ml: 1, p: 1 }}> {doI18n(`pages:content:required_field`, i18nRef.current)}</Typography>
-                <Stack spacing={2} sx={{ m: 2 }}>
+                <Typography variant='subtitle2'
+                            sx={{ml: 1, p: 1}}> {doI18n(`pages:content:required_field`, i18nRef.current)}</Typography>
+                <Stack spacing={2} sx={{m: 2}}>
                     <TextField
                         id="name"
                         required
@@ -207,10 +222,11 @@ export default function NewBibleContent() {
                             setContentName(event.target.value);
                         }}
                     />
-                    <Tooltip 
-                        open={repoExists} 
+                    <Tooltip
+                        open={repoExists}
                         slotProps={{popper: {modifiers: [{name: 'offset', options: {offset: [0, -7]}}]}}}
-                        title={doI18n("pages:core-contenthandler_text_translation:name_is_taken", i18nRef.current)} placement="top-start"
+                        title={doI18n("pages:core-contenthandler_text_translation:name_is_taken", i18nRef.current)}
+                        placement="top-start"
                     >
                         <TextField
                             id="abbr"
@@ -218,11 +234,7 @@ export default function NewBibleContent() {
                             label={doI18n("pages:content:abbreviation", i18nRef.current)}
                             value={contentAbbr}
                             onChange={(event) => {
-                                if (localRepos.map(l => l.split("/")[2]).includes(event.target.value)){
-                                    setRepoExists(true);
-                                } else {
-                                    setRepoExists(false);
-                                }
+                                setRepoExists(localRepos.map(l => l.split("/")[2]).includes(event.target.value));
                                 setContentAbbr(event.target.value);
                             }}
                         />
@@ -231,7 +243,7 @@ export default function NewBibleContent() {
                         id="type"
                         required
                         disabled={true}
-                        sx={{ display: "none" }}
+                        sx={{display: "none"}}
                         label={doI18n("pages:content:type", i18nRef.current)}
                         value={contentType}
                         onChange={(event) => {
@@ -248,53 +260,30 @@ export default function NewBibleContent() {
                         }}
                     />
                     <FormControl>
-                        <InputLabel id="booksVersification-label" required htmlFor="booksVersification"
-                            sx={sx.inputLabel}>
-                            {doI18n("pages:content:versification_scheme", i18nRef.current)}
-                        </InputLabel>
-                        <Select
-                            variant="outlined"
-                            required
-                            labelId="booksVersification-label"
-                            name="booksVersification"
-                            inputProps={{
-                                id: "bookVersification",
-                            }}
-                            value={versification}
-                            label={doI18n("pages:content:versification_scheme", i18nRef.current)}
-                            onChange={(event) => {
-                                setVersification(event.target.value);
-                            }}
-                            sx={sx.select}
+                        <FormLabel
+                            id="book-create-options">
+                            {doI18n("pages:core-contenthandler_text_translation:add_content", i18nRef.current)}
+                        </FormLabel>
+                        <RadioGroup
+                            row
+                            aria-labelledby="book-create-options"
+                            name="book-create-options-radio-group"
+                            value={contentOption}
+                            onClick={event => setContentOption(event.target.value)}
                         >
-                            {
-                                versificationCodes.map((listItem, n) => <MenuItem key={n} value={listItem}
-                                    dense>
-                                    <ListMenuItem
-                                        listItem={`${listItem.toUpperCase()} - ${doI18n(`scripture:versifications:${listItem}`, i18nRef.current)}`}
-                                    />
-                                </MenuItem>
-                                )
-                            }
-                        </Select>
+                            <FormControlLabel value="none" control={<Radio/>}
+                                              label={doI18n("pages:core-contenthandler_text_translation:no_content_radio", i18nRef.current)}/>
+                            <FormControlLabel value="book" control={<Radio/>}
+                                              label={doI18n("pages:core-contenthandler_text_translation:book_content_radio", i18nRef.current)}/>
+                            <FormControlLabel value="plan" control={<Radio/>}
+                                              label={doI18n("pages:core-contenthandler_text_translation:plan_content_radio", i18nRef.current)}/>
+                        </RadioGroup>
                     </FormControl>
-                    <FormGroup>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    color='secondary'
-                                    checked={showBookFields}
-                                    onChange={() => setShowBookFields(!showBookFields)}
-                                />
-                            }
-                            label={doI18n("pages:content:add_book_checkbox", i18nRef.current)}
-                        />
-                    </FormGroup>
                     {
-                        showBookFields && <>
+                        (contentOption === "book") && <>
                             <Grid2 container spacing={2} justifyItems="flex-end" alignItems="stretch">
                                 <Grid2 item size={4}>
-                                    <FormControl sx={{ width: "100%" }}>
+                                    <FormControl sx={{width: "100%"}}>
                                         <InputLabel id="bookCode-label" required htmlFor="bookCode" sx={sx.inputLabel}>
                                             {doI18n("pages:content:book_code", i18nRef.current)}
                                         </InputLabel>
@@ -319,9 +308,11 @@ export default function NewBibleContent() {
                                             sx={sx.select}
                                         >
                                             {
-                                                (protestantOnly ? bookCodes.slice(0, 66) : bookCodes).map((listItem, n) => <MenuItem key={n} value={listItem} dense>
-                                                    <ListMenuItem listItem={`${listItem} - ${doI18n(`scripture:books:${listItem}`, i18nRef.current)}`} />
-                                                </MenuItem>
+                                                (protestantOnly ? bookCodes.slice(0, 66) : bookCodes).map((listItem, n) =>
+                                                    <MenuItem key={n} value={listItem} dense>
+                                                        <ListMenuItem
+                                                            listItem={`${listItem} - ${doI18n(`scripture:books:${listItem}`, i18nRef.current)}`}/>
+                                                    </MenuItem>
                                                 )
                                             }
                                         </Select>
@@ -332,7 +323,7 @@ export default function NewBibleContent() {
                                     <TextField
                                         id="bookAbbr"
                                         required
-                                        sx={{ width: "100%" }}
+                                        sx={{width: "100%"}}
                                         label={doI18n("pages:content:book_abbr", i18nRef.current)}
                                         value={bookAbbr}
                                         onChange={(event) => {
@@ -344,7 +335,7 @@ export default function NewBibleContent() {
                                     <TextField
                                         id="bookTitle"
                                         required
-                                        sx={{ width: "100%" }}
+                                        sx={{width: "100%"}}
                                         label={doI18n("pages:content:book_title", i18nRef.current)}
                                         value={bookTitle}
                                         onChange={(event) => {
@@ -380,6 +371,78 @@ export default function NewBibleContent() {
 
                         </>
                     }
+                    {
+                        (contentOption === "plan") &&
+                        <Grid2 container spacing={2} justifyItems="flex-end" alignItems="stretch">
+                            <Grid2 item size={12}>
+                                <FormControl sx={{width: "100%"}}>
+                                    <InputLabel id="select-plan-label" required htmlFor="plan" sx={sx.inputLabel}>
+                                        {doI18n("pages:core-contenthandler_text_translation:select_plan", i18nRef.current)}
+                                    </InputLabel>
+                                    <Select
+                                        variant="outlined"
+                                        required
+                                        labelId="plan-label"
+                                        name="plan"
+                                        inputProps={{
+                                            id: "bookCode",
+                                        }}
+                                        value={selectedPlan}
+                                        label={doI18n("pages:core-contenthandler_text_translation:select_plan", i18nRef.current)}
+                                        onChange={event => {
+                                            setSelectedPlan(event.target.value);
+                                        }}
+                                        sx={sx.select}
+                                    >
+                                        {
+                                            Object.entries(metadataSummaries)
+                                                .filter(r => r[1].flavor === "x-translationplan")
+                                                .map(r =>
+                                                    <MenuItem key={r[0]} value={r[0]} dense>
+                                                        <ListMenuItem
+                                                            listItem={r[1].name}/>
+                                                    </MenuItem>
+                                                )
+                                        }
+                                    </Select>
+                                </FormControl>
+                            </Grid2>
+                        </Grid2>
+                    }
+                    {
+                        contentOption !== "plan" &&
+                        <FormControl>
+                            <InputLabel id="booksVersification-label" required htmlFor="booksVersification"
+                                        sx={sx.inputLabel}>
+                                {doI18n("pages:content:versification_scheme", i18nRef.current)}
+                            </InputLabel>
+                            <Select
+                                variant="outlined"
+                                required
+                                labelId="booksVersification-label"
+                                name="booksVersification"
+                                inputProps={{
+                                    id: "bookVersification",
+                                }}
+                                value={versification}
+                                label={doI18n("pages:content:versification_scheme", i18nRef.current)}
+                                onChange={(event) => {
+                                    setVersification(event.target.value);
+                                }}
+                                sx={sx.select}
+                            >
+                                {
+                                    versificationCodes.map((listItem, n) => <MenuItem key={n} value={listItem}
+                                                                                      dense>
+                                            <ListMenuItem
+                                                listItem={`${listItem.toUpperCase()} - ${doI18n(`scripture:versifications:${listItem}`, i18nRef.current)}`}
+                                            />
+                                        </MenuItem>
+                                    )
+                                }
+                            </Select>
+                        </FormControl>
+                    }
                 </Stack>
                 <DialogActions>
                     <Button
@@ -400,11 +463,14 @@ export default function NewBibleContent() {
                                 contentLanguageCode.trim().length > 0 &&
                                 versification.trim().length === 3 &&
                                 (
-                                    !showBookFields || (
+                                    !(contentOption === "book") || (
                                         bookCode.trim().length === 3 &&
                                         bookTitle.trim().length > 0 &&
                                         bookAbbr.trim().length > 0
                                     )
+                                ) &&
+                                (
+                                    !(contentOption === "plan") || selectedPlan
                                 )
                             )
                             ||

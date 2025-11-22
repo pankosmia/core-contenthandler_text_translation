@@ -26,6 +26,26 @@
     "error_data":{
       "en":"Error fetching data",
       "fr":"Erreur lors de la récupération des données"
+    },
+    "add_content": {
+      "en": "Add content to document",
+      "fr": "Ajouter du contenu au document"
+    },
+    "no_content_radio": {
+      "en": "None",
+      "fr": "Aucun"
+    },
+    "book_content_radio": {
+      "en": "Book",
+      "fr": "Livre"
+    },
+    "plan_content_radio": {
+      "en": "Plan",
+      "fr": "Plan"
+    },
+    "select_plan": {
+      "en": "Choose a plan",
+      "fr": "Choisissez un plan"
     }
   }
 }
