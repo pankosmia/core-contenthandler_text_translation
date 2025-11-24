@@ -132,18 +132,38 @@ export default function NewBibleContent() {
     );
 
     const handleCreate = async () => {
+        // versification for plan comes from plan
+        let planJson = null;
+        let submittedVersification = versification;
+        if (contentOption === "plan" && selectedPlan) {
+            const planResponse = await getJson(
+                `/burrito/ingredient/raw/${selectedPlan}?ipath=plan.json`,
+                debugRef.current
+            );
+            if (planResponse.ok) {
+                planJson = planResponse.json;
+                submittedVersification = planJson.versification;
+            } else {
+                console.log(planResponse.error);
+                setErrorMessage(`${doI18n("pages:content:content_creation_error", i18nRef.current)}: ${planResponse.status}`);
+                setErrorDialogOpen(true);
+                return;
+            }
+        }
+        // Make repo (empty for plans)
         const payload = {
             content_name: contentName,
             content_abbr: contentAbbr,
             content_type: contentType,
             content_language_code: contentLanguageCode,
-            versification: versification,
+            versification: submittedVersification,
             add_book: contentOption === "book",
             book_code: contentOption === "book" ? bookCode : null,
             book_title: contentOption === "book" ? bookTitle : null,
             book_abbr: contentOption === "book" ? bookAbbr : null,
             add_cv: contentOption === "book" ? showVersification : null,
         };
+        /*
         const response = await postJson(
             "/git/new-text-translation",
             JSON.stringify(payload),
@@ -164,6 +184,37 @@ export default function NewBibleContent() {
             setErrorMessage(`${doI18n("pages:content:book_creation_error", i18nRef.current)}: ${response.status
             }`);
             setErrorDialogOpen(true);
+        }
+         */
+        // Add books for plan
+        if (planJson) {
+            // Get bookCode list
+            const bookCodes = Array.from(new Set(planJson.sections.map(s => s.bookCode)));
+            for (const bookCode of bookCodes) {
+                const bookSections = planJson.sections.filter(s => s.bookCode === bookCode);
+                let usfmBits = [];
+                usfmBits.push(`\\id ${bookCode} -- ${planJson.short_name} -- v${planJson.version} -- ${planJson.copyright}`);
+                for (const headerTag of ["toc1", "toc2", "toc3", "mt"]) {
+                    usfmBits.push(`\\${headerTag} ${planJson.name} (${bookCode})`);
+                }
+                for (const bookSection of bookSections) {
+                    usfmBits.push(`\\rem ${bookSection.cv[0]}-${bookSection.cv[1]}`);
+                    usfmBits.push(`\\ts\\*`);
+                    for (const sectionField of planJson.sectionStructure) {
+                        if (sectionField.type === "paraField") {
+                            if (bookSection.fieldInitialValues && bookSection.fieldInitialValues[sectionField.name]) {
+                                usfmBits.push(`\\${sectionField.paraTag} ___`);
+                            } else if (planJson.fieldInitialValues && planJson.fieldInitialValues[sectionField.name]) {
+                                usfmBits.push(`\\${sectionField.paraTag} ___`);
+                            }
+                        } else if (sectionField.type === "scripture") {
+                            // TODO
+                        }
+                    }
+                }
+                console.log(usfmBits.join('\n'));
+            }
+            break;
         }
     };
 
