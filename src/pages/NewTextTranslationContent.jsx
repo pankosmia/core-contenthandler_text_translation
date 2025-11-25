@@ -163,7 +163,6 @@ export default function NewBibleContent() {
             book_abbr: contentOption === "book" ? bookAbbr : null,
             add_cv: contentOption === "book" ? showVersification : null,
         };
-        /*
         const response = await postJson(
             "/git/new-text-translation",
             JSON.stringify(payload),
@@ -175,7 +174,6 @@ export default function NewBibleContent() {
                 doI18n("pages:content:content_created", i18nRef.current),
                 {variant: "success"}
             );
-            handleCloseCreate();
         } else {
             enqueueSnackbar(
                 `${doI18n("pages:content:content_creation_error", i18nRef.current)}: ${response.status}`,
@@ -184,8 +182,8 @@ export default function NewBibleContent() {
             setErrorMessage(`${doI18n("pages:content:book_creation_error", i18nRef.current)}: ${response.status
             }`);
             setErrorDialogOpen(true);
+            return;
         }
-         */
         // Add books for plan
         if (planJson) {
             // Get bookCode list
@@ -203,19 +201,57 @@ export default function NewBibleContent() {
                     for (const sectionField of planJson.sectionStructure) {
                         if (sectionField.type === "paraField") {
                             if (bookSection.fieldInitialValues && bookSection.fieldInitialValues[sectionField.name]) {
-                                usfmBits.push(`\\${sectionField.paraTag} ___`);
+                                usfmBits.push(`\\${sectionField.paraTag}`);
+                                usfmBits.push("___")
                             } else if (planJson.fieldInitialValues && planJson.fieldInitialValues[sectionField.name]) {
-                                usfmBits.push(`\\${sectionField.paraTag} ___`);
+                                usfmBits.push(`\\${sectionField.paraTag}`);
+                                usfmBits.push("___")
                             }
                         } else if (sectionField.type === "scripture") {
-                            // TODO
+                            let chapterNo = 0;
+                            for (const para of bookSection.paragraphs) {
+                                if (para.units) {
+                                    const paraChapter = parseInt(para.units[0].split(":")[0]);
+                                    if (paraChapter !== chapterNo) {
+                                        usfmBits.push(`\\c ${paraChapter}`);
+                                        chapterNo = paraChapter;
+                                    }
+                                    usfmBits.push(`\\${para.paraTag}`);
+                                    for (const unit of para.units) {
+                                        const [ch, vr] = unit.split(":");
+                                        if (parseInt(ch) !== chapterNo) {
+                                            usfmBits.push(`\\c ${ch}`);
+                                            chapterNo = parseInt(ch);
+                                            usfmBits.push(`\\${para.paraTag}`);
+                                        }
+                                        usfmBits.push(`\\v ${vr}`);
+                                        usfmBits.push("___")
+                                    }
+                                } else { // bridge
+                                    usfmBits.push(`\\rem ${para.cv[0]}-${para.cv[1]}`);
+                                    usfmBits.push(`\\${para.paraTag}`);
+                                    usfmBits.push("___")
+                                }
+                            }
                         }
                     }
                 }
-                console.log(usfmBits.join('\n'));
+                const payload = {
+                  payload: usfmBits.join("\n")
+                };
+                const newBookResponse = await postJson(
+                    `/burrito/ingredient/raw/_local_/_local_/${contentAbbr}?ipath=${bookCode}.usfm`,
+                    JSON.stringify(payload)
+                );
+                if (!newBookResponse.ok) {
+                    setErrorMessage(`${doI18n("pages:content:book_creation_error", i18nRef.current)}: ${response.status
+                    }`);
+                    setErrorDialogOpen(true);
+                    return;
+                }
             }
-            break;
         }
+        handleCloseCreate();
     };
 
     const handleCloseErrorDialog = () => {
