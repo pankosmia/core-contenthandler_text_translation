@@ -1,4 +1,4 @@
-import { useRef, useContext, useState, useEffect } from 'react';
+import {useContext, useState, useEffect } from 'react';
 import {
     AppBar,
     Box,
@@ -7,7 +7,6 @@ import {
     DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle,
     FormControl,
     FormControlLabel,
     MenuItem,
@@ -27,7 +26,6 @@ function ZipExport() {
     const [open, setOpen] = useState(true);
     const { i18nRef } = useContext(i18nContext);
     const { debugRef } = useContext(debugContext);
-    const fileExport = useRef();
     const [bookNames, setBookNames] = useState();
     const [selectedBooks, setSelectedBooks] = useState(bookNames);
     const [bookCodes, setBookCodes] = useState([]);
@@ -96,7 +94,7 @@ function ZipExport() {
         );
     };
 
-    const zipSetBooks = (zipSet === 'all' ? bookNames : fileExport.current)
+    const zipSetBooks = (zipSet === 'all' ? bookNames : selectedBooks)
 
     const handleZipSetChange = (event, newValue) => {
         setZipSet(newValue);
@@ -121,7 +119,7 @@ function ZipExport() {
         },
         []
     );
-
+ 
     const handleClose = () => {
         setOpen(false);
         return window.location.href = "/clients/content"
@@ -188,9 +186,8 @@ function ZipExport() {
                                 if (selected.length === 0) {
                                     return <em>{doI18n("pages:content:books", i18nRef.current)}</em>;
                                 }
-                                fileExport.current = selected;
                                 return (
-                                    <Box sx={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>
+                                    <Box sx={{ whiteSpace: 'normal', wordWrap: 'break-word', backgroundColor: "red" }}>
                                         {selected
                                             .map(s => doI18n(`scripture:books:${s}`, i18nRef.current))
                                             .join(', ')}
@@ -245,6 +242,7 @@ function ZipExport() {
                     <Button
                         variant="contained"
                         color="primary"
+                        disabled={!zipSetBooks || zipSetBooks.length === 0}
                         onClick={() => {
                             if (!zipSetBooks || zipSetBooks.length === 0) {
                                 setTimeout(() => {

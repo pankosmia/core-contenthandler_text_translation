@@ -7,7 +7,6 @@ import {
     DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle,
     List,
     ListItem,
     ListItemText,
@@ -151,7 +150,7 @@ function UsfmExport() {
                     <Box sx={{ maxHeight: '269px' }}>
                         <DialogContentText>
                             <Typography>
-                                {doI18n("pages:content:pick_one_or_more_books_export", i18nRef.current)}
+                                {doI18n("pages:core-contenthandler_text_translation:pick_one_or_more_books_export", i18nRef.current)}
                             </Typography>
                             {selectedBooks.length > 0 &&
                                 <Typography sx={{ ml: 2 }}>
