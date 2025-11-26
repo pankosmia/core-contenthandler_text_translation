@@ -240,7 +240,7 @@ export default function NewBibleContent() {
                   payload: usfmBits.join("\n")
                 };
                 const newBookResponse = await postJson(
-                    `/burrito/ingredient/raw/_local_/_local_/${contentAbbr}?ipath=${bookCode}.usfm`,
+                    `/burrito/ingredient/raw/_local_/_local_/${contentAbbr}?ipath=${bookCode}.usfm&update_ingredients`,
                     JSON.stringify(payload)
                 );
                 if (!newBookResponse.ok) {
