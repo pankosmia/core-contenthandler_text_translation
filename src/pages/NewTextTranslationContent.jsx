@@ -91,12 +91,12 @@ export default function NewBibleContent() {
 
     useEffect(
         () => {
-            if (open){
+            if (open) {
                 getAndSetJson({
                     url: "/git/list-local-repos",
                     setter: setLocalRepos
-                }).then()  
-            }  
+                }).then()
+            }
         },
         [open]
     );
@@ -191,9 +191,8 @@ export default function NewBibleContent() {
                 <AppBar color='secondary' sx={{ position: 'relative', borderTopLeftRadius: 4, borderTopRightRadius: 4 }}>
                     <Toolbar>
                         <Typography variant="h6" component="div">
-                            {doI18n("pages:core-contenthandler_text_translation:new_text_translation_content", i18nRef.current)}
+                            {doI18n("pages:core-contenthandler_text_translation:create_content_text_translation", i18nRef.current)}                        
                         </Typography>
-
                     </Toolbar>
                 </AppBar>
                 <Typography variant='subtitle2' sx={{ ml: 1, p: 1 }}> {doI18n(`pages:content:required_field`, i18nRef.current)}</Typography>
@@ -207,9 +206,9 @@ export default function NewBibleContent() {
                             setContentName(event.target.value);
                         }}
                     />
-                    <Tooltip 
-                        open={repoExists} 
-                        slotProps={{popper: {modifiers: [{name: 'offset', options: {offset: [0, -7]}}]}}}
+                    <Tooltip
+                        open={repoExists}
+                        slotProps={{ popper: { modifiers: [{ name: 'offset', options: { offset: [0, -7] } }] } }}
                         title={doI18n("pages:core-contenthandler_text_translation:name_is_taken", i18nRef.current)} placement="top-start"
                     >
                         <TextField
@@ -218,7 +217,7 @@ export default function NewBibleContent() {
                             label={doI18n("pages:content:abbreviation", i18nRef.current)}
                             value={contentAbbr}
                             onChange={(event) => {
-                                if (localRepos.map(l => l.split("/")[2]).includes(event.target.value)){
+                                if (localRepos.map(l => l.split("/")[2]).includes(event.target.value)) {
                                     setRepoExists(true);
                                 } else {
                                     setRepoExists(false);
