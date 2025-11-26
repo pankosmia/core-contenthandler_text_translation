@@ -187,7 +187,7 @@ function ZipExport() {
                                     return <em>{doI18n("pages:content:books", i18nRef.current)}</em>;
                                 }
                                 return (
-                                    <Box sx={{ whiteSpace: 'normal', wordWrap: 'break-word', backgroundColor: "red" }}>
+                                    <Box sx={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>
                                         {selected
                                             .map(s => doI18n(`scripture:books:${s}`, i18nRef.current))
                                             .join(', ')}
