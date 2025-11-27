@@ -246,10 +246,6 @@ export default function NewBibleContent() {
                     return;
                 }
             }
-            enqueueSnackbar(
-                doI18n("pages:content:content_created", i18nRef.current),
-                {variant: "success"}
-            );
         }
         await handleCloseCreate();
     };
