@@ -170,10 +170,6 @@ export default function NewBibleContent() {
         );
         if (response.ok) {
             setPostCount(postCount + 1);
-            enqueueSnackbar(
-                doI18n("pages:content:content_created", i18nRef.current),
-                {variant: "success"}
-            );
         } else {
             enqueueSnackbar(
                 `${doI18n("pages:content:content_creation_error", i18nRef.current)}: ${response.status}`,
@@ -250,8 +246,12 @@ export default function NewBibleContent() {
                     return;
                 }
             }
+            enqueueSnackbar(
+                doI18n("pages:content:content_created", i18nRef.current),
+                {variant: "success"}
+            );
         }
-        handleCloseCreate();
+        await handleCloseCreate();
     };
 
     const handleCloseErrorDialog = () => {
