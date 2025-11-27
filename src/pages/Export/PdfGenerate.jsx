@@ -516,6 +516,11 @@ function PdfGenerate() {
         }, 500);
     };
 
+    const handleCloseColumns = () => {
+        setAnchorEl(null);
+    };
+
+
     function columnIcon(selectedColumns) {
         let content;
 
@@ -588,7 +593,7 @@ function PdfGenerate() {
                         </Typography>
                     </Toolbar>
                 </AppBar>
-                <DialogContent  >
+                <DialogContent sx={{ mt: 1, pt: 0 }}>
                     <DialogContentText>
                         <Typography>
                             {doI18n("pages:content:pick_one_book_export", i18nRef.current)}
@@ -605,7 +610,8 @@ function PdfGenerate() {
                             MenuProps={{
                                 PaperProps: {
                                     style: {
-                                        maxHeight: 200,
+                                        maxHeight: 224,
+                                        minWidth: 250,
                                     },
                                 },
                             }}
@@ -740,11 +746,11 @@ function PdfGenerate() {
                                         id="basic-menu"
                                         anchorEl={anchorEl}
                                         open={openAnchor}
-                                        onClose={handleClose}
+                                        onClose={handleCloseColumns}
                                     >
-                                        <MenuItem onClick={() => { setSelectedColumns(1); handleClose() }}>1</MenuItem>
-                                        <MenuItem onClick={() => { setSelectedColumns(2); handleClose() }}>2</MenuItem>
-                                        <MenuItem onClick={() => { setSelectedColumns(3); handleClose() }}>3</MenuItem>
+                                        <MenuItem onClick={() => { setSelectedColumns(1); handleCloseColumns() }}>1</MenuItem>
+                                        <MenuItem onClick={() => { setSelectedColumns(2); handleCloseColumns() }}>2</MenuItem>
+                                        <MenuItem onClick={() => { setSelectedColumns(3); handleCloseColumns() }}>3</MenuItem>
                                     </Menu>
                                 </ListItem>
                             </List>

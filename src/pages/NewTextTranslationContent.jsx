@@ -18,7 +18,6 @@ import {
     FormLabel,
     RadioGroup, Radio
 } from "@mui/material";
-import {enqueueSnackbar} from "notistack";
 import {i18nContext, debugContext, postJson, doI18n, getAndSetJson, getJson, Header} from "pithekos-lib";
 import sx from "./Selection.styles";
 import ListMenuItem from "./ListMenuItem";
@@ -171,10 +170,6 @@ export default function NewBibleContent() {
         if (response.ok) {
             setPostCount(postCount + 1);
         } else {
-            enqueueSnackbar(
-                `${doI18n("pages:content:content_creation_error", i18nRef.current)}: ${response.status}`,
-                {variant: "error"}
-            );
             setErrorMessage(`${doI18n("pages:content:book_creation_error", i18nRef.current)}: ${response.status
             }`);
             setErrorDialogOpen(true);

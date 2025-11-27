@@ -161,11 +161,6 @@ export default function NewTextTranslationBook() {
             });
             handleCloseCreate();
         } else {
-            enqueueSnackbar(
-                `${doI18n("pages:content:book_creation_error", i18nRef.current)}: ${response.status
-                }`,
-                { variant: "error" }
-            );
             setErrorMessage(`${doI18n("pages:content:book_creation_error", i18nRef.current)}: ${response.status
                 }`);
             setErrorDialogOpen(true);
