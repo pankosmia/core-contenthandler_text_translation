@@ -283,9 +283,8 @@ export default function NewBibleContent() {
                 <AppBar color='secondary' sx={{position: 'relative', borderTopLeftRadius: 4, borderTopRightRadius: 4}}>
                     <Toolbar>
                         <Typography variant="h6" component="div">
-                            {doI18n("pages:core-contenthandler_text_translation:new_text_translation_content", i18nRef.current)}
+                            {doI18n("pages:core-contenthandler_text_translation:create_content_text_translation", i18nRef.current)}                        
                         </Typography>
-
                     </Toolbar>
                 </AppBar>
                 <Typography variant='subtitle2'
@@ -302,9 +301,9 @@ export default function NewBibleContent() {
                     />
                     <Tooltip
                         open={repoExists}
-                        slotProps={{popper: {modifiers: [{name: 'offset', options: {offset: [0, -7]}}]}}}
-                        title={doI18n("pages:core-contenthandler_text_translation:name_is_taken", i18nRef.current)}
-                        placement="top-start"
+
+                        slotProps={{ popper: { modifiers: [{ name: 'offset', options: { offset: [0, -7] } }] } }}
+                        title={doI18n("pages:core-contenthandler_text_translation:name_is_taken", i18nRef.current)} placement="top-start"
                     >
                         <TextField
                             id="abbr"

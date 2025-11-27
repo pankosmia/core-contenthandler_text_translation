@@ -56,7 +56,7 @@ function UsfmExport() {
         const bookUsfmResponse = await getText(bookUrl, debugRef.current);
         if (!bookUsfmResponse.ok) {
             enqueueSnackbar(
-                `${doI18n("pages:content:could_not_fetch", i18nRef.current)} ${bookCode}`,
+                `${doI18n("pages:core-contenthandler_text_translation:could_not_fetch", i18nRef.current)} ${bookCode}`,
                 { variant: "error" }
             );
             return false;
@@ -143,7 +143,7 @@ function UsfmExport() {
                 <AppBar color='secondary' sx={{ position: 'relative', borderTopLeftRadius: 4, borderTopRightRadius: 4 }}>
                     <Toolbar>
                         <Typography variant="h6" component="div">
-                            {doI18n("pages:content:export_as_usfm", i18nRef.current)}
+                            {doI18n("pages:core-contenthandler_text_translation:export_as_usfm", i18nRef.current)}
                         </Typography>
                     </Toolbar>
                 </AppBar>
@@ -201,7 +201,7 @@ function UsfmExport() {
                         onClick={() => {
                             if (!selectedBooks || selectedBooks.length === 0) {
                                 enqueueSnackbar(
-                                    doI18n("pages:content:no_books_selected", i18nRef.current),
+                                    doI18n("pages:core-contenthandler_text_translation:no_books_selected", i18nRef.current),
                                     { variant: "warning" }
                                 );
                             } else {
@@ -210,7 +210,7 @@ function UsfmExport() {
                             handleCloseCreate();
                         }}
                     >
-                        {doI18n("pages:content:export_label", i18nRef.current)}
+                        {doI18n("pages:core-contenthandler_text_translation:export_label", i18nRef.current)}
                     </Button>
                 </DialogActions>
             </Dialog>
