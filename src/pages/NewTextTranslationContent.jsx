@@ -181,6 +181,7 @@ export default function NewBibleContent() {
             const bookCodes = Array.from(new Set(planJson.sections.map(s => s.bookCode)));
             for (const bookCode of bookCodes) {
                 const bookSections = planJson.sections.filter(s => s.bookCode === bookCode);
+                let chapterNo = 0;
                 let usfmBits = [];
                 usfmBits.push(`\\id ${bookCode} -- ${planJson.short_name} -- v${planJson.version} -- ${planJson.copyright}`);
                 for (const headerTag of ["toc1", "toc2", "toc3", "mt"]) {
@@ -199,7 +200,6 @@ export default function NewBibleContent() {
                                 usfmBits.push("___")
                             }
                         } else if (sectionField.type === "scripture") {
-                            let chapterNo = 0;
                             for (const para of bookSection.paragraphs) {
                                 if (para.units) {
                                     const paraChapter = parseInt(para.units[0].split(":")[0]);
