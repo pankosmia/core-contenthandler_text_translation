@@ -396,7 +396,7 @@ export default function NewBibleContent() {
                                 contentLanguageCode.trim().length > 0 &&
                                 versification.trim().length === 3 &&
                                 (
-                                    !showBookFields || (
+                                    showBookFields && (
                                         bookCode.trim().length === 3 &&
                                         bookTitle.trim().length > 0 &&
                                         bookAbbr.trim().length > 0
