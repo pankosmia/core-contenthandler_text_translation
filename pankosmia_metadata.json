@@ -26,6 +26,10 @@
     "error_data":{
       "en":"Error fetching data",
       "fr":"Erreur lors de la récupération des données"
+    },
+    "import_local_book":{
+      "en":"Import local book",
+      "es":"Importar libro local"
     }
   }
 }

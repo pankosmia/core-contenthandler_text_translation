@@ -31,6 +31,7 @@ import {
 } from "pithekos-lib";
 import sx from "./Selection.styles";
 import ListMenuItem from "./ListMenuItem";
+import ZipImport from "../pages/Import/ZipImport"
 
 export default function NewTextTranslationBook() {
     const [addCV, setAddCV] = useState(true);
@@ -49,6 +50,9 @@ export default function NewTextTranslationBook() {
     const [versification, setVersification] = useState("eng");
     const [versificationCodes, setVersificationCodes] = useState([]);
     const [fileVrs, setFileVrs] = useState(false);
+    const [zipImportAnchorEl, setZipImportAnchorEl] = useState(null);
+    const zipImportOpen = Boolean(zipImportAnchorEl);
+    const [localBook, setLocalBook] = useState([]);
 
     const getProjectSummaries = async () => {
         const hash = window.location.hash;
@@ -167,10 +171,36 @@ export default function NewTextTranslationBook() {
         };
 
     };
+    const handleCreateLocalBook = async (localBook, repoPath) => {
+        const response = await postJson(
+            `/burrito/ingredient/raw/${repoPath}?ipath=${localBook[0].filename}&update_ingredients`,
+            JSON.stringify({"payload": localBook[0].usfmText}),
+            debugRef.current
+        );
+        if (response.ok) {
+            enqueueSnackbar(doI18n("pages:content:book_created", i18nRef.current), {
+                variant: "success",
+            });
+            handleCloseCreate();
+        } else {
+            setErrorMessage(`${doI18n("pages:content:book_creation_error", i18nRef.current)}: ${response.status
+                }`);
+            setErrorDialogOpen(true);
+        };
+    };
     const handleCloseErrorDialog = () => {
         setErrorDialogOpen(false);
         handleClose();
     };
+
+    useEffect(() => {
+        if (localBook.length > 0){
+            console.log(localBook)
+            setBookCode(localBook[0].bookId);
+            setBookTitle(localBook[0].usfmText.split("toc1 ")[1].split("toc2")[0].split("\\")[0]);
+            setBookAbbr(localBook[0].bookId);
+        }
+    },[localBook])
 
     return (
         <Box>
@@ -341,6 +371,15 @@ export default function NewTextTranslationBook() {
                                 }}
                             />
                         </Grid2>
+                        <Grid2 item size={4}>
+                            <Button
+                                color="secondary"
+                                variant="contained"
+                                onClick={() => setZipImportAnchorEl(true)}
+                            >
+                                {doI18n("pages:core-contenthandler_text_translation:import_local_book",i18nRef.current)}
+                            </Button>
+                        </Grid2>
                     </Grid2>
                     <FormGroup>
                         <FormControlLabel
@@ -405,6 +444,13 @@ export default function NewTextTranslationBook() {
                     </Button>
                 </DialogActions>
             </Dialog>
+            <ZipImport
+                open={zipImportOpen}
+                closeFn={() => setZipImportAnchorEl(null)}
+                setLocalBook={setLocalBook}
+                handleCreateLocalBook={handleCreateLocalBook}
+                repoPath={repoPath}
+            />
         </Box>
     );
 }
