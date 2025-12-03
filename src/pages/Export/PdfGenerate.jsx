@@ -120,7 +120,7 @@ function PdfGenerate() {
             const bookUsfmResponse = await getText(bookUrl, debugRef.current);
             if (!bookUsfmResponse.ok) {
                 enqueueSnackbar(
-                    `${doI18n("pages:content:could_not_fetch", i18nRef.current)} ${bookCode}`,
+                    `${doI18n("pages:core-contenthandler_text_translation:could_not_fetch", i18nRef.current)} ${bookCode}`,
                     { variant: "error" }
                 );
                 return false;
@@ -174,7 +174,7 @@ function PdfGenerate() {
             const bookUsfmResponse = await getText(bookUrl, debugRef.current);
             if (!bookUsfmResponse.ok) {
                 enqueueSnackbar(
-                    `${doI18n("pages:content:could_not_fetch", i18nRef.current)} ${bookCode}`,
+                    `${doI18n("pages:core-contenthandler_text_translation:could_not_fetch", i18nRef.current)} ${bookCode}`,
                     { variant: "error" }
                 );
                 return false;
@@ -258,7 +258,7 @@ function PdfGenerate() {
                   ${pdfHtml}
               </div>
               <div id="preview-print-host">
-                  <button id="preview-print" type="button">${doI18n("pages:content:print", i18nRef.current) || 'Print'}</button>
+                  <button id="preview-print" type="button">${doI18n("pages:core-contenthandler_text_translation:print", i18nRef.current) || 'Print'}</button>
               </div>
               <script>
                   (function(){
@@ -425,7 +425,7 @@ function PdfGenerate() {
             return; // window currently inaccessible (e.g., not yet initialized or cross‑origin)
           }
           // Pass values to previewWin
-          previewWin.__printButtonText = doI18n("pages:content:print", i18nRef.current);
+          previewWin.__printButtonText = doI18n("pages:core-contenthandler_text_translation:print", i18nRef.current);
           previewWin.__printButtonBackgroundColor = theme.palette.primary.main;
           previewWin.__printButtonColor = theme.palette.primary.contrastText;
 
@@ -441,7 +441,7 @@ function PdfGenerate() {
           }
 
           // Set the page title.
-          previewWin.document.title = doI18n("pages:content:pdf_preview", i18nRef.current);
+          previewWin.document.title = doI18n("pages:core-contenthandler_text_translation:pdf_preview", i18nRef.current);
 
           // Wait until document.body is present, retrying until body exists or timeout.
           const waitForBody = (win, timeout = 3000) => {
@@ -589,14 +589,14 @@ function PdfGenerate() {
                 <AppBar color='secondary' sx={{ position: 'relative', borderTopLeftRadius: 4, borderTopRightRadius: 4 }}>
                     <Toolbar>
                         <Typography variant="h6" component="div">
-                            {doI18n("pages:content:generate_as_pdf", i18nRef.current)}
+                            {doI18n("pages:core-contenthandler_text_translation:generate_as_pdf", i18nRef.current)}
                         </Typography>
                     </Toolbar>
                 </AppBar>
                 <DialogContent sx={{ mt: 1, pt: 0 }}>
                     <DialogContentText>
                         <Typography>
-                            {doI18n("pages:content:pick_one_book_export", i18nRef.current)}
+                            {doI18n("pages:core-contenthandler_text_translation:pick_one_book_export", i18nRef.current)}
                         </Typography>
                     </DialogContentText>
                     <FormControl fullWidth>
@@ -641,7 +641,7 @@ function PdfGenerate() {
                                     <ListItemIcon>
                                         <ViewHeadlineOutlinedIcon color='primary' />
                                     </ListItemIcon>
-                                    <ListItemText primary={doI18n("pages:content:show_by_verse", i18nRef.current)} />
+                                    <ListItemText primary={doI18n("pages:core-contenthandler_text_translation:show_by_verse", i18nRef.current)} />
                                     <Switch
                                         edge='end'
                                         onChange={() => setShowByVerse(!showByVerse)}
@@ -654,7 +654,7 @@ function PdfGenerate() {
                                         <ListItemIcon>
                                             <Checkbox edge="start" checked={showTitles} tabIndex={-1} disableRipple />
                                         </ListItemIcon>
-                                        <ListItemText primary={doI18n("pages:content:show_title", i18nRef.current)} />
+                                        <ListItemText primary={doI18n("pages:core-contenthandler_text_translation:show_title", i18nRef.current)} />
                                     </ListItemButton>
                                 </ListItem>
                                 <ListItem disablePadding >
@@ -662,7 +662,7 @@ function PdfGenerate() {
                                         <ListItemIcon>
                                             <Checkbox edge="start" checked={showHeadings} tabIndex={-1} disableRipple />
                                         </ListItemIcon>
-                                        <ListItemText primary={doI18n("pages:content:show_headings", i18nRef.current)} />
+                                        <ListItemText primary={doI18n("pages:core-contenthandler_text_translation:show_headings", i18nRef.current)} />
                                     </ListItemButton>
                                 </ListItem>
                                 <ListItem disablePadding >
@@ -670,7 +670,7 @@ function PdfGenerate() {
                                         <ListItemIcon>
                                             <Checkbox edge="start" checked={showIntroductions} tabIndex={-1} disableRipple />
                                         </ListItemIcon>
-                                        <ListItemText primary={doI18n("pages:content:show_introductions", i18nRef.current)} />
+                                        <ListItemText primary={doI18n("pages:core-contenthandler_text_translation:show_introductions", i18nRef.current)} />
                                     </ListItemButton>
                                 </ListItem>
                                 <ListItem disablePadding >
@@ -678,7 +678,7 @@ function PdfGenerate() {
                                         <ListItemIcon>
                                             <Checkbox edge="start" checked={showFootnotes} tabIndex={-1} disableRipple />
                                         </ListItemIcon>
-                                        <ListItemText primary={doI18n("pages:content:show_footnotes", i18nRef.current)} />
+                                        <ListItemText primary={doI18n("pages:core-contenthandler_text_translation:show_footnotes", i18nRef.current)} />
                                     </ListItemButton>
                                 </ListItem>
                                 <ListItem disablePadding >
@@ -686,7 +686,7 @@ function PdfGenerate() {
                                         <ListItemIcon>
                                             <Checkbox edge="start" checked={showXrefs} tabIndex={-1} disableRipple />
                                         </ListItemIcon>
-                                        <ListItemText primary={doI18n("pages:content:show_xrefs", i18nRef.current)} />
+                                        <ListItemText primary={doI18n("pages:core-contenthandler_text_translation:show_xrefs", i18nRef.current)} />
                                     </ListItemButton>
                                 </ListItem>
                                 <ListItem disablePadding >
@@ -694,7 +694,7 @@ function PdfGenerate() {
                                         <ListItemIcon>
                                             <Checkbox edge="start" checked={showParaStyles} tabIndex={-1} disableRipple />
                                         </ListItemIcon>
-                                        <ListItemText primary={doI18n("pages:content:show_para_styles", i18nRef.current)} />
+                                        <ListItemText primary={doI18n("pages:core-contenthandler_text_translation:show_para_styles", i18nRef.current)} />
                                     </ListItemButton>
                                 </ListItem>
                                 <ListItem disablePadding >
@@ -702,7 +702,7 @@ function PdfGenerate() {
                                         <ListItemIcon>
                                             <Checkbox edge="start" checked={showCharacterMarkup} tabIndex={-1} disableRipple />
                                         </ListItemIcon>
-                                        <ListItemText primary={doI18n("pages:content:show_character_markup", i18nRef.current)} />
+                                        <ListItemText primary={doI18n("pages:core-contenthandler_text_translation:show_character_markup", i18nRef.current)} />
                                     </ListItemButton>
                                 </ListItem>
                                 <ListItem disablePadding >
@@ -710,7 +710,7 @@ function PdfGenerate() {
                                         <ListItemIcon>
                                             <Checkbox edge="start" checked={showChapterLabels} tabIndex={-1} disableRipple />
                                         </ListItemIcon>
-                                        <ListItemText primary={doI18n("pages:content:show_chapter_labels", i18nRef.current)} />
+                                        <ListItemText primary={doI18n("pages:core-contenthandler_text_translation:show_chapter_labels", i18nRef.current)} />
                                     </ListItemButton>
                                 </ListItem>
                                 <ListItem disablePadding >
@@ -718,7 +718,7 @@ function PdfGenerate() {
                                         <ListItemIcon>
                                             <Checkbox edge="start" checked={showVersesLabels} tabIndex={-1} disableRipple />
                                         </ListItemIcon>
-                                        <ListItemText primary={doI18n("pages:content:show_verses_labels", i18nRef.current)} />
+                                        <ListItemText primary={doI18n("pages:core-contenthandler_text_translation:show_verses_labels", i18nRef.current)} />
                                     </ListItemButton>
                                 </ListItem>
                                 <ListItem disablePadding >
@@ -726,7 +726,7 @@ function PdfGenerate() {
                                         <ListItemIcon>
                                             <Checkbox edge="start" checked={showFirstVerseLabel} tabIndex={-1} disableRipple />
                                         </ListItemIcon>
-                                        <ListItemText primary={doI18n("pages:content:show_first_verse_label", i18nRef.current)} />
+                                        <ListItemText primary={doI18n("pages:core-contenthandler_text_translation:show_first_verse_label", i18nRef.current)} />
                                     </ListItemButton>
                                 </ListItem>
                                 <ListItem disablePadding >
@@ -740,7 +740,7 @@ function PdfGenerate() {
                                         dense
                                     >
                                         <ListItemIcon>{columnIcon(selectedColumns)}</ListItemIcon>
-                                        <ListItemText primary={doI18n("pages:content:number_of_columns", i18nRef.current)} />
+                                        <ListItemText primary={doI18n("pages:core-contenthandler_text_translation:number_of_columns", i18nRef.current)} />
                                     </ListItemButton>
                                     <Menu
                                         id="basic-menu"
@@ -775,7 +775,7 @@ function PdfGenerate() {
                         onClick={() => {
                             if (!fileExport.current) {
                                 enqueueSnackbar(
-                                    doI18n("pages:content:no_books_selected", i18nRef.current),
+                                    doI18n("pages:core-contenthandler_text_translation:no_books_selected", i18nRef.current),
                                     { variant: "warning" }
                                 );
                             } else {
@@ -783,7 +783,7 @@ function PdfGenerate() {
                             }
                             handleCloseCreate();
                         }}
-                    >{doI18n("pages:content:export_label", i18nRef.current)}</Button>
+                    >{doI18n("pages:core-contenthandler_text_translation:export_label", i18nRef.current)}</Button>
                 </DialogActions>
             </Dialog>
         </Box>

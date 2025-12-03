@@ -1,4 +1,4 @@
-import { useRef, useContext, useState, useEffect } from 'react';
+import {useContext, useState, useEffect } from 'react';
 import {
     AppBar,
     Box,
@@ -7,7 +7,6 @@ import {
     DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle,
     FormControl,
     FormControlLabel,
     MenuItem,
@@ -27,7 +26,6 @@ function ZipExport() {
     const [open, setOpen] = useState(true);
     const { i18nRef } = useContext(i18nContext);
     const { debugRef } = useContext(debugContext);
-    const fileExport = useRef();
     const [bookNames, setBookNames] = useState();
     const [selectedBooks, setSelectedBooks] = useState(bookNames);
     const [bookCodes, setBookCodes] = useState([]);
@@ -74,7 +72,7 @@ function ZipExport() {
         const bookUsfmResponse = await getText(bookUrl, debugRef.current);
         if (!bookUsfmResponse.ok) {
             enqueueSnackbar(
-                `${doI18n("pages:content:could_not_fetch", i18nRef.current)} ${bookCode}`,
+                `${doI18n("pages:core-contenthandler_text_translation:could_not_fetch", i18nRef.current)} ${bookCode}`,
                 { variant: "error" }
             );
             setTimeout(() => {
@@ -96,7 +94,7 @@ function ZipExport() {
         );
     };
 
-    const zipSetBooks = (zipSet === 'all' ? bookNames : fileExport.current)
+    const zipSetBooks = (zipSet === 'all' ? bookNames : selectedBooks)
 
     const handleZipSetChange = (event, newValue) => {
         setZipSet(newValue);
@@ -121,7 +119,7 @@ function ZipExport() {
         },
         []
     );
-
+ 
     const handleClose = () => {
         setOpen(false);
         return window.location.href = "/clients/content"
@@ -169,7 +167,7 @@ function ZipExport() {
                 <AppBar color='secondary' sx={{ position: 'relative', borderTopLeftRadius: 4, borderTopRightRadius: 4 }}>
                     <Toolbar>
                         <Typography variant="h6" component="div">
-                            {doI18n("pages:content:export_as_zip", i18nRef.current)}
+                            {doI18n("pages:core-contenthandler_text_translation:export_as_zip", i18nRef.current)}
                         </Typography>
                     </Toolbar>
                 </AppBar>
@@ -188,7 +186,6 @@ function ZipExport() {
                                 if (selected.length === 0) {
                                     return <em>{doI18n("pages:content:books", i18nRef.current)}</em>;
                                 }
-                                fileExport.current = selected;
                                 return (
                                     <Box sx={{ whiteSpace: 'normal', wordWrap: 'break-word' }}>
                                         {selected
@@ -228,8 +225,8 @@ function ZipExport() {
                                 name="radio-buttons-group"
                                 onChange={handleZipSetChange}
                             >
-                                <FormControlLabel value="pick" control={<Radio />} label={doI18n("pages:content:pick_one_or_more_books_export", i18nRef.current)} />
-                                <FormControlLabel value="all" control={<Radio />} label={doI18n("pages:content:export_all", i18nRef.current)} />
+                                <FormControlLabel value="pick" control={<Radio />} label={doI18n("pages:core-contenthandler_text_translation:pick_one_or_more_books_export", i18nRef.current)} />
+                                <FormControlLabel value="all" control={<Radio />} label={doI18n("pages:core-contenthandler_text_translation:export_all", i18nRef.current)} />
                             </RadioGroup>
                         </FormControl>
                     </DialogContentText>
@@ -245,13 +242,14 @@ function ZipExport() {
                     <Button
                         variant="contained"
                         color="primary"
+                        disabled={!zipSetBooks || zipSetBooks.length === 0}
                         onClick={() => {
                             if (!zipSetBooks || zipSetBooks.length === 0) {
                                 setTimeout(() => {
                                     window.location.href = '/clients/content';
                                 }, 1000);
                                 enqueueSnackbar(
-                                    doI18n("pages:content:no_books_selected", i18nRef.current),
+                                    doI18n("pages:core-contenthandler_text_translation:no_books_selected", i18nRef.current),
                                     { variant: "warning" }
                                 );
                             } else {
@@ -260,7 +258,7 @@ function ZipExport() {
                             handleCloseCreate();
                         }}
                     >
-                        {doI18n("pages:content:export_label", i18nRef.current)}
+                        {doI18n("pages:core-contenthandler_text_translation:export_label", i18nRef.current)}
                     </Button>
                 </DialogActions>
             </Dialog>
