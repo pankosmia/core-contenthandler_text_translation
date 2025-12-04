@@ -26,10 +26,8 @@ function ZipImport({open, closeFn, localBook, setLocalBook, localBookContent, se
       const reader = new FileReader();
 
       reader.onload = (event) => {
-        // This runs AFTER the browser has finished reading the file data
         const fileContent = event.target.result;
         
-        // Update React state with the content
         setContent(fileContent); 
         setLoading(false);
       };
@@ -39,7 +37,6 @@ function ZipImport({open, closeFn, localBook, setLocalBook, localBookContent, se
         setLoading(false);
       };
 
-      // Start the reading process
       reader.readAsText(fileFromPicker);
     };
 
