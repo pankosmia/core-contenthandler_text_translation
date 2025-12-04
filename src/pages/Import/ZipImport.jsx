@@ -10,12 +10,38 @@ import {
 import {i18nContext, doI18n, debugContext} from "pithekos-lib";
 import {enqueueSnackbar} from "notistack";
 import { useZipUsfmFileInput } from 'zip-project';
+import { FilePicker } from 'react-file-picker'
 
-function ZipImport({open, closeFn, setLocalBook, handleCreateLocalBook, repoPath}) {
+function ZipImport({open, closeFn, localBook, setLocalBook, localBookContent, setLocalBookContent, handleCreateLocalBook, repoPath}) {
 
     const {i18nRef} = useContext(i18nContext);
     const [newImport, setNewImport] = useState(true);
     const [usfmArray, setUsfmArray] = useState([]);
+    const [content, setContent] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    const handleFilePicked = (fileFromPicker) => {
+      setLoading(true);
+      
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        // This runs AFTER the browser has finished reading the file data
+        const fileContent = event.target.result;
+        
+        // Update React state with the content
+        setContent(fileContent); 
+        setLoading(false);
+      };
+
+      reader.onerror = (error) => {
+        console.error("Error reading file:", error);
+        setLoading(false);
+      };
+
+      // Start the reading process
+      reader.readAsText(fileFromPicker);
+    };
 
     //This is temporary
     const newClick = () => {
@@ -76,6 +102,12 @@ function ZipImport({open, closeFn, setLocalBook, handleCreateLocalBook, repoPath
         );
       }
     }, [usfmArray]);
+
+    useEffect(() => {
+      if (content) {
+        setLocalBookContent(content);
+      }
+    }, [content]);
   
     return <Dialog
         open={open}
@@ -95,7 +127,16 @@ function ZipImport({open, closeFn, setLocalBook, handleCreateLocalBook, repoPath
                 onChange={onChange}
               />
             </DialogContentText>
-            <Button
+            <FilePicker
+              extensions={['usfm']}
+              onChange={handleFilePicked} // The library passes the File object to this function
+              onError={error => console.error(error)}
+            >
+              <button disabled={loading}>
+                {loading ? 'Reading File...' : doI18n("pages:content:import", i18nRef.current)}
+              </button>
+            </FilePicker>
+            {/* <Button
                 variant="contained"
                 color="primary"
                 onClick={() => {
@@ -104,7 +145,9 @@ function ZipImport({open, closeFn, setLocalBook, handleCreateLocalBook, repoPath
                 }}
             >
               {doI18n("pages:content:import", i18nRef.current)}
-            </Button>
+            </Button> */}
+            
+            
         </DialogContent>
         <DialogActions>
             <Button onClick={closeFn}>
@@ -114,7 +157,7 @@ function ZipImport({open, closeFn, setLocalBook, handleCreateLocalBook, repoPath
                 variant="contained"
                 color="primary"
                 onClick={() => {
-                  handleCreateLocalBook(usfmArray, repoPath)
+                  handleCreateLocalBook(localBookContent, repoPath)
                   closeFn();
                 }}
             >

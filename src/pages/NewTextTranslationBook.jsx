@@ -53,6 +53,7 @@ export default function NewTextTranslationBook() {
     const [zipImportAnchorEl, setZipImportAnchorEl] = useState(null);
     const zipImportOpen = Boolean(zipImportAnchorEl);
     const [localBook, setLocalBook] = useState([]);
+    const [localBookContent, setLocalBookContent] = useState();
 
     const getProjectSummaries = async () => {
         const hash = window.location.hash;
@@ -171,10 +172,10 @@ export default function NewTextTranslationBook() {
         };
 
     };
-    const handleCreateLocalBook = async (localBook, repoPath) => {
+    const handleCreateLocalBook = async (localBookContent, repoPath) => {
         const response = await postJson(
-            `/burrito/ingredient/raw/${repoPath}?ipath=${localBook[0].filename}&update_ingredients`,
-            JSON.stringify({"payload": localBook[0].usfmText}),
+            `/burrito/ingredient/raw/${repoPath}?ipath=${`${localBookContent.split("toc1")[0].split(" ")[1]}.usfm`}&update_ingredients`,
+            JSON.stringify({"payload": localBookContent}),
             debugRef.current
         );
         if (response.ok) {
@@ -194,13 +195,16 @@ export default function NewTextTranslationBook() {
     };
 
     useEffect(() => {
-        if (localBook.length > 0){
-            console.log(localBook)
-            setBookCode(localBook[0].bookId);
-            setBookTitle(localBook[0].usfmText.split("toc1 ")[1].split("toc2")[0].split("\\")[0]);
-            setBookAbbr(localBook[0].bookId);
+        if (localBook && localBookContent){
+            console.log(localBookContent);
+            /* console.log(localBookContent.split("toc1")[0].split(" ")[1]);
+            console.log(localBookContent.split("\\toc2")[0].split("\\toc1")[1].split(" ")[1]); */
+
+            setBookCode(localBookContent.split("toc1")[0].split(" ")[1]);
+            setBookTitle(localBookContent.split("\\toc2")[0].split("\\toc1")[1].split(" ")[1]);
+            setBookAbbr(localBookContent.split("toc1")[0].split(" ")[1]);
         }
-    },[localBook])
+    },[localBook, localBookContent])
 
     return (
         <Box>
@@ -447,7 +451,10 @@ export default function NewTextTranslationBook() {
             <ZipImport
                 open={zipImportOpen}
                 closeFn={() => setZipImportAnchorEl(null)}
+                localBook={localBook}
                 setLocalBook={setLocalBook}
+                localBookContent={localBookContent}
+                setLocalBookContent={setLocalBookContent}
                 handleCreateLocalBook={handleCreateLocalBook}
                 repoPath={repoPath}
             />
