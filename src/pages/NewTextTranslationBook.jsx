@@ -52,7 +52,7 @@ export default function NewTextTranslationBook() {
     const [fileVrs, setFileVrs] = useState(false);
     const [zipImportAnchorEl, setZipImportAnchorEl] = useState(null);
     const zipImportOpen = Boolean(zipImportAnchorEl);
-    const [localBook, setLocalBook] = useState([]);
+ /*    const [localBook, setLocalBook] = useState([]); */
     const [localBookContent, setLocalBookContent] = useState();
 
     const getProjectSummaries = async () => {
@@ -91,6 +91,7 @@ export default function NewTextTranslationBook() {
 
     useEffect(
         () => {
+            console.log("AQUIIIIIIIIIIIIIIIIIIIIIII");
             getProjectSummaries();
             getProjectFiles();
         },
@@ -173,21 +174,23 @@ export default function NewTextTranslationBook() {
 
     };
     const handleCreateLocalBook = async (localBookContent, repoPath) => {
-        const response = await postJson(
-            `/burrito/ingredient/raw/${repoPath}?ipath=${`${localBookContent.split("toc1")[0].split(" ")[1]}.usfm`}&update_ingredients`,
-            JSON.stringify({"payload": localBookContent}),
-            debugRef.current
-        );
-        if (response.ok) {
-            enqueueSnackbar(doI18n("pages:content:book_created", i18nRef.current), {
-                variant: "success",
-            });
-            handleCloseCreate();
-        } else {
-            setErrorMessage(`${doI18n("pages:content:book_creation_error", i18nRef.current)}: ${response.status
-                }`);
-            setErrorDialogOpen(true);
-        };
+        if (!bookCodes.includes(localBookContent.split("toc1")[0].split(" ")[1])){
+            const response = await postJson(
+                `/burrito/ingredient/raw/${repoPath}?ipath=${`${localBookContent.split("toc1")[0].split(" ")[1]}.usfm`}&update_ingredients`,
+                JSON.stringify({"payload": localBookContent}),
+                debugRef.current
+            );
+            if (response.ok) {
+                enqueueSnackbar(doI18n("pages:content:book_created", i18nRef.current), {
+                    variant: "success",
+                });
+                handleCloseCreate();
+            } else {
+                setErrorMessage(`${doI18n("pages:content:book_creation_error", i18nRef.current)}: ${response.status
+                    }`);
+                setErrorDialogOpen(true);
+            };
+        }
     };
     const handleCloseErrorDialog = () => {
         setErrorDialogOpen(false);
@@ -195,16 +198,14 @@ export default function NewTextTranslationBook() {
     };
 
     useEffect(() => {
-        if (localBook && localBookContent){
-            console.log(localBookContent);
-            /* console.log(localBookContent.split("toc1")[0].split(" ")[1]);
-            console.log(localBookContent.split("\\toc2")[0].split("\\toc1")[1].split(" ")[1]); */
-
+        if (localBookContent){
             setBookCode(localBookContent.split("toc1")[0].split(" ")[1]);
             setBookTitle(localBookContent.split("\\toc2")[0].split("\\toc1")[1].split(" ")[1]);
             setBookAbbr(localBookContent.split("toc1")[0].split(" ")[1]);
         }
-    },[localBook, localBookContent])
+    },[localBookContent])
+
+    console.log(bookName);
 
     return (
         <Box>
@@ -451,8 +452,8 @@ export default function NewTextTranslationBook() {
             <ZipImport
                 open={zipImportOpen}
                 closeFn={() => setZipImportAnchorEl(null)}
-                localBook={localBook}
-                setLocalBook={setLocalBook}
+               /*  localBook={localBook}
+                setLocalBook={setLocalBook} */
                 localBookContent={localBookContent}
                 setLocalBookContent={setLocalBookContent}
                 handleCreateLocalBook={handleCreateLocalBook}

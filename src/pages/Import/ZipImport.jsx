@@ -7,104 +7,31 @@ import {
     DialogContentText,
     DialogTitle
 } from "@mui/material";
-import {i18nContext, doI18n, debugContext} from "pithekos-lib";
-import {enqueueSnackbar} from "notistack";
-import { useZipUsfmFileInput } from 'zip-project';
+import {i18nContext, doI18n} from "pithekos-lib";
 import { FilePicker } from 'react-file-picker'
 
-function ZipImport({open, closeFn, localBook, setLocalBook, localBookContent, setLocalBookContent, handleCreateLocalBook, repoPath}) {
+function ZipImport({open, closeFn, localBookContent, setLocalBookContent, handleCreateLocalBook, repoPath}) {
 
     const {i18nRef} = useContext(i18nContext);
-    const [newImport, setNewImport] = useState(true);
-    const [usfmArray, setUsfmArray] = useState([]);
-    const [content, setContent] = useState(null);
+   /*  const [content, setContent] = useState(null); */
     const [loading, setLoading] = useState(false);
 
     const handleFilePicked = (fileFromPicker) => {
-      setLoading(true);
-      
       const reader = new FileReader();
-
+      reader.onloadstart = () => {
+          setLoading(true);
+      };
       reader.onload = (event) => {
         const fileContent = event.target.result;
-        
-        setContent(fileContent); 
+        setLocalBookContent(fileContent);
         setLoading(false);
       };
-
       reader.onerror = (error) => {
         console.error("Error reading file:", error);
         setLoading(false);
       };
-
       reader.readAsText(fileFromPicker);
     };
-
-    //This is temporary
-    const newClick = () => {
-      setNewImport(true);
-    }
-
-    const handleZipLoad = (usfmData, file) => {
-      setUsfmArray([...usfmData]);
-    }
-
-    const {
-      status,
-      isLoading,
-      invalidFileType,
-      uploadError,
-      onChange,
-      onSubmit
-    } = useZipUsfmFileInput(handleZipLoad)
-
-    useEffect(() => {
-      if (isLoading) {
-        enqueueSnackbar(
-            doI18n("pages:content:loading", i18nRef.current),
-            {variant: "warning"}
-        );
-      }
-    }, [isLoading]);
-
-    // uploadError (from the RCL) may not not necessarily be reset after a successful upload (not yet experienced)
-    useEffect(() => {
-      if (newImport && uploadError) {
-        enqueueSnackbar(
-            `${doI18n("pages:content:import_error", i18nRef.current)} ${uploadError.message}`,
-            {variant: "error"}
-        );
-        setNewImport(false);
-      }
-    }, [newImport, uploadError]);
-
-
-    // invalidFileType (from the RCL) is not reset after a successful upload
-    useEffect(() => {
-      if (newImport && invalidFileType) {
-        enqueueSnackbar(
-            `${doI18n("pages:content:invalid_file_type", i18nRef.current)} ${invalidFileType}`,
-            {variant: "error"}
-        );
-        setNewImport(false);
-      }
-    }, [invalidFileType, newImport]);
-
-    useEffect(() => {
-      if (status === 'UPLOAD_SUCCESS') {
-        setLocalBook(usfmArray);
-        enqueueSnackbar(
-            doI18n("pages:content:successful_upload", i18nRef.current),
-            {variant: "success"}
-        );
-      }
-    }, [usfmArray]);
-
-    useEffect(() => {
-      if (content) {
-        setLocalBookContent(content);
-      }
-    }, [content]);
   
     return <Dialog
         open={open}
@@ -118,18 +45,18 @@ function ZipImport({open, closeFn, localBook, setLocalBook, localBookContent, se
         <DialogTitle sx={{ backgroundColor: 'secondary.main' }}><b>{doI18n("pages:content:import_content", i18nRef.current)}</b></DialogTitle>
         <DialogContent sx={{ mt: 1 }}>
             <DialogContentText>
-              <input
+              {/* <input
                 type='file'
                 accept='.zip'
                 onChange={onChange}
-              />
+              /> */}
             </DialogContentText>
             <FilePicker
               extensions={['usfm']}
-              onChange={handleFilePicked} // The library passes the File object to this function
-              onError={error => console.error(error)}
+              onChange={handleFilePicked}
+              onError={error => {console.error(error); setLoading(false);}}
             >
-              <button disabled={loading}>
+              <button type="button" disabled={loading}>
                 {loading ? 'Reading File...' : doI18n("pages:content:import", i18nRef.current)}
               </button>
             </FilePicker>
