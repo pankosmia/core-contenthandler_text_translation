@@ -15,7 +15,7 @@ const router = createHashRouter([
         element:<App/>
     },
     {
-        path: "textTranslation",
+        path: "/createDocument/textTranslation",
         element: <NewBibleContent/>
     },
     {
@@ -23,15 +23,15 @@ const router = createHashRouter([
         element:<NewTextTranslationBook/>
     },
     {
-        path:"zipExport",
+        path:"/export/zip",
         element:<ZipExport/>
     },
     {
-        path:"usfmExport",
+        path:"/export/usfm",
         element:<UsfmExport/>
     },
     {
-        path:"pdfExport",
+        path:"/export/pdf",
         element:<PdfGenerate/>
     }
 ]);

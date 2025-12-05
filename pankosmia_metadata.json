@@ -6,6 +6,73 @@
     "net": false,
     "debug": true
   },
+  "endpoints":{
+  "textTranslation": {
+    "create_document": [
+      {
+        "doc":"Create document for textTranslation Project",
+        "placeHolders":{},
+        "label": "pages:content:create_content",
+        "url": "/clients/core-contenthandler_text_translation#/createDocument/textTranslation"
+      }
+    ],
+    "new_book": [
+      {
+        "doc":"Add a book to a textTranslation document",
+        "placeHolders": {
+          "REPO_PATH": {
+            "doc": "The path to the repo in <X>/<Y>/<Z> format"
+          }
+        },
+        "label": "pages:content:new_book",
+        "url": "/clients/core-contenthandler_text_translation#/newBook?repoPath=%%REPO_PATH%%"
+      }
+    ],
+    "export": [
+      {
+        "subMenu": [
+          {
+            "usfm": [
+              {
+                "doc":"Export to usfm a textTranslation document",
+                "placeHolders": {
+                  "REPO_PATH": {
+                    "doc": "The path to the repo in <X>/<Y>/<Z> format"
+                  }
+                },
+                "label": "pages:content:export_usfm",
+                "url": "/clients/core-contenthandler_text_translation#/export/usfm?repoPath=%%REPO_PATH%%"
+              }
+            ],
+            "zip": [
+              {
+                "doc":"Export to zip a textTranslation document",
+                "placeHolders": {
+                  "REPO_PATH": {
+                    "doc": "The path to the repo in <X>/<Y>/<Z> format"
+                  }
+                },
+                "label": "pages:content:export_zip",
+                "url": "/clients/core-contenthandler_text_translation#/export/zip?repoPath=%%REPO_PATH%%"
+              }
+            ],
+            "pdf": [
+              {
+                "doc":"Export to pdf a textTranslation document",
+                "placeHolders": {
+                  "REPO_PATH": {
+                    "doc": "The path to the repo in <X>/<Y>/<Z> format"
+                  }
+                },
+                "label": "pages:content:export_pdf",
+                "url": "/clients/core-contenthandler_text_translation#/export/pdf?repoPath=%%REPO_PATH%%"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }},
   "i18n": {
     "title": {
       "en": "core-contenthandler_text_translation"
