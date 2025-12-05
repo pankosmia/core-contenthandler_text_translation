@@ -1,4 +1,4 @@
-import {useContext, useState, useEffect} from 'react';
+import {useContext, useState} from 'react';
 import {
     Button,
     Dialog,
@@ -10,10 +10,9 @@ import {
 import {i18nContext, doI18n} from "pithekos-lib";
 import { FilePicker } from 'react-file-picker'
 
-function ZipImport({open, closeFn, localBookContent, setLocalBookContent, handleCreateLocalBook, repoPath}) {
+function UsfmImport({open, closeFn, localBookContent, setLocalBookContent, handleCreateLocalBook, repoPath}) {
 
     const {i18nRef} = useContext(i18nContext);
-   /*  const [content, setContent] = useState(null); */
     const [loading, setLoading] = useState(false);
 
     const handleFilePicked = (fileFromPicker) => {
@@ -42,40 +41,21 @@ function ZipImport({open, closeFn, localBookContent, setLocalBookContent, handle
             },
         }}
     >
-        <DialogTitle sx={{ backgroundColor: 'secondary.main' }}><b>{doI18n("pages:content:import_content", i18nRef.current)}</b></DialogTitle>
+        <DialogTitle sx={{ backgroundColor: 'secondary.main' }}><b>{doI18n("pages:core-contenthandler_text_translation:import_content", i18nRef.current)}</b></DialogTitle>
         <DialogContent sx={{ mt: 1 }}>
-            <DialogContentText>
-              {/* <input
-                type='file'
-                accept='.zip'
-                onChange={onChange}
-              /> */}
-            </DialogContentText>
             <FilePicker
               extensions={['usfm']}
               onChange={handleFilePicked}
               onError={error => {console.error(error); setLoading(false);}}
             >
               <button type="button" disabled={loading}>
-                {loading ? 'Reading File...' : doI18n("pages:content:import", i18nRef.current)}
+                {loading ? 'Reading File...' : doI18n("pages:core-contenthandler_text_translation:import", i18nRef.current)}
               </button>
-            </FilePicker>
-            {/* <Button
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                    newClick();
-                    onSubmit();
-                }}
-            >
-              {doI18n("pages:content:import", i18nRef.current)}
-            </Button> */}
-            
-            
+            </FilePicker>    
         </DialogContent>
         <DialogActions>
             <Button onClick={closeFn}>
-                {doI18n("pages:content:cancel", i18nRef.current)}
+                {doI18n("pages:core-contenthandler_text_translation:cancel", i18nRef.current)}
             </Button>
             <Button
                 variant="contained"
@@ -85,10 +65,10 @@ function ZipImport({open, closeFn, localBookContent, setLocalBookContent, handle
                   closeFn();
                 }}
             >
-              {doI18n("pages:content:import", i18nRef.current)}
+              {doI18n("pages:core-contenthandler_text_translation:import", i18nRef.current)}
             </Button>
         </DialogActions>
     </Dialog>;
 }
 
-export default ZipImport;
+export default UsfmImport;

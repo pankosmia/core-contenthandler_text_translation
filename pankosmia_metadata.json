@@ -167,7 +167,8 @@
     "no_books_selected": {
       "en": "No books were selected so nothing was exported",
       "fr": "Aucun livre n'a été selectionné pour exportation",
-      "id": "Buku tidak ditentukan jadi tidak ada ekspor"
+      "id": "Buku tidak ditentukan jadi tidak ada ekspor",
+      "es": "No se seleccionaron libros así que no se exportó nada"
     },
     "export_all": {
       "en": "Export all books",
@@ -178,6 +179,95 @@
       "en": "Choose one or more books to export",
       "es": "Elige uno o más libros para exportar",
       "id": "Pilih satuh lebih buku buat diekspor"
+    },
+    "book_created": {
+      "en": "Book created",
+      "fr": "Livre crée",
+      "id": "Buku telah dibuat",
+      "es": "Libro creado"
+    },
+    "content_creation_error": {
+      "en": "An error occurred while attempting to create Content",
+      "fr": "Une erreur est survenue pendant la création du contenu",
+      "id": "Kesalahan terjadi sambil coba buat konten",
+      "es": "Ocurrió un error al intentar crear contenido"
+    },
+    "new_book": {
+      "en": "New Book",
+      "fr": "Nouveau livre",
+      "id": "Buku Baru",
+      "es": "Nuevo libro"
+    },
+    "required_field": {
+      "en": "* Required fields",
+      "fr": "* champs obligatoires",
+      "id": "* Data yg diperlukan",
+      "es": "* Campos requeridos"
+    },
+    "versification_scheme": {
+      "en": "Versification scheme",
+      "fr": "Schéma de versification",
+      "id": "Skema ayat",
+      "es": "Esquema de verificación"
+    },
+    "book_code": {
+      "en": "Book Code",
+      "fr": "Code du livre",
+      "es": "Código del libro",
+      "id": "Kode Buku"
+    },
+    "book_abbr": {
+      "en": "Book Abbreviation",
+      "fr": "Abbréviation du livre",
+      "id": "Singkatan Buku",
+      "es": "Abreviación del libro"
+    },
+    "book_title": {
+      "en": "Book Title",
+      "fr": "Titre du livre",
+      "es": "Título del libro",
+      "id": "Judul Utama Buku"
+    },
+    "add_versification_checkbox": {
+      "en": "Add empty chapters and verses",
+      "fr": "Ajouter des chapitres et des versets vides",
+      "id": "Tambah fasal dan ayat kosong",
+      "es": "Agregar capítulos y versículos vacíos"
+    },
+    "close": {
+      "en": "close",
+      "es": "cerrar",
+      "fr": "fermer",
+      "id": "tutup"
+    },
+    "protestant_books_only": {
+      "en": "List protestant books only",
+      "fr": "Proposer uniquement les livres protestants",
+      "id": "Cantum hanya buku Protestan",
+      "es": "Listar únicamente los libros protestantes"
+    },
+    "create": {
+      "en": "Create",
+      "es": "Crear",
+      "fr": "Créer",
+      "id": "Buat"
+    },
+    "import_content": {
+      "en": "Import from computer",
+      "es": "Cargar Contenido",
+      "fr": "Importer manuellement le Contenu",
+      "id": "Impor dari komputer"
+    },
+    "import": {
+      "en": "Import",
+      "es": "Importar",
+      "fr": "Importer",
+      "id": "Impor"
+    },
+    "cancel": {
+      "en": "CANCEL",
+      "es": "CANCELAR",
+      "id": "BATAL"
     }
   }
 }
