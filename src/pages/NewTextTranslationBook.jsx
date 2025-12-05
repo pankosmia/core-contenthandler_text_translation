@@ -205,6 +205,12 @@ export default function NewTextTranslationBook() {
 
     console.log(bookName);
 
+    useEffect(() => {
+        if (bookName){
+            console.log(bookName);
+        }
+    },[bookName])
+
     return (
         <Box>
             <Box

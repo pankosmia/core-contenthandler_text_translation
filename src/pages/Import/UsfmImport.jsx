@@ -8,7 +8,8 @@ import {
     DialogTitle
 } from "@mui/material";
 import {i18nContext, doI18n} from "pithekos-lib";
-import { FilePicker } from 'react-file-picker'
+import { FilePicker } from 'react-file-picker';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 
 function UsfmImport({open, closeFn, localBookContent, setLocalBookContent, handleCreateLocalBook, repoPath}) {
 
@@ -48,9 +49,16 @@ function UsfmImport({open, closeFn, localBookContent, setLocalBookContent, handl
               onChange={handleFilePicked}
               onError={error => {console.error(error); setLoading(false);}}
             >
-              <button type="button" disabled={loading}>
+              <Button 
+                type="button" 
+                disabled={loading}
+                variant="contained"
+                color="primary" 
+                component="span"
+                startIcon={<UploadFileIcon />}
+              >
                 {loading ? 'Reading File...' : doI18n("pages:core-contenthandler_text_translation:import", i18nRef.current)}
-              </button>
+              </Button>
             </FilePicker>    
         </DialogContent>
         <DialogActions>
@@ -65,7 +73,7 @@ function UsfmImport({open, closeFn, localBookContent, setLocalBookContent, handl
                   closeFn();
                 }}
             >
-              {doI18n("pages:core-contenthandler_text_translation:import", i18nRef.current)}
+              {doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}
             </Button>
         </DialogActions>
     </Dialog>;
