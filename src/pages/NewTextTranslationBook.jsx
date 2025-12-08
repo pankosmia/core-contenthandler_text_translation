@@ -196,14 +196,12 @@ export default function NewTextTranslationBook() {
     };
 
     useEffect(() => {
-        if (localBookContent){
+        if (localBookContent && !bookName.includes(localBookContent.split("toc1")[0].split(" ")[1])){
             setBookCode(localBookContent.split("toc1")[0].split(" ")[1]);
             setBookTitle(localBookContent.split("\\toc2")[0].split("\\toc1")[1].split(" ")[1]);
             setBookAbbr(localBookContent.split("toc1")[0].split(" ")[1]);
         }
     },[localBookContent])
-
-    console.log(bookName);
 
     useEffect(() => {
         if (bookName){
@@ -460,6 +458,7 @@ export default function NewTextTranslationBook() {
                 setLocalBookContent={setLocalBookContent}
                 handleCreateLocalBook={handleCreateLocalBook}
                 repoPath={repoPath}
+                repoBooks={bookName}
             />
         </Box>
     );

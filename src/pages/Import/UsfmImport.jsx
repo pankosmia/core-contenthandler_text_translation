@@ -4,14 +4,14 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
-    DialogTitle
+    DialogTitle,
+    Tooltip
 } from "@mui/material";
 import {i18nContext, doI18n} from "pithekos-lib";
 import { FilePicker } from 'react-file-picker';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 
-function UsfmImport({open, closeFn, localBookContent, setLocalBookContent, handleCreateLocalBook, repoPath}) {
+function UsfmImport({open, closeFn, localBookContent, setLocalBookContent, handleCreateLocalBook, repoPath, repoBooks}) {
 
     const {i18nRef} = useContext(i18nContext);
     const [loading, setLoading] = useState(false);
@@ -35,7 +35,7 @@ function UsfmImport({open, closeFn, localBookContent, setLocalBookContent, handl
   
     return <Dialog
         open={open}
-        onClose={closeFn}
+        onClose={() => {setLocalBookContent(null); closeFn()}}
         slotProps={{
             paper: {
                 component: 'form',
@@ -62,19 +62,22 @@ function UsfmImport({open, closeFn, localBookContent, setLocalBookContent, handl
             </FilePicker>    
         </DialogContent>
         <DialogActions>
-            <Button onClick={closeFn}>
+            <Button onClick={() => {setLocalBookContent(null); closeFn()}}>
                 {doI18n("pages:core-contenthandler_text_translation:cancel", i18nRef.current)}
             </Button>
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                  handleCreateLocalBook(localBookContent, repoPath)
-                  closeFn();
-                }}
-            >
-              {doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}
-            </Button>
+            <Tooltip open={localBookContent ? repoBooks.includes(localBookContent.split("toc1")[0].split(" ")[1]) : false} title="Book already exists">
+              <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    handleCreateLocalBook(localBookContent, repoPath)
+                    closeFn();
+                  }}
+                  disabled={localBookContent ? repoBooks.includes(localBookContent.split("toc1")[0].split(" ")[1]) : false}
+              >
+                {doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}
+              </Button>
+            </Tooltip>
         </DialogActions>
     </Dialog>;
 }
