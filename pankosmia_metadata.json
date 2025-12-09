@@ -28,6 +28,18 @@
         "url": "/clients/core-contenthandler_text_translation#/newBook?repoPath=%%REPO_PATH%%"
       }
     ],
+    "import_book": [
+      {
+        "doc":"Import a book into a textTranslation document",
+        "placeHolders": {
+          "REPO_PATH": {
+            "doc": "The path to the repo in <X>/<Y>/<Z> format"
+          }
+        },
+        "label": "pages:content:import_book",
+        "url": "/clients/core-contenthandler_text_translation#/importBook?repoPath=%%REPO_PATH%%"
+      }
+    ],
     "export": [
       {
         "subMenu": [

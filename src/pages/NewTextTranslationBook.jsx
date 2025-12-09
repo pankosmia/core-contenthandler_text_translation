@@ -50,8 +50,7 @@ export default function NewTextTranslationBook() {
     const [versification, setVersification] = useState("eng");
     const [versificationCodes, setVersificationCodes] = useState([]);
     const [fileVrs, setFileVrs] = useState(false);
-    const [usfmImportAnchorEl, setUsfmImportAnchorEl] = useState(null);
-    const usfmImportOpen = Boolean(usfmImportAnchorEl);
+
     const [localBookContent, setLocalBookContent] = useState();
 
     const getProjectSummaries = async () => {
@@ -445,15 +444,14 @@ export default function NewTextTranslationBook() {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <UsfmImport
-                open={usfmImportOpen}
-                closeFn={() => setUsfmImportAnchorEl(null)}
+            {/* <UsfmImport
+                
                 localBookContent={localBookContent}
                 setLocalBookContent={setLocalBookContent}
                 handleCreateLocalBook={handleCreateLocalBook}
                 repoPath={repoPath}
                 repoBooks={bookName}
-            />
+            /> */}
         </Box>
     );
 }
