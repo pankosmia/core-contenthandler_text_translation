@@ -203,12 +203,6 @@ export default function NewTextTranslationBook() {
         }
     },[localBookContent])
 
-    useEffect(() => {
-        if (bookName){
-            console.log(bookName);
-        }
-    },[bookName])
-
     return (
         <Box>
             <Box
