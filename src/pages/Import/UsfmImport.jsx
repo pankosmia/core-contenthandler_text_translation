@@ -45,7 +45,7 @@ function UsfmImport({open, closeFn, localBookContent, setLocalBookContent, handl
         <DialogTitle sx={{ backgroundColor: 'secondary.main' }}><b>{doI18n("pages:core-contenthandler_text_translation:import_content", i18nRef.current)}</b></DialogTitle>
         <DialogContent sx={{ mt: 1 }}>
             <FilePicker
-              extensions={['usfm']}
+              extensions={['usfm', 'sfm', 'txt']}
               onChange={handleFilePicked}
               onError={error => {console.error(error); setLoading(false);}}
             >
