@@ -353,8 +353,8 @@
       "es": "Este libro ya existe en este projecto"
     },
     "usfm_invalid": {
-      "en": "This Usfm is not valid",
-      "es": "Este Usfm no es válido"
+      "en": "This USFM is not valid",
+      "es": "Este USFM no es válido"
     },
     "import_click": {
       "en": "Upload USFM file",
