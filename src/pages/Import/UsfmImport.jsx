@@ -181,7 +181,7 @@ function UsfmImport() {
                     component="span"
                     startIcon={<UploadFileIcon />}
                   >
-                    {loading ? 'Reading File...' : (filePicked.name ? filePicked.name : doI18n("pages:core-contenthandler_text_translation:import", i18nRef.current))}
+                    {loading ? 'Reading File...' : (filePicked.name ? filePicked.name : doI18n("pages:core-contenthandler_text_translation:import_click", i18nRef.current))}
                   </Button>
                 </FilePicker>    
             </DialogContent>

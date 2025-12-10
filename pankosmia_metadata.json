@@ -338,8 +338,10 @@
       "id": "Impor dari komputer"
     },
     "import": {
-      "en": "Upload a USFM file",
-      "es": "Subir archivo USFM"
+      "en": "Import",
+      "es": "Importar",
+      "fr": "Importer",
+      "id": "Impor"
     },
     "cancel": {
       "en": "CANCEL",
@@ -353,6 +355,10 @@
     "usfm_invalid": {
       "en": "This Usfm is not valid",
       "es": "Este Usfm no es válido"
+    },
+    "import_click": {
+      "en": "Upload USFM file",
+      "es": "Subir archivo USFM"
     }
   }
 }
