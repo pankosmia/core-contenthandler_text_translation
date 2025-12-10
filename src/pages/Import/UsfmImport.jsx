@@ -1,25 +1,32 @@
-import {useContext, useState} from 'react';
+import {useContext, useState, useEffect} from 'react';
 import {
     Button,
     Dialog,
     DialogActions,
     DialogContent,
-    DialogTitle,
-    Tooltip
+    Tooltip,
+    Box,
+    AppBar,
+    Toolbar,
+    Typography
 } from "@mui/material";
-import {i18nContext, doI18n} from "pithekos-lib";
+import { enqueueSnackbar } from "notistack";
+import {i18nContext, doI18n, getJson, debugContext, postJson, Header} from "pithekos-lib";
 import { FilePicker } from 'react-file-picker';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 
 function UsfmImport() {
 
     const {i18nRef} = useContext(i18nContext);
+    const {debugRef} = useContext(debugContext);
     const [loading, setLoading] = useState(false);
-    const [usfmImportAnchorEl, setUsfmImportAnchorEl] = useState(null);
+    const [usfmImportAnchorEl, setUsfmImportAnchorEl] = useState(true);
     const usfmImportOpen = Boolean(usfmImportAnchorEl);
+    const [filePicked, setFilePicked] = useState({});
     const [localBookContent, setLocalBookContent] = useState();
     const [repoBooks, setRepoBooks] = useState([]);
-    const [repoPath, setRepoPath] = useState([])
+    const [repoPath, setRepoPath] = useState([]);
+    const [isUsfmValid, setIsUsfmValid] = useState(false);
 
     const getProjectSummaries = async () => {
         const hash = window.location.hash;
@@ -35,7 +42,6 @@ function UsfmImport() {
         } else {
             console.error(`${doI18n("pages:core-contenthandler_text_translation:error_data", i18nRef.current)}`);
         }
-
     };
 
     const handleFilePicked = (fileFromPicker) => {
@@ -55,6 +61,24 @@ function UsfmImport() {
       reader.readAsText(fileFromPicker);
     };
 
+    const handleClose = () => {
+        const url = window.location.search;
+        const params = new URLSearchParams(url);
+        const returnType = params.get("returntypepage");
+        if (returnType === "dashboard") {
+            window.location.href = "/clients/main";
+        } else {
+            window.location.href = "/clients/content";
+        }
+    };
+
+    const handleCloseCreate = async () => {
+        setUsfmImportAnchorEl(false);
+        setTimeout(() => {
+            window.location.href = '/clients/content';
+        },500);
+    };
+
     const handleCreateLocalBook = async (localBookContent, repoPath) => {
         if (!repoBooks.includes(localBookContent.split("toc1")[0].split(" ")[1])){
             const response = await postJson(
@@ -68,18 +92,30 @@ function UsfmImport() {
                 });
                 handleCloseCreate();
             } else {
-                setErrorMessage(`${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${response.status
-                    }`);
-                setErrorDialogOpen(true);
+                enqueueSnackbar(`${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${response.status}`, { variant: "error" });
             };
         }
     };
 
+    useEffect(
+        () => {
+            getProjectSummaries();
+        },
+        []
+    );
+
+    const usfmValidation = (file) => {
+        const regexForBookAbbr = /^\\id [A-Z0-9]{3}.*$/m;
+        if (regexForBookAbbr.test(file) && file.includes("\\mt") && file.includes("\\c") && file.includes("\\v")){
+            setIsUsfmValid(true);
+        } else {
+            setIsUsfmValid(false);
+        }
+    };
+
     useEffect(() => {
-        if (localBookContent && !repoBooks.includes(localBookContent.split("toc1")[0].split(" ")[1])){
-            setBookCode(localBookContent.split("toc1")[0].split(" ")[1]);
-            setBookTitle(localBookContent.split("\\toc2")[0].split("\\toc1")[1].split(" ")[1]);
-            setBookAbbr(localBookContent.split("toc1")[0].split(" ")[1]);
+        if (localBookContent){
+            usfmValidation(localBookContent);
         }
     },[localBookContent])
   
@@ -105,19 +141,36 @@ function UsfmImport() {
             requireNet={false}
         />
           <Dialog
+              fullWidth={true}
               open={usfmImportOpen}
-              onClose={() => {setLocalBookContent(null); setUsfmImportAnchorEl(null)}}
+              onClose={() => {setLocalBookContent(null); setUsfmImportAnchorEl(null); handleClose()}}
+              sx={{
+                backdropFilter: "blur(3px)",
+              }}
               slotProps={{
                   paper: {
-                      component: 'form',
-                  },
+                      component: 'form'
+                  }
               }}
           >
-            <DialogTitle sx={{ backgroundColor: 'secondary.main' }}><b>{doI18n("pages:core-contenthandler_text_translation:import_content", i18nRef.current)}</b></DialogTitle>
+            <AppBar
+                color="secondary"
+                sx={{
+                    position: "relative",
+                    borderTopLeftRadius: 4,
+                    borderTopRightRadius: 4,
+                }}
+            >
+                <Toolbar>
+                    <Typography variant="h6" component="div">
+                        {doI18n("pages:core-contenthandler_text_translation:import_content", i18nRef.current)}
+                    </Typography>
+                </Toolbar>
+            </AppBar>
             <DialogContent sx={{ mt: 1 }}>
                 <FilePicker
                   extensions={['usfm', 'sfm', 'txt']}
-                  onChange={handleFilePicked}
+                  onChange={(file) => {handleFilePicked(file); setFilePicked(file)}}
                   onError={error => {console.error(error); setLoading(false);}}
                 >
                   <Button 
@@ -128,15 +181,19 @@ function UsfmImport() {
                     component="span"
                     startIcon={<UploadFileIcon />}
                   >
-                    {loading ? 'Reading File...' : doI18n("pages:core-contenthandler_text_translation:import", i18nRef.current)}
+                    {loading ? 'Reading File...' : (filePicked.name ? filePicked.name : doI18n("pages:core-contenthandler_text_translation:import", i18nRef.current))}
                   </Button>
                 </FilePicker>    
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => {setLocalBookContent(null); setUsfmImportAnchorEl(null)}}>
+                <Button onClick={() => {setLocalBookContent(null); setUsfmImportAnchorEl(null); handleClose()}}>
                     {doI18n("pages:core-contenthandler_text_translation:cancel", i18nRef.current)}
                 </Button>
-                <Tooltip open={localBookContent ? repoBooks.includes(localBookContent.split("toc1")[0].split(" ")[1]) : false} title="Book already exists">
+                <Tooltip 
+                    open={localBookContent ? (repoBooks.includes(localBookContent.split("toc1")[0].split(" ")[1]) || !isUsfmValid) : false} 
+                    title={!isUsfmValid ? doI18n("pages:core-contenthandler_text_translation:usfm_invalid", i18nRef.current) : doI18n("pages:core-contenthandler_text_translation:book_already_exists", i18nRef.current)}
+                    placement="top-end"
+                >
                   <Button
                       variant="contained"
                       color="primary"
@@ -144,7 +201,7 @@ function UsfmImport() {
                         handleCreateLocalBook(localBookContent, repoPath)
                         setUsfmImportAnchorEl(null);
                       }}
-                      disabled={localBookContent ? repoBooks.includes(localBookContent.split("toc1")[0].split(" ")[1]) : false}
+                      disabled={localBookContent ? (repoBooks.includes(localBookContent.split("toc1")[0].split(" ")[1]) || !isUsfmValid) : false}
                   >
                     {doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}
                   </Button>

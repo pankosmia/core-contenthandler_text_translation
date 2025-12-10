@@ -31,7 +31,6 @@ import {
 } from "pithekos-lib";
 import sx from "./Selection.styles";
 import ListMenuItem from "./ListMenuItem";
-import UsfmImport from "./Import/UsfmImport"
 
 export default function NewTextTranslationBook() {
     const [addCV, setAddCV] = useState(true);
@@ -50,8 +49,6 @@ export default function NewTextTranslationBook() {
     const [versification, setVersification] = useState("eng");
     const [versificationCodes, setVersificationCodes] = useState([]);
     const [fileVrs, setFileVrs] = useState(false);
-
-    const [localBookContent, setLocalBookContent] = useState();
 
     const getProjectSummaries = async () => {
         const hash = window.location.hash;
@@ -170,37 +167,10 @@ export default function NewTextTranslationBook() {
         };
 
     };
-    const handleCreateLocalBook = async (localBookContent, repoPath) => {
-        if (!bookName.includes(localBookContent.split("toc1")[0].split(" ")[1])){
-            const response = await postJson(
-                `/burrito/ingredient/raw/${repoPath}?ipath=${`${localBookContent.split("toc1")[0].split(" ")[1]}.usfm`}&update_ingredients`,
-                JSON.stringify({"payload": localBookContent}),
-                debugRef.current
-            );
-            if (response.ok) {
-                enqueueSnackbar(doI18n("pages:core-contenthandler_text_translation:book_created", i18nRef.current), {
-                    variant: "success",
-                });
-                handleCloseCreate();
-            } else {
-                setErrorMessage(`${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${response.status
-                    }`);
-                setErrorDialogOpen(true);
-            };
-        }
-    };
     const handleCloseErrorDialog = () => {
         setErrorDialogOpen(false);
         handleClose();
     };
-
-    useEffect(() => {
-        if (localBookContent && !bookName.includes(localBookContent.split("toc1")[0].split(" ")[1])){
-            setBookCode(localBookContent.split("toc1")[0].split(" ")[1]);
-            setBookTitle(localBookContent.split("\\toc2")[0].split("\\toc1")[1].split(" ")[1]);
-            setBookAbbr(localBookContent.split("toc1")[0].split(" ")[1]);
-        }
-    },[localBookContent])
 
     return (
         <Box>
@@ -371,15 +341,6 @@ export default function NewTextTranslationBook() {
                                 }}
                             />
                         </Grid2>
-                        <Grid2 item size={4}>
-                            <Button
-                                color="secondary"
-                                variant="contained"
-                                onClick={() => setUsfmImportAnchorEl(true)}
-                            >
-                                {doI18n("pages:core-contenthandler_text_translation:import_local_book",i18nRef.current)}
-                            </Button>
-                        </Grid2>
                     </Grid2>
                     <FormGroup>
                         <FormControlLabel
@@ -444,14 +405,6 @@ export default function NewTextTranslationBook() {
                     </Button>
                 </DialogActions>
             </Dialog>
-            {/* <UsfmImport
-                
-                localBookContent={localBookContent}
-                setLocalBookContent={setLocalBookContent}
-                handleCreateLocalBook={handleCreateLocalBook}
-                repoPath={repoPath}
-                repoBooks={bookName}
-            /> */}
         </Box>
     );
 }

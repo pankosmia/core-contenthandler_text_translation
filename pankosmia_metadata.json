@@ -338,15 +338,21 @@
       "id": "Impor dari komputer"
     },
     "import": {
-      "en": "Import",
-      "es": "Importar",
-      "fr": "Importer",
-      "id": "Impor"
+      "en": "Upload a USFM file",
+      "es": "Subir archivo USFM"
     },
     "cancel": {
       "en": "CANCEL",
       "es": "CANCELAR",
       "id": "BATAL"
+    },
+    "book_already_exists": {
+      "en": "This book already exists in this project",
+      "es": "Este libro ya existe en este projecto"
+    },
+    "usfm_invalid": {
+      "en": "This Usfm is not valid",
+      "es": "Este Usfm no es válido"
     }
   }
 }
