@@ -14,6 +14,7 @@ import { enqueueSnackbar } from "notistack";
 import {i18nContext, doI18n, getJson, debugContext, postJson, Header} from "pithekos-lib";
 import { FilePicker } from 'react-file-picker';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
+import {Proskomma} from "proskomma-core";
 
 function UsfmImport() {
 
@@ -27,6 +28,18 @@ function UsfmImport() {
     const [repoBooks, setRepoBooks] = useState([]);
     const [repoPath, setRepoPath] = useState([]);
     const [isUsfmValid, setIsUsfmValid] = useState(false);
+    const [validationResult, setValidationResult] =  useState({});
+    const pk = new Proskomma();
+    const initialQuery = `{
+        id
+        processor
+        documents {
+          id
+          book: header(id: "bookCode")
+          title: header(id: "toc")
+          mainBlocksText
+        }
+      }`;
 
     const getProjectSummaries = async () => {
         const hash = window.location.hash;
@@ -45,6 +58,7 @@ function UsfmImport() {
     };
 
     const handleFilePicked = (fileFromPicker) => {
+      setValidationResult({});
       const reader = new FileReader();
       reader.onloadstart = () => {
           setLoading(true);
@@ -115,9 +129,26 @@ function UsfmImport() {
 
     useEffect(() => {
         if (localBookContent){
+
             usfmValidation(localBookContent);
         }
     },[localBookContent])
+
+    useEffect(() => {
+        if (isUsfmValid){
+            try {
+                pk.importDocument({lang: "eng", abbr: `${localBookContent.split("toc1")[0].split(" ")[1]}`}, `${filePicked.name.split(".")[1]}`, localBookContent);
+                try {
+                    const res = pk.gqlQuerySync(initialQuery);
+                    setValidationResult(res);
+                } catch (error) {
+                    console.error("An error occurred while a query on the instance:", error.message);
+                }
+            } catch (error) {
+                console.error("An error occurred while validating the USFM:", error.message);
+            }
+        }
+    },[isUsfmValid])
   
     return (
       <Box>
@@ -183,7 +214,8 @@ function UsfmImport() {
                   >
                     {loading ? 'Reading File...' : (filePicked.name ? filePicked.name : doI18n("pages:core-contenthandler_text_translation:import_click", i18nRef.current))}
                   </Button>
-                </FilePicker>    
+                </FilePicker>
+                {Object.keys(validationResult).length > 0 && <div><pre>{JSON.stringify(validationResult, null, 2)}</pre></div> }
             </DialogContent>
             <DialogActions>
                 <Button onClick={() => {setLocalBookContent(null); setUsfmImportAnchorEl(null); handleClose()}}>
