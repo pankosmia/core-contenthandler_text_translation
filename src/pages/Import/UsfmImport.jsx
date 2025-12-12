@@ -31,13 +31,12 @@ function UsfmImport() {
     const [validationResult, setValidationResult] =  useState({});
     const pk = new Proskomma();
     const initialQuery = `{
-        id
-        processor
         documents {
           id
-          book: header(id: "bookCode")
-          title: header(id: "toc")
-          mainBlocksText
+          headers {key value}
+          cvIndexes {
+            chapter
+          }
         }
       }`;
 
