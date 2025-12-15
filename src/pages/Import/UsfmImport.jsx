@@ -30,6 +30,7 @@ function UsfmImport() {
     const [repoPath, setRepoPath] = useState([]);
     const [isUsfmValid, setIsUsfmValid] = useState(false);
     const [validationResult, setValidationResult] =  useState({});
+    const [bookIsDuplicate, setBookIsDuplicate] = useState(false);
     const pk = new Proskomma();
     const initialQuery = `{
         documents {
@@ -40,9 +41,9 @@ function UsfmImport() {
           }
         }
       }`;
-    const bookCode = Object.keys(validationResult).length > 0 ? validationResult.data.documents.headers?.find(header => header.key === 'bookCode') : [];
-    const title = Object.keys(validationResult).length > 0 ? validationResult.data.documents.headers?.find(header => header.key === 'h') : [];
-    const cvIndexes = Object.keys(validationResult).length > 0 ? validationResult.data.documents.headers?.find(header => header.key === 'cvIndexes') : [];
+    const bookCode = Object.keys(validationResult).length > 0 ? validationResult.data.documents[0].headers?.find(header => header.key === 'bookCode') : {};
+    const title = Object.keys(validationResult).length > 0 ? validationResult.data.documents[0].headers?.find(header => header.key === 'h') : {};
+    const cvIndexes = Object.keys(validationResult).length > 0 ? validationResult.data.documents[0].cvIndexes : [];
 
     const getProjectSummaries = async () => {
         const hash = window.location.hash;
@@ -121,6 +122,12 @@ function UsfmImport() {
         []
     );
 
+    useEffect(() => {
+        if (repoBooks.length > 0 && localBookContent && bookCode) {
+            setBookIsDuplicate(repoBooks.includes(bookCode.value));
+        }
+    },[repoBooks, localBookContent, bookCode])
+
     const usfmValidation = (file) => {
         const regexForBookAbbr = /^\\id [A-Z0-9]{3}.*$/m;
         setIsUsfmValid(regexForBookAbbr.test(file) && file.includes("\\mt") && file.includes("\\c") && file.includes("\\v"));
@@ -128,10 +135,9 @@ function UsfmImport() {
 
     useEffect(() => {
         if (localBookContent){
-
             usfmValidation(localBookContent);
         }
-    },[localBookContent])
+    },[localBookContent]);
 
     useEffect(() => {
         if (isUsfmValid){
@@ -201,7 +207,7 @@ function UsfmImport() {
                 <FilePicker
                   extensions={['usfm', 'sfm', 'txt']}
                   onChange={(file) => {handleFilePicked(file); setFilePicked(file)}}
-                  onError={error => {console.error(error); setLoading(false);}}
+                  onError={error => {enqueueSnackbar(`${error}`, {variant: "error",}); setLoading(false);}}
                 >
                   <Button 
                     type="button" 
@@ -214,17 +220,17 @@ function UsfmImport() {
                     {loading ? 'Reading File...' : (filePicked.name ? filePicked.name : doI18n("pages:core-contenthandler_text_translation:import_click", i18nRef.current))}
                   </Button>
                 </FilePicker>
-                {Object.keys(validationResult).length > 0 && 
-                    <Stack>
+                {(Object.keys(validationResult).length > 0 && !bookIsDuplicate) && 
+                    <Stack spacing={2} sx={{mt:0.5}}>
                         <Typography variant="body1">
                             {`Book Code: ${JSON.stringify(bookCode?.value, null, 2)}`}
                         </Typography>
                         <Typography variant="body1">
                             {`Title: ${JSON.stringify(title?.value, null, 2)}`}
                         </Typography>
-                        {/* <Typography variant="body1">
+                        <Typography variant="body1">
                             {`Chapters from ${JSON.stringify(cvIndexes[0]?.chapter, null, 2)} to ${JSON.stringify(cvIndexes[cvIndexes.length - 1]?.chapter, null, 2)}`}
-                        </Typography> */}
+                        </Typography>
                     </Stack>
                 }
             </DialogContent>
@@ -233,7 +239,7 @@ function UsfmImport() {
                     {doI18n("pages:core-contenthandler_text_translation:cancel", i18nRef.current)}
                 </Button>
                 <Tooltip 
-                    open={localBookContent ? (repoBooks.includes(localBookContent.split("toc1")[0].split(" ")[1]) || !isUsfmValid) : false} 
+                    open={localBookContent ? (bookIsDuplicate || !isUsfmValid) : false} 
                     title={!isUsfmValid ? doI18n("pages:core-contenthandler_text_translation:usfm_invalid", i18nRef.current) : doI18n("pages:core-contenthandler_text_translation:book_already_exists", i18nRef.current)}
                     placement="top-end"
                 >
@@ -244,7 +250,7 @@ function UsfmImport() {
                         handleCreateLocalBook(localBookContent, repoPath)
                         setUsfmImportAnchorEl(null);
                       }}
-                      disabled={localBookContent ? (repoBooks.includes(localBookContent.split("toc1")[0].split(" ")[1]) || !isUsfmValid) : false}
+                      disabled={localBookContent ? (bookIsDuplicate || !isUsfmValid) : false}
                   >
                     {doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}
                   </Button>
