@@ -8,7 +8,8 @@ import {
     Box,
     AppBar,
     Toolbar,
-    Typography
+    Typography,
+    Stack
 } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
 import {i18nContext, doI18n, getJson, debugContext, postJson, Header} from "pithekos-lib";
@@ -39,6 +40,9 @@ function UsfmImport() {
           }
         }
       }`;
+    const bookCode = Object.keys(validationResult).length > 0 ? validationResult.data.documents.headers?.find(header => header.key === 'bookCode') : [];
+    const title = Object.keys(validationResult).length > 0 ? validationResult.data.documents.headers?.find(header => header.key === 'h') : [];
+    const cvIndexes = Object.keys(validationResult).length > 0 ? validationResult.data.documents.headers?.find(header => header.key === 'cvIndexes') : [];
 
     const getProjectSummaries = async () => {
         const hash = window.location.hash;
@@ -119,11 +123,7 @@ function UsfmImport() {
 
     const usfmValidation = (file) => {
         const regexForBookAbbr = /^\\id [A-Z0-9]{3}.*$/m;
-        if (regexForBookAbbr.test(file) && file.includes("\\mt") && file.includes("\\c") && file.includes("\\v")){
-            setIsUsfmValid(true);
-        } else {
-            setIsUsfmValid(false);
-        }
+        setIsUsfmValid(regexForBookAbbr.test(file) && file.includes("\\mt") && file.includes("\\c") && file.includes("\\v"));
     };
 
     useEffect(() => {
@@ -214,7 +214,19 @@ function UsfmImport() {
                     {loading ? 'Reading File...' : (filePicked.name ? filePicked.name : doI18n("pages:core-contenthandler_text_translation:import_click", i18nRef.current))}
                   </Button>
                 </FilePicker>
-                {Object.keys(validationResult).length > 0 && <div><pre>{JSON.stringify(validationResult, null, 2)}</pre></div> }
+                {Object.keys(validationResult).length > 0 && 
+                    <Stack>
+                        <Typography variant="body1">
+                            {`Book Code: ${JSON.stringify(bookCode?.value, null, 2)}`}
+                        </Typography>
+                        <Typography variant="body1">
+                            {`Title: ${JSON.stringify(title?.value, null, 2)}`}
+                        </Typography>
+                        {/* <Typography variant="body1">
+                            {`Chapters from ${JSON.stringify(cvIndexes[0]?.chapter, null, 2)} to ${JSON.stringify(cvIndexes[cvIndexes.length - 1]?.chapter, null, 2)}`}
+                        </Typography> */}
+                    </Stack>
+                }
             </DialogContent>
             <DialogActions>
                 <Button onClick={() => {setLocalBookContent(null); setUsfmImportAnchorEl(null); handleClose()}}>
