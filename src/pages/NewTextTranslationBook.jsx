@@ -156,12 +156,12 @@ export default function NewTextTranslationBook() {
             debugRef.current
         );
         if (response.ok) {
-            enqueueSnackbar(doI18n("pages:content:book_created", i18nRef.current), {
+            enqueueSnackbar(doI18n("pages:core-contenthandler_text_translation:book_created", i18nRef.current), {
                 variant: "success",
             });
             handleCloseCreate();
         } else {
-            setErrorMessage(`${doI18n("pages:content:book_creation_error", i18nRef.current)}: ${response.status
+            setErrorMessage(`${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${response.status
                 }`);
             setErrorDialogOpen(true);
         };
@@ -189,8 +189,8 @@ export default function NewTextTranslationBook() {
                 }}
             />
             <Header
-                titleKey="pages:content:title"
-                currentId="content"
+                titleKey="pages:core-contenthandler_text_translation:title"
+                currentId="core-contenthandler_text_translation"
                 requireNet={false}
             />
             <Dialog
@@ -211,20 +211,20 @@ export default function NewTextTranslationBook() {
                 >
                     <Toolbar>
                         <Typography variant="h6" component="div">
-                            {doI18n("pages:content:new_book", i18nRef.current)}
+                            {doI18n("pages:core-contenthandler_text_translation:new_book", i18nRef.current)}
                         </Typography>
                     </Toolbar>
                 </AppBar>
                 <Typography variant="subtitle2" sx={{ ml: 1, p: 1 }}>
                     {" "}
-                    {doI18n(`pages:content:required_field`, i18nRef.current)}
+                    {doI18n(`pages:core-contenthandler_text_translation:required_field`, i18nRef.current)}
                 </Typography>
                 <Stack spacing={2} sx={{ m: 2 }}>
                     {fileVrs === false ? (
                         <FormControl>
                             <InputLabel id="booksVersification-label" required htmlFor="booksVersification"
                                 sx={sx.inputLabel}>
-                                {doI18n("pages:content:versification_scheme", i18nRef.current)}
+                                {doI18n("pages:core-contenthandler_text_translation:versification_scheme", i18nRef.current)}
                             </InputLabel>
                             <Select
                                 variant="outlined"
@@ -235,7 +235,7 @@ export default function NewTextTranslationBook() {
                                     id: "bookVersification",
                                 }}
                                 value={versification}
-                                label={doI18n("pages:content:versification_scheme", i18nRef.current)}
+                                label={doI18n("pages:core-contenthandler_text_translation:versification_scheme", i18nRef.current)}
                                 onChange={(event) => {
                                     setVersification(event.target.value);
                                 }}
@@ -267,7 +267,7 @@ export default function NewTextTranslationBook() {
                                     htmlFor="bookCode"
                                     sx={sx.inputLabel}
                                 >
-                                    {doI18n("pages:content:book_code", i18nRef.current)}
+                                    {doI18n("pages:core-contenthandler_text_translation:book_code", i18nRef.current)}
                                 </InputLabel>
                                 <Select
                                     variant="outlined"
@@ -278,7 +278,7 @@ export default function NewTextTranslationBook() {
                                         id: "bookCode",
                                     }}
                                     value={bookCode}
-                                    label={doI18n("pages:content:book_code", i18nRef.current)}
+                                    label={doI18n("pages:core-contenthandler_text_translation:book_code", i18nRef.current)}
                                     onChange={(event) => {
                                         setBookCode(event.target.value);
                                         setBookAbbr(
@@ -322,7 +322,7 @@ export default function NewTextTranslationBook() {
                                 id="bookAbbr"
                                 required
                                 sx={{ width: "100%" }}
-                                label={doI18n("pages:content:book_abbr", i18nRef.current)}
+                                label={doI18n("pages:core-contenthandler_text_translation:book_abbr", i18nRef.current)}
                                 value={bookAbbr}
                                 onChange={(event) => {
                                     setBookAbbr(event.target.value);
@@ -334,7 +334,7 @@ export default function NewTextTranslationBook() {
                                 id="bookTitle"
                                 required
                                 sx={{ width: "100%" }}
-                                label={doI18n("pages:content:book_title", i18nRef.current)}
+                                label={doI18n("pages:core-contenthandler_text_translation:book_title", i18nRef.current)}
                                 value={bookTitle}
                                 onChange={(event) => {
                                     setBookTitle(event.target.value);
@@ -352,7 +352,7 @@ export default function NewTextTranslationBook() {
                                 />
                             }
                             label={doI18n(
-                                "pages:content:protestant_books_only",
+                                "pages:core-contenthandler_text_translation:protestant_books_only",
                                 i18nRef.current
                             )}
                         />
@@ -367,7 +367,7 @@ export default function NewTextTranslationBook() {
                                 />
                             }
                             label={doI18n(
-                                "pages:content:add_versification_checkbox",
+                                "pages:core-contenthandler_text_translation:add_versification_checkbox",
                                 i18nRef.current
                             )}
                         />
@@ -375,7 +375,7 @@ export default function NewTextTranslationBook() {
                 </Stack>
                 <DialogActions>
                     <Button onClick={() => handleClose()} color="primary">
-                        {doI18n("pages:content:close", i18nRef.current)}
+                        {doI18n("pages:core-contenthandler_text_translation:close", i18nRef.current)}
                     </Button>
                     <Button
                         autoFocus
@@ -390,7 +390,7 @@ export default function NewTextTranslationBook() {
                         }
                         onClick={() => handleCreate()}
                     >
-                        {doI18n("pages:content:create", i18nRef.current)}
+                        {doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -401,7 +401,7 @@ export default function NewTextTranslationBook() {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => handleCloseErrorDialog()} variant="contained" color="primary">
-                        {doI18n("pages:content:close", i18nRef.current)}
+                        {doI18n("pages:core-contenthandler_text_translation:close", i18nRef.current)}
                     </Button>
                 </DialogActions>
             </Dialog>

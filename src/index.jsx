@@ -7,6 +7,7 @@ import NewTextTranslationBook from "./pages/NewTextTranslationBook";
 import ZipExport from "./pages/Export/ZipExport";
 import UsfmExport from "./pages/Export/UsfmExport";
 import PdfGenerate from "./pages/Export/PdfGenerate";
+import UsfmImport from "./pages/Import/UsfmImport";
 import App from "./App";
 
 const router = createHashRouter([
@@ -21,6 +22,10 @@ const router = createHashRouter([
     {
         path:"newBook",
         element:<NewTextTranslationBook/>
+    },
+    {
+        path:"importBook",
+        element:<UsfmImport/>
     },
     {
         path:"/export/zip",
