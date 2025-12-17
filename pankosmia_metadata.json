@@ -101,6 +101,7 @@
     },
     "name_is_taken": {
       "en": "The name is already taken",
+      "fr": "Ce nom est déjà pris",
       "es": "El nombre ya está en uso"
     },
     "error_data":{
@@ -124,152 +125,177 @@
       "fr": "Livre"
     },
     "plan_content_radio": {
-      "en": "Plan",
-      "fr": "Plan"
+      "en": "Translation template",
+      "fr": "Template de traduction"
     },
     "select_plan": {
-      "en": "Choose a plan",
-      "fr": "Choisissez un plan"
+      "en": "Choose a template",
+      "fr": "Choisissez un template"
     },
     "could_not_fetch": {
-      "en": "Could not fetch",
-      "es": "No se pudo obtener",
-      "id": "Tidak dapat ambil"
+      "en": "Could not fetch data",
+      "es": "@No se pudo obtener",
+      "fr": "Les données n'ont pas pu être récupérées",
+      "id": "@Tidak dapat ambil"
     },
     "print": {
       "en": "Print",
+      "fr": "Imprimer",
       "id": "Cetak"
     },
     "pdf_preview": {
       "en": "PDF Preview",
+      "fr": "Prévisualisation PDF",
       "id": "Pratinjau PDF"
     },
     "export_as_usfm": {
-      "en": "Export Content as USFM",
-      "es": "Exportar Contenido como USFM",
-      "id": "Ekspor konten sebagai USFM"
+      "en": "Share as USFM",
+      "es": "@Exportar Contenido como USFM",
+      "fr": "Partager au format USFM",
+      "id": "@Ekspor konten sebagai USFM"
     },
     "export_as_zip": {
-      "en": "Export Content as ZIP",
-      "es": "Exportar Contenido como ZIP",
-      "id": "Ekspor Konten sebagai ZIP"
+      "en": "Share as ZIP",
+      "es": "@Exportar Contenido como ZIP",
+      "fr": "Partager au format ZIP",
+      "id": "@Ekspor Konten sebagai ZIP"
     },
     "generate_as_pdf": {
-      "en": "Generate a PDF",
-      "id": "Hasilkan PDF"
+      "en": "Share as PDF",
+      "fr": "Partager au format PDF",
+      "id": "@Hasilkan PDF"
     },
     "pick_one_book_export": {
-      "en": "Choose a book to export",
-      "es": "Elige uno libro para exportar",
-      "id": "Pilih buku buat diekspor"
+      "en": "Choose a book to share",
+      "es": "@Elige uno libro para exportar",
+      "fr": "Choisir un livre à partager",
+      "id": "@Pilih buku buat diekspor"
     },
     "export_zip": {
-      "en": "Export as ZIP",
-      "es": "Exportar como ZIP",
-      "id": "Ekspor sebagai ZIP"
+      "en": "Share as ZIP",
+      "es": "@Exportar como ZIP",
+      "fr": "Partager au format ZIP",
+      "id": "@Ekspor sebagai ZIP"
     },
     "export_usfm": {
-      "en": "Export as USFM",
-      "es": "Exportar como USFM",
-      "id": "Ekspor USFM"
+      "en": "Share as USFM",
+      "es": "@Exportar como USFM",
+      "fr": "Partager au format USFM",
+      "id": "@Ekspor USFM"
     },
     "export_pdf": {
-      "en": "Export as PDF",
-      "es": "Exportar como PDF",
-      "id": "Ekspor sebagai PDF"
+      "en": "Share as PDF",
+      "es": "@Exportar como PDF",
+      "fr": "Partager au format PDF",
+      "id": "@Ekspor sebagai PDF"
     },
     "show_by_verse": {
-      "en": "Show by verse",
-      "es": "Mostrar por versículos",
-      "id": "Tampil per ayat"
+      "en": "Format verse-by-verse",
+      "es": "@Mostrar por versículos",
+      "fr": "Formater verset par verset",
+      "id": "@Tampil per ayat"
     },
     "show_title": {
       "en": "Show title",
       "es": "Mostrar el título",
+      "fr": "Afficher le titre principal",
       "id": "Tampil judul utama"
     },
     "show_headings": {
       "en": "Show headings",
       "es": "Mostrar encabezados",
+      "fr": "Afficher les titres",
       "id": "Tampil judul-judul"
     },
     "show_introductions": {
       "en": "Show introductions",
       "es": "Mostrar introducciones",
+      "fr": "Afficher les introductions",
       "id": "Tampil pengantar-pengantar"
     },
     "show_footnotes": {
       "en": "Show footnotes",
       "es": "Mostrar notas a pie de página",
+      "fr": "Afficher les notes de bas de page",
       "id": "Tampil catatan kaki"
     },
     "show_xrefs": {
       "en": "Show cross references",
       "es": "Mostrar referencias cruzadas",
+      "fr": "Afficher les références croisées",
       "id": "Tampil referensi silang"
     },
     "show_para_styles": {
       "en": "Show paragraph styles",
       "es": "Mostrar estilos de párrafo",
+      "fr": "Afficher les styles de paragraphe",
       "id": "Tampil gaya paragraf"
     },
     "show_character_markup": {
-      "en": "Show character markup",
-      "es": "Mostrar el marcado de caracteres",
-      "id": "Tampil markup karakter"
+      "en": "Show character formatting marks",
+      "es": "@Mostrar el marcado de caracteres",
+      "fr": "Afficher les marques de formatage des caractères",
+      "id": "@Tampil markup karakter"
     },
     "show_chapter_labels": {
-      "en": "Show chapter labels",
-      "es": "Mostrar los nombres de los capítulos",
-      "id": "Tampil label fasal"
+      "en": "Show chapter numbers",
+      "es": "@Mostrar los nombres de los capítulos",
+      "fr": "Afficher les numéros de chapitre",
+      "id": "@Tampil label fasal"
     },
     "show_verses_labels": {
-      "en": "Show verses labels",
-      "es": "Mostrar los nomnbres de los versículos",
-      "id": "Tampil label ayat"
+      "en": "Show verse numbers",
+      "es": "@Mostrar los nomnbres de los versículos",
+      "fr": "Afficher les numéros de verset",
+      "id": "@Tampil label ayat"
     },
     "show_first_verse_label": {
-      "en": "Show first verse label",
-      "es": "Mostrar el nombre del primer versículo",
-      "id": "Tampil label ayat"
+      "en": "Show verse one",
+      "es": "@Mostrar el nombre del primer versículo",
+      "fr": "Afficher le verset un",
+      "id": "@Tampil label ayat"
     },
     "number_of_columns": {
       "en": "Select the number of columns",
       "es": "Seleccione el número de columnas",
+      "fr": "Sélectionner le nombre de colonnes",
       "id": "Pilih jumlah kolum-kolum"
     },
     "export_label": {
-      "en": "EXPORT",
-      "es": "EXPORTAR",
-      "id": "EKSPOR"
+      "en": "Share",
+      "es": "@EXPORTAR",
+      "fr": "Partager",
+      "id": "@EKSPOR"
     },
     "no_books_selected": {
       "en": "No books were selected so nothing was exported",
-      "fr": "Aucun livre n'a été selectionné pour exportation",
+      "fr": "Aucun livre n'a été sélectionné pour exportation",
       "id": "Buku tidak ditentukan jadi tidak ada ekspor",
       "es": "No se seleccionaron libros así que no se exportó nada"
     },
     "export_all": {
-      "en": "Export all books",
-      "es": "Exportar todos los libros",
-      "id": "Ekspor semua buku"
+      "en": "Share all books",
+      "es": "@Exportar todos los libros",
+      "fr": "Partager tous les livres",
+      "id": "@Ekspor semua buku"
     },
     "pick_one_or_more_books_export": {
-      "en": "Choose one or more books to export",
-      "es": "Elige uno o más libros para exportar",
-      "id": "Pilih satuh lebih buku buat diekspor"
+      "en": "Choose one or more books to share",
+      "es": "@Elige uno o más libros para exportar",
+      "fr": "Choisir un ou des livres à partager",
+      "id": "@Pilih satuh lebih buku buat diekspor"
     },
     "book_created": {
       "en": "Book created",
-      "fr": "Livre crée",
+      "fr": "Livre créé",
       "id": "Buku telah dibuat",
       "es": "Libro creado"
     },
     "content_creation_error": {
-      "en": "An error occurred while attempting to create Content",
-      "fr": "Une erreur est survenue pendant la création du contenu",
-      "id": "Kesalahan terjadi sambil coba buat konten",
-      "es": "Ocurrió un error al intentar crear contenido"
+      "en": "The document could not be created",
+      "fr": "Le document n'a pas pu être créé",
+      "id": "@Kesalahan terjadi sambil coba buat konten",
+      "es": "@Ocurrió un error al intentar crear contenido"
     },
     "new_book": {
       "en": "New Book",
@@ -279,7 +305,7 @@
     },
     "required_field": {
       "en": "* Required fields",
-      "fr": "* champs obligatoires",
+      "fr": "* Champs obligatoires",
       "id": "* Data yg diperlukan",
       "es": "* Campos requeridos"
     },
@@ -287,7 +313,7 @@
       "en": "Versification scheme",
       "fr": "Schéma de versification",
       "id": "Skema ayat",
-      "es": "Esquema de verificación"
+      "es": "Esquema de versificación"
     },
     "book_code": {
       "en": "Book Code",
@@ -297,7 +323,7 @@
     },
     "book_abbr": {
       "en": "Book Abbreviation",
-      "fr": "Abbréviation du livre",
+      "fr": "Abréviation du livre",
       "id": "Singkatan Buku",
       "es": "Abreviación del libro"
     },
@@ -314,14 +340,14 @@
       "es": "Agregar capítulos y versículos vacíos"
     },
     "close": {
-      "en": "close",
-      "es": "cerrar",
-      "fr": "fermer",
-      "id": "tutup"
+      "en": "Close",
+      "es": "Cerrar",
+      "fr": "Fermer",
+      "id": "Tutup"
     },
     "protestant_books_only": {
       "en": "List protestant books only",
-      "fr": "Proposer uniquement les livres protestants",
+      "fr": "Lister uniquement les livres protestants",
       "id": "Cantum hanya buku Protestan",
       "es": "Listar únicamente los libros protestantes"
     },
@@ -333,8 +359,8 @@
     },
     "import_content": {
       "en": "Import from computer",
-      "es": "Cargar Contenido",
-      "fr": "Importer manuellement le Contenu",
+      "es": "@Cargar Contenido",
+      "fr": "Importer depuis l'ordinateur",
       "id": "Impor dari komputer"
     },
     "import": {
@@ -344,21 +370,25 @@
       "id": "Impor"
     },
     "cancel": {
-      "en": "CANCEL",
-      "es": "CANCELAR",
-      "id": "BATAL"
+      "en": "Cancel",
+      "es": "Cancelar",
+      "fr": "Annuler",
+      "id": "Batal"
     },
     "book_already_exists": {
-      "en": "This book already exists in this project",
-      "es": "Este libro ya existe en este projecto"
+      "en": "This book already exists",
+      "fr": "Ce livre existe déjà",
+      "es": "Este libro ya existe"
     },
     "usfm_invalid": {
-      "en": "This USFM is not valid",
-      "es": "Este USFM no es válido"
+      "en": "The file should be in the USFM format",
+      "fr": "Le fichier devrait être au format USFM",
+      "es": "@Este USFM no es válido"
     },
     "import_click": {
-      "en": "Upload USFM file",
-      "es": "Subir archivo USFM"
+      "en": "Import USFM file",
+      "fr": "Importer fichier USFM",
+      "es": "@Subir archivo USFM"
     }
   }
 }
