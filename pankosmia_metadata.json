@@ -12,7 +12,7 @@
       {
         "doc":"Create document for textTranslation Project",
         "placeHolders":{},
-        "label": "pages:content:create_content",
+        "label": "pages:core-contenthandler_text_translation:create_content_text_translation",
         "url": "/clients/core-contenthandler_text_translation#/createDocument/textTranslation"
       }
     ],
