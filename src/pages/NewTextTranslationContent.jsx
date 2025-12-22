@@ -146,7 +146,7 @@ export default function NewBibleContent() {
                 submittedVersification = planJson.versification;
             } else {
                 console.log(planResponse.error);
-                setErrorMessage(`${doI18n("pages:content:content_creation_error", i18nRef.current)}: ${planResponse.status}`);
+                setErrorMessage(`${doI18n("pages:core-contenthandler_text_translation:content_creation_error", i18nRef.current)}: ${planResponse.status}`);
                 setErrorDialogOpen(true);
                 return;
             }
@@ -172,7 +172,7 @@ export default function NewBibleContent() {
         if (response.ok) {
             setPostCount(postCount + 1);
         } else {
-            setErrorMessage(`${doI18n("pages:content:book_creation_error", i18nRef.current)}: ${response.status
+            setErrorMessage(`${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${response.status
                 }`);
             setErrorDialogOpen(true);
             return;
@@ -237,7 +237,7 @@ export default function NewBibleContent() {
                     JSON.stringify(payload)
                 );
                 if (!newBookResponse.ok) {
-                    setErrorMessage(`${doI18n("pages:content:book_creation_error", i18nRef.current)}: ${response.status
+                    setErrorMessage(`${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${response.status
                         }`);
                     setErrorDialogOpen(true);
                     return;
@@ -282,7 +282,7 @@ export default function NewBibleContent() {
                 <DialogContentText
                     variant='subtitle2'
                     sx={{ ml: 1, p: 1 }}>
-                    {doI18n(`pages:content:required_field`, i18nRef.current)}
+                    {doI18n(`pages:core-contenthandler_text_translation:required_field`, i18nRef.current)}
                 </DialogContentText>
 
                 <DialogContent
@@ -298,7 +298,7 @@ export default function NewBibleContent() {
                         <TextField
                             id="name"
                             required
-                            label={doI18n("pages:content:name", i18nRef.current)}
+                            label={doI18n("pages:core-contenthandler_text_translation:name", i18nRef.current)}
                             value={contentName}
                             onChange={(event) => {
                                 setContentName(event.target.value);
@@ -313,7 +313,7 @@ export default function NewBibleContent() {
                             <TextField
                                 id="abbr"
                                 required
-                                label={doI18n("pages:content:abbreviation", i18nRef.current)}
+                                label={doI18n("pages:core-contenthandler_text_translation:abbreviation", i18nRef.current)}
                                 value={contentAbbr}
                                 onChange={(event) => {
                                     setRepoExists(localRepos.map(l => l.split("/")[2]).includes(event.target.value));
@@ -326,7 +326,7 @@ export default function NewBibleContent() {
                             required
                             disabled={true}
                             sx={{ display: "none" }}
-                            label={doI18n("pages:content:type", i18nRef.current)}
+                            label={doI18n("pages:core-contenthandler_text_translation:type", i18nRef.current)}
                             value={contentType}
                             onChange={(event) => {
                                 setContentType(event.target.value);
@@ -335,7 +335,7 @@ export default function NewBibleContent() {
                         <TextField
                             id="languageCode"
                             required
-                            label={doI18n("pages:content:lang_code", i18nRef.current)}
+                            label={doI18n("pages:core-contenthandler_text_translation:lang_code", i18nRef.current)}
                             value={contentLanguageCode}
                             onChange={(event) => {
                                 setContentLanguageCode(event.target.value);
@@ -346,7 +346,7 @@ export default function NewBibleContent() {
                             <FormControl sx={{ width: "100%" }}>
                                 <InputLabel id="booksVersification-label" required htmlFor="booksVersification"
                                     sx={sx.inputLabel}>
-                                    {doI18n("pages:content:versification_scheme", i18nRef.current)}
+                                    {doI18n("pages:core-contenthandler_text_translation:versification_scheme", i18nRef.current)}
                                 </InputLabel>
                                 <Select
                                     variant="outlined"
@@ -357,7 +357,7 @@ export default function NewBibleContent() {
                                         id: "bookVersification",
                                     }}
                                     value={versification}
-                                    label={doI18n("pages:content:versification_scheme", i18nRef.current)}
+                                    label={doI18n("pages:core-contenthandler_text_translation:versification_scheme", i18nRef.current)}
                                     onChange={(event) => {
                                         setVersification(event.target.value);
                                     }}
@@ -402,7 +402,7 @@ export default function NewBibleContent() {
                                 <Grid2 item size={4}>
                                     <FormControl sx={{ width: "100%" }}>
                                         <InputLabel id="bookCode-label" required htmlFor="bookCode" sx={sx.inputLabel}>
-                                            {doI18n("pages:content:book_code", i18nRef.current)}
+                                            {doI18n("pages:core-contenthandler_text_translation:book_code", i18nRef.current)}
                                         </InputLabel>
                                         <Select
                                             variant="outlined"
@@ -412,7 +412,7 @@ export default function NewBibleContent() {
                                                 id: "bookCode",
                                             }}
                                             value={bookCode}
-                                            label={doI18n("pages:content:book_code", i18nRef.current)}
+                                            label={doI18n("pages:core-contenthandler_text_translation:book_code", i18nRef.current)}
                                             onChange={(event) => {
                                                 setBookCode(event.target.value);
                                                 setBookAbbr(
@@ -441,7 +441,7 @@ export default function NewBibleContent() {
                                         id="bookAbbr"
                                         required
                                         sx={{ width: "100%" }}
-                                        label={doI18n("pages:content:book_abbr", i18nRef.current)}
+                                        label={doI18n("pages:core-contenthandler_text_translation:book_abbr", i18nRef.current)}
                                         value={bookAbbr}
                                         onChange={(event) => {
                                             setBookAbbr(event.target.value);
@@ -453,7 +453,7 @@ export default function NewBibleContent() {
                                         id="bookTitle"
                                         required
                                         sx={{ width: "100%" }}
-                                        label={doI18n("pages:content:book_title", i18nRef.current)}
+                                        label={doI18n("pages:core-contenthandler_text_translation:book_title", i18nRef.current)}
                                         value={bookTitle}
                                         onChange={(event) => {
                                             setBookTitle(event.target.value);
@@ -469,7 +469,7 @@ export default function NewBibleContent() {
                                                 onChange={() => setProtestantOnly(!protestantOnly)}
                                             />
                                         }
-                                        label={doI18n("pages:content:protestant_books_only", i18nRef.current)}
+                                        label={doI18n("pages:core-contenthandler_text_translation:protestant_books_only", i18nRef.current)}
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -481,7 +481,7 @@ export default function NewBibleContent() {
                                                 onChange={() => setShowVersification(!showVersification)}
                                             />
                                         }
-                                        label={doI18n("pages:content:add_versification_checkbox", i18nRef.current)}
+                                        label={doI18n("pages:core-contenthandler_text_translation:add_versification_checkbox", i18nRef.current)}
                                     />
                                 </FormGroup>
                             </Grid2>
@@ -564,7 +564,7 @@ export default function NewBibleContent() {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseErrorDialog} variant="contained" color="primary">
-                        {doI18n("pages:content:close", i18nRef.current)}
+                        {doI18n("pages:core-contenthandler_text_translation:close", i18nRef.current)}
                     </Button>
                 </DialogActions>
             </Dialog>

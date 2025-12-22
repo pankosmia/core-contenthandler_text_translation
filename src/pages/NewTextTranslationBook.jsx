@@ -54,7 +54,7 @@ export default function NewTextTranslationBook() {
     const [versificationCodes, setVersificationCodes] = useState([]);
     const [fileVrs, setFileVrs] = useState(false);
     const [nameProject, setNameProject] = useState("");
-    console.log("nameProject", nameProject);
+   
     const getProjectSummaries = async () => {
         const hash = window.location.hash;
         const query = hash.includes('?') ? hash.split('?')[1] : '';
@@ -65,7 +65,6 @@ export default function NewTextTranslationBook() {
         if (summariesResponse.ok) {
             const data = summariesResponse.json;
             const bookCode = data.book_codes;
-            console.log("dara", data);
             setNameProject(data.name);
             setBookName(bookCode);
         } else {
@@ -203,10 +202,9 @@ export default function NewTextTranslationBook() {
             <PanDialog
                 titleLabel={`${doI18n("pages:core-contenthandler_text_translation:new_book", i18nRef.current)} - ${nameProject}`}
                 isOpen={open}
-                closeFn={() => handleCloseCreate()}
+                closeFn={() => handleClose()}
             >
                 <DialogContentText sx={{ ml: 1, p: 1 }} variant='subtitle2'>
-                    {" "}
                     {doI18n(`pages:core-contenthandler_text_translation:required_field`, i18nRef.current)}
                 </DialogContentText>
                 <DialogContent>
