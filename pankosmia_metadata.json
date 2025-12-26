@@ -389,6 +389,30 @@
       "en": "Import USFM file",
       "fr": "Importer fichier USFM",
       "es": "@Subir archivo USFM"
+    },
+    "name": {
+      "en": "Document name",
+      "es": "@Nombre",
+      "fr": "Nom du document",
+      "id": "@Nama"
+    },
+    "abbreviation": {
+      "en": "Abbreviation",
+      "es": "Abreviación",
+      "fr": "Abréviation",
+      "id": "Singkatan"
+    },
+    "type": {
+      "en": "Type",
+      "es": "Tipo",
+      "fr": "Type",
+      "id": "Jenis"
+    },
+    "lang_code": {
+      "en": "Language Code ('und' for undetermined)",
+      "es": "Código del Idioma (si no está determinado, use 'und')",
+      "fr": "Code Langue (si non déterminé, utilisez 'und')",
+      "id": "Kode Bahasa ('und' buat yg tak dpt ditentukan)"
     }
   }
 }
