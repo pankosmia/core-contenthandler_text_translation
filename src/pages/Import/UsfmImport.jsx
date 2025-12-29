@@ -1,26 +1,22 @@
-import {useContext, useState, useEffect} from 'react';
+import { useContext, useState, useEffect } from 'react';
 import {
     Button,
-    Dialog,
-    DialogActions,
     DialogContent,
-    Tooltip,
     Box,
-    AppBar,
-    Toolbar,
     Typography,
     Stack
 } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
-import {i18nContext, doI18n, getJson, debugContext, postJson, Header} from "pithekos-lib";
+import { i18nContext, doI18n, getJson, debugContext, postJson, Header } from "pithekos-lib";
 import { FilePicker } from 'react-file-picker';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
-import {Proskomma} from "proskomma-core";
+import { Proskomma } from "proskomma-core";
+import { PanDialog, PanDialogActions } from 'pankosmia-rcl';
 
 function UsfmImport() {
 
-    const {i18nRef} = useContext(i18nContext);
-    const {debugRef} = useContext(debugContext);
+    const { i18nRef } = useContext(i18nContext);
+    const { debugRef } = useContext(debugContext);
     const [loading, setLoading] = useState(false);
     const [usfmImportAnchorEl, setUsfmImportAnchorEl] = useState(true);
     const usfmImportOpen = Boolean(usfmImportAnchorEl);
@@ -29,7 +25,7 @@ function UsfmImport() {
     const [repoBooks, setRepoBooks] = useState([]);
     const [repoPath, setRepoPath] = useState([]);
     const [isUsfmValid, setIsUsfmValid] = useState(false);
-    const [validationResult, setValidationResult] =  useState({});
+    const [validationResult, setValidationResult] = useState({});
     const [bookIsDuplicate, setBookIsDuplicate] = useState(false);
     const pk = new Proskomma();
     const initialQuery = `{
@@ -62,21 +58,21 @@ function UsfmImport() {
     };
 
     const handleFilePicked = (fileFromPicker) => {
-      setValidationResult({});
-      const reader = new FileReader();
-      reader.onloadstart = () => {
-          setLoading(true);
-      };
-      reader.onload = (event) => {
-        const fileContent = event.target.result;
-        setLocalBookContent(fileContent);
-        setLoading(false);
-      };
-      reader.onerror = (error) => {
-        console.error("Error reading file:", error);
-        setLoading(false);
-      };
-      reader.readAsText(fileFromPicker);
+        setValidationResult({});
+        const reader = new FileReader();
+        reader.onloadstart = () => {
+            setLoading(true);
+        };
+        reader.onload = (event) => {
+            const fileContent = event.target.result;
+            setLocalBookContent(fileContent);
+            setLoading(false);
+        };
+        reader.onerror = (error) => {
+            console.error("Error reading file:", error);
+            setLoading(false);
+        };
+        reader.readAsText(fileFromPicker);
     };
 
     const handleClose = () => {
@@ -94,14 +90,14 @@ function UsfmImport() {
         setUsfmImportAnchorEl(false);
         setTimeout(() => {
             window.location.href = '/clients/content';
-        },500);
+        }, 500);
     };
 
     const handleCreateLocalBook = async (localBookContent, repoPath) => {
-        if (!repoBooks.includes(localBookContent.split("toc1")[0].split(" ")[1])){
+        if (!repoBooks.includes(localBookContent.split("toc1")[0].split(" ")[1])) {
             const response = await postJson(
                 `/burrito/ingredient/raw/${repoPath}?ipath=${`${localBookContent.split("toc1")[0].split(" ")[1]}.usfm`}&update_ingredients`,
-                JSON.stringify({"payload": localBookContent}),
+                JSON.stringify({ "payload": localBookContent }),
                 debugRef.current
             );
             if (response.ok) {
@@ -126,7 +122,7 @@ function UsfmImport() {
         if (repoBooks.length > 0 && localBookContent && bookCode) {
             setBookIsDuplicate(repoBooks.includes(bookCode.value));
         }
-    },[repoBooks, localBookContent, bookCode])
+    }, [repoBooks, localBookContent, bookCode])
 
     const usfmValidation = (file) => {
         const regexForBookAbbr = /^\\id [A-Z0-9]{3}.*$/m;
@@ -134,15 +130,15 @@ function UsfmImport() {
     };
 
     useEffect(() => {
-        if (localBookContent){
+        if (localBookContent) {
             usfmValidation(localBookContent);
         }
-    },[localBookContent]);
+    }, [localBookContent]);
 
     useEffect(() => {
-        if (isUsfmValid){
+        if (isUsfmValid) {
             try {
-                pk.importDocument({lang: "eng", abbr: `${localBookContent.split("toc1")[0].split(" ")[1]}`}, `${filePicked.name.split(".")[1]}`, localBookContent);
+                pk.importDocument({ lang: "eng", abbr: `${localBookContent.split("toc1")[0].split(" ")[1]}` }, `${filePicked.name.split(".")[1]}`, localBookContent);
                 try {
                     const res = pk.gqlQuerySync(initialQuery);
                     setValidationResult(res);
@@ -153,111 +149,78 @@ function UsfmImport() {
                 console.error("An error occurred while validating the USFM:", error.message);
             }
         }
-    },[isUsfmValid])
-  
+    }, [isUsfmValid])
+
     return (
-      <Box>
-        <Box
-            sx={{
-                position: "absolute",
-                width: "100%",
-                height: "100%",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                zIndex: -1,
-                backgroundImage:
-                    'url("/app-resources/pages/content/background_blur.png")',
-                backgroundRepeat: "no-repeat",
-                backdropFilter: "blur(3px)",
-            }}
-        />
-        <Header
-            titleKey="pages:core-contenthandler_text_translation:title"
-            currentId="core-contenthandler_text_translation"
-            requireNet={false}
-        />
-          <Dialog
-              fullWidth={true}
-              open={usfmImportOpen}
-              onClose={() => {setLocalBookContent(null); setUsfmImportAnchorEl(null); handleClose()}}
-              sx={{
-                backdropFilter: "blur(3px)",
-              }}
-              slotProps={{
-                  paper: {
-                      component: 'form'
-                  }
-              }}
-          >
-            <AppBar
-                color="secondary"
+        <Box>
+            <Box
                 sx={{
-                    position: "relative",
-                    borderTopLeftRadius: 4,
-                    borderTopRightRadius: 4,
+                    position: "absolute",
+                    width: "100%",
+                    height: "100%",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    zIndex: -1,
+                    backgroundImage:
+                        'url("/app-resources/pages/content/background_blur.png")',
+                    backgroundRepeat: "no-repeat",
+                    backdropFilter: "blur(3px)",
                 }}
+            />
+            <Header
+                titleKey="pages:core-contenthandler_text_translation:title"
+                currentId="core-contenthandler_text_translation"
+                requireNet={false}
+            />    
+            <PanDialog
+                titleLabel={doI18n("pages:core-contenthandler_text_translation:import_content", i18nRef.current)}
+                isOpen={usfmImportOpen}
+                closeFn={() => { setLocalBookContent(null); setUsfmImportAnchorEl(null); handleClose() }}
             >
-                <Toolbar>
-                    <Typography variant="h6" component="div">
-                        {doI18n("pages:core-contenthandler_text_translation:import_content", i18nRef.current)}
-                    </Typography>
-                </Toolbar>
-            </AppBar>
-            <DialogContent sx={{ mt: 1 }}>
-                <FilePicker
-                  extensions={['usfm', 'sfm', 'txt']}
-                  onChange={(file) => {handleFilePicked(file); setFilePicked(file)}}
-                  onError={error => {enqueueSnackbar(`${error}`, {variant: "error",}); setLoading(false);}}
-                >
-                  <Button 
-                    type="button" 
-                    disabled={loading}
-                    variant="contained"
-                    color="primary" 
-                    component="span"
-                    startIcon={<UploadFileIcon />}
-                  >
-                    {loading ? 'Reading File...' : (filePicked.name ? filePicked.name : doI18n("pages:core-contenthandler_text_translation:import_click", i18nRef.current))}
-                  </Button>
-                </FilePicker>
-                {(Object.keys(validationResult).length > 0 && !bookIsDuplicate) && 
-                    <Stack spacing={2} sx={{mt:0.5}}>
-                        <Typography variant="body1">
-                            {`Book Code: ${JSON.stringify(bookCode?.value, null, 2)}`}
-                        </Typography>
-                        <Typography variant="body1">
-                            {`Title: ${JSON.stringify(title?.value, null, 2)}`}
-                        </Typography>
-                        <Typography variant="body1">
-                            {`Chapters from ${JSON.stringify(cvIndexes[0]?.chapter, null, 2)} to ${JSON.stringify(cvIndexes[cvIndexes.length - 1]?.chapter, null, 2)}`}
-                        </Typography>
-                    </Stack>
-                }
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={() => {setLocalBookContent(null); setUsfmImportAnchorEl(null); handleClose()}}>
-                    {doI18n("pages:core-contenthandler_text_translation:cancel", i18nRef.current)}
-                </Button>
-                <Tooltip 
-                    open={localBookContent ? (bookIsDuplicate || !isUsfmValid) : false} 
-                    title={!isUsfmValid ? doI18n("pages:core-contenthandler_text_translation:usfm_invalid", i18nRef.current) : doI18n("pages:core-contenthandler_text_translation:book_already_exists", i18nRef.current)}
-                    placement="top-end"
-                >
-                  <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => {
-                        handleCreateLocalBook(localBookContent, repoPath)
-                        setUsfmImportAnchorEl(null);
-                      }}
-                      disabled={localBookContent ? (bookIsDuplicate || !isUsfmValid) : false}
-                  >
-                    {doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}
-                  </Button>
-                </Tooltip>
-            </DialogActions>
-        </Dialog>
-      </Box>
+                  <DialogContent sx={{ mt: 1 }}>
+                    <FilePicker
+                        extensions={['usfm', 'sfm', 'txt']}
+                        onChange={(file) => { handleFilePicked(file); setFilePicked(file) }}
+                        onError={error => { enqueueSnackbar(`${error}`, { variant: "error", }); setLoading(false); }}
+                    >
+                        <Button
+                            type="button"
+                            disabled={loading}
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<UploadFileIcon />}
+                        >
+                            {loading ? 'Reading File...' : (filePicked.name ? filePicked.name : doI18n("pages:core-contenthandler_text_translation:import_click", i18nRef.current))}
+                        </Button>
+                    </FilePicker>
+                    {(Object.keys(validationResult).length > 0 && !bookIsDuplicate) &&
+                        <Stack spacing={2} sx={{ mt: 0.5 }}>
+                            <Typography variant="body1">
+                                {`Book Code: ${JSON.stringify(bookCode?.value, null, 2)}`}
+                            </Typography>
+                            <Typography variant="body1">
+                                {`Title: ${JSON.stringify(title?.value, null, 2)}`}
+                            </Typography>
+                            <Typography variant="body1">
+                                {`Chapters from ${JSON.stringify(cvIndexes[0]?.chapter, null, 2)} to ${JSON.stringify(cvIndexes[cvIndexes.length - 1]?.chapter, null, 2)}`}
+                            </Typography>
+                        </Stack>
+                    }
+                </DialogContent>
+                <PanDialogActions
+                
+                 closeFn={() =>{ setLocalBookContent(null); setUsfmImportAnchorEl(null); handleClose() }}
+                    closeLabel={doI18n("pages:core-contenthandler_text_translation:cancel", i18nRef.current)}
+                    actionFn={() => {
+                                handleCreateLocalBook(localBookContent, repoPath)
+                                setUsfmImportAnchorEl(null);
+                            }}
+                    actionLabel={doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}
+                    isDisabled={localBookContent ? (bookIsDuplicate || !isUsfmValid) : false}
+                />
+            </PanDialog>
+        </Box >
     );
 }
 
