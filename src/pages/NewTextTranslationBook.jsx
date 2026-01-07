@@ -368,6 +368,7 @@ export default function NewTextTranslationBook() {
                     closeFn={() => handleClose()}
                     closeLabel={doI18n("pages:core-contenthandler_text_translation:close", i18nRef.current)}
                     actionFn={handleCreate}
+                    closeOnAction={false}
                     actionLabel={doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}
                     isDisabled={
                         !(

@@ -10,7 +10,7 @@
     "color": "^5.0.2",
     "eslint-config-react-app": "^7.0.1",
     "font-detect-rhl": "^1.1.8",
-    "pankosmia-rcl": "^0.1.1",
+    "pankosmia-rcl": "^0.1.3",
     "pithekos-lib": "^0.11.20",
     "proskomma-core": "^0.11.2",
     "react": "^17.0.0 || ^18.0.0",
