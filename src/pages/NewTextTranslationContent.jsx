@@ -533,6 +533,7 @@ export default function NewBibleContent() {
                     closeLabel={doI18n("pages:core-contenthandler_text_translation:close", i18nRef.current)}
                     actionFn={handleCreate}
                     actionLabel={doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}
+                    closeOnAction={false}
                     isDisabled={
                         !(
                             contentName.trim().length > 0 &&
