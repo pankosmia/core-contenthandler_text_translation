@@ -5,8 +5,6 @@ import {
     Box,
     Typography,
     Stack,
-    DialogActions,
-    Tooltip
 } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
 import { i18nContext, doI18n, getJson, debugContext, postJson, Header } from "pithekos-lib";
@@ -29,6 +27,7 @@ function UsfmImport() {
     const [isUsfmValid, setIsUsfmValid] = useState(false);
     const [validationResult, setValidationResult] = useState({});
     const [bookIsDuplicate, setBookIsDuplicate] = useState(false);
+    console.log("localBook,bookDuplicate,isUfmValid", localBookContent, bookIsDuplicate, isUsfmValid)
     const pk = new Proskomma();
     const initialQuery = `{
         documents {
@@ -209,29 +208,38 @@ function UsfmImport() {
                             </Typography>
                         </Stack>
                     }
+                    {
+                        localBookContent && !isUsfmValid && (
+                            <Typography color="warning">
+                                {doI18n(
+                                    "pages:core-contenthandler_text_translation:usfm_invalid",
+                                    i18nRef.current
+                                )}
+                            </Typography>
+                        )
+                    }
+
+                    {
+                        localBookContent && bookIsDuplicate && (
+                            <Typography color="warning">
+                                {doI18n(
+                                    "pages:core-contenthandler_text_translation:book_already_exists",
+                                    i18nRef.current
+                                )}
+                            </Typography>
+                        )
+                    }
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => { setLocalBookContent(null); setUsfmImportAnchorEl(null); handleClose() }}>
-                        {doI18n("pages:core-contenthandler_text_translation:cancel", i18nRef.current)}
-                    </Button>
-                    <Tooltip
-                        open={localBookContent ? (bookIsDuplicate || !isUsfmValid) : false}
-                        title={!isUsfmValid ? doI18n("pages:core-contenthandler_text_translation:usfm_invalid", i18nRef.current) : doI18n("pages:core-contenthandler_text_translation:book_already_exists", i18nRef.current)}
-                        placement="top-end"
-                    >
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => {
-                                handleCreateLocalBook(localBookContent, repoPath)
-                                setUsfmImportAnchorEl(null);
-                            }}
-                            disabled={localBookContent ? (bookIsDuplicate || !isUsfmValid) : false}
-                        >
-                            {doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}
-                        </Button>
-                    </Tooltip>
-                </DialogActions>
+                <PanDialogActions
+                    closeFn={() => { handleClose(); setLocalBookContent(null); setUsfmImportAnchorEl(null) }}
+                    closeLabel={doI18n("pages:core-contenthandler_text_translation:cancel", i18nRef.current)}
+                    actionFn={() => {
+                        handleCreateLocalBook(localBookContent, repoPath)
+                        setUsfmImportAnchorEl(null)
+                    }}
+                    actionLabel={doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}
+                    isDisabled={localBookContent ? (bookIsDuplicate || !isUsfmValid) : false}
+                />
             </PanDialog>
         </Box >
     );
