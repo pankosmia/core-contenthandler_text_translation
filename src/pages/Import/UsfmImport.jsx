@@ -27,7 +27,10 @@ function UsfmImport() {
     const [isUsfmValid, setIsUsfmValid] = useState(false);
     const [validationResult, setValidationResult] = useState({});
     const [bookIsDuplicate, setBookIsDuplicate] = useState(false);
-    console.log("localBook,bookDuplicate,isUfmValid", localBookContent, bookIsDuplicate, isUsfmValid)
+    console.log("localBook", localBookContent)
+    console.log("bookDuplicate",bookIsDuplicate)
+    console.log("isUfmValid", isUsfmValid)
+
     const pk = new Proskomma();
     const initialQuery = `{
         documents {
@@ -150,7 +153,8 @@ function UsfmImport() {
                 console.error("An error occurred while validating the USFM:", error.message);
             }
         }
-    }, [isUsfmValid])
+        console.log("3")
+    }, [isUsfmValid,localBookContent,filePicked,pk,initialQuery])
 
     return (
         <Box>
