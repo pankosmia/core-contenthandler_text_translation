@@ -13,7 +13,7 @@
       {
         "doc":"Create document for textTranslation Project",
         "placeHolders":{},
-        "label": "pages:core-contenthandler_text_translation:create_content",
+        "label": "pages:core-contenthandler_text_translation:new_translation_text",
         "url": "/createDocument/textTranslation"
       }
     ],
@@ -418,6 +418,11 @@
       "en": "The book could not be created",
       "fr": "Le livre n'a pas pu être créé",
       "id": "@Kesalahan terjadi: Buku tidak jadi terbuat"
-    }
+    },"new_translation_text": {
+  "en": "New Translation Text",
+  "es": "Nuevo texto de traducción",
+  "fr": "Nouveau texte de traduction",
+  "id": "Teks Terjemahan Baru"
+}
   }
 }
