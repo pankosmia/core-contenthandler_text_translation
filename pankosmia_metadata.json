@@ -13,7 +13,7 @@
         "doc":"Create document for textTranslation Project",
         "placeHolders":{},
         "label": "pages:content:create_content",
-        "url": "/clients/core-contenthandler_text_translation#/createDocument/textTranslation"
+        "url": "/createDocument/textTranslation"
       }
     ],
     "new_book": [
@@ -25,7 +25,7 @@
           }
         },
         "label": "pages:content:new_book",
-        "url": "/clients/core-contenthandler_text_translation#/newBook?repoPath=%%REPO_PATH%%"
+        "url": "/newBook?repoPath=%%REPO_PATH%%"
       }
     ],
     "import_book": [
@@ -37,7 +37,7 @@
           }
         },
         "label": "pages:content:import_book",
-        "url": "/clients/core-contenthandler_text_translation#/importBook?repoPath=%%REPO_PATH%%"
+        "url": "/importBook?repoPath=%%REPO_PATH%%"
       }
     ],
     "export": [
@@ -53,7 +53,7 @@
                   }
                 },
                 "label": "pages:content:export_usfm",
-                "url": "/clients/core-contenthandler_text_translation#/export/usfm?repoPath=%%REPO_PATH%%"
+                "url": "/export/usfm?repoPath=%%REPO_PATH%%"
               }
             ],
             "zip": [
@@ -65,7 +65,7 @@
                   }
                 },
                 "label": "pages:content:export_zip",
-                "url": "/clients/core-contenthandler_text_translation#/export/zip?repoPath=%%REPO_PATH%%"
+                "url": "/export/zip?repoPath=%%REPO_PATH%%"
               }
             ],
             "pdf": [
@@ -77,7 +77,7 @@
                   }
                 },
                 "label": "pages:content:export_pdf",
-                "url": "/clients/core-contenthandler_text_translation#/export/pdf?repoPath=%%REPO_PATH%%"
+                "url": "/export/pdf?repoPath=%%REPO_PATH%%"
               }
             ]
           }
