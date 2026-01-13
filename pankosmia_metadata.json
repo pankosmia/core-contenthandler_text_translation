@@ -57,18 +57,6 @@
                 "url": "/export/usfm?repoPath=%%REPO_PATH%%"
               }
             ],
-            "zip": [
-              {
-                "doc":"Export to zip a textTranslation document",
-                "placeHolders": {
-                  "REPO_PATH": {
-                    "doc": "The path to the repo in <X>/<Y>/<Z> format"
-                  }
-                },
-                "label": "pages:content:export_zip",
-                "url": "/export/zip?repoPath=%%REPO_PATH%%"
-              }
-            ],
             "pdf": [
               {
                 "doc":"Export to pdf a textTranslation document",
