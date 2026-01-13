@@ -28,10 +28,6 @@ const router = createHashRouter([
         element:<UsfmImport/>
     },
     {
-        path:"/export/zip",
-        element:<ZipExport/>
-    },
-    {
         path:"/export/usfm",
         element:<UsfmExport/>
     },

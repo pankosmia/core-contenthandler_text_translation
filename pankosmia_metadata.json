@@ -2,6 +2,7 @@
   "id": "core-contenthandler_text_translation",
   "exclude_from_menu": true,
   "exclude_from_dashboard": true,
+  "minServerVersion":"0.12.14",
   "require": {
     "net": false,
     "debug": true
@@ -12,8 +13,8 @@
       {
         "doc":"Create document for textTranslation Project",
         "placeHolders":{},
-        "label": "pages:core-contenthandler_text_translation:create_content_text_translation",
-        "url": "/clients/core-contenthandler_text_translation#/createDocument/textTranslation"
+        "label": "pages:core-contenthandler_text_translation:new_translation_text",
+        "url": "/createDocument/textTranslation"
       }
     ],
     "new_book": [
@@ -25,7 +26,7 @@
           }
         },
         "label": "pages:content:new_book",
-        "url": "/clients/core-contenthandler_text_translation#/newBook?repoPath=%%REPO_PATH%%"
+        "url": "/newBook?repoPath=%%REPO_PATH%%"
       }
     ],
     "import_book": [
@@ -37,7 +38,7 @@
           }
         },
         "label": "pages:content:import_book",
-        "url": "/clients/core-contenthandler_text_translation#/importBook?repoPath=%%REPO_PATH%%"
+        "url": "/importBook?repoPath=%%REPO_PATH%%"
       }
     ],
     "export": [
@@ -53,19 +54,7 @@
                   }
                 },
                 "label": "pages:content:export_usfm",
-                "url": "/clients/core-contenthandler_text_translation#/export/usfm?repoPath=%%REPO_PATH%%"
-              }
-            ],
-            "zip": [
-              {
-                "doc":"Export to zip a textTranslation document",
-                "placeHolders": {
-                  "REPO_PATH": {
-                    "doc": "The path to the repo in <X>/<Y>/<Z> format"
-                  }
-                },
-                "label": "pages:content:export_zip",
-                "url": "/clients/core-contenthandler_text_translation#/export/zip?repoPath=%%REPO_PATH%%"
+                "url": "/export/usfm?repoPath=%%REPO_PATH%%"
               }
             ],
             "pdf": [
@@ -77,7 +66,7 @@
                   }
                 },
                 "label": "pages:content:export_pdf",
-                "url": "/clients/core-contenthandler_text_translation#/export/pdf?repoPath=%%REPO_PATH%%"
+                "url": "/export/pdf?repoPath=%%REPO_PATH%%"
               }
             ]
           }
@@ -417,6 +406,11 @@
       "en": "The book could not be created",
       "fr": "Le livre n'a pas pu être créé",
       "id": "@Kesalahan terjadi: Buku tidak jadi terbuat"
-    }
+    },"new_translation_text": {
+  "en": "New Translation Text",
+  "es": "Nuevo texto de traducción",
+  "fr": "Nouveau texte de traduction",
+  "id": "Teks Terjemahan Baru"
+}
   }
 }
