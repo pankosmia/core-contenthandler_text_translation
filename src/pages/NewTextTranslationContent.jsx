@@ -19,7 +19,15 @@ import {
     RadioGroup, Radio,
     DialogContentText
 } from "@mui/material";
-import { i18nContext, debugContext, postJson, doI18n, getAndSetJson, getJson, Header } from "pithekos-lib";
+import {
+    i18nContext,
+    debugContext,
+    postJson,
+    doI18n,
+    getAndSetJson,
+    getJson,
+    Header
+} from "pithekos-lib";
 import sx from "./Selection.styles";
 import ListMenuItem from "./ListMenuItem";
 import { PanDialog, PanDialogActions } from "pankosmia-rcl";
@@ -49,6 +57,25 @@ export default function NewBibleContent() {
     const [protestantOnly, setProtestantOnly] = useState(true);
     const [localRepos, setLocalRepos] = useState([]);
     const [repoExists, setRepoExists] = useState(false);
+
+    const [clientConfig, setClientConfig] = useState({});
+
+    const isProtestantBooksOnlyCheckboxEnabled =
+    clientConfig?.['core-contenthandler_text_translation']
+      ?.find((section) => section.id === 'config')
+      ?.fields?.find((field) => field.id === 'protestantBooksOnlyCheckbox')?.value !== false;
+
+    const isProtestantBooksOnlyDefaultChecked =
+    clientConfig?.['core-contenthandler_text_translation']
+      ?.find((section) => section.id === 'config')
+      ?.fields?.find((field) => field.id === 'protestantBooksOnlyDefaultChecked')?.value !== false;
+
+    useEffect(() => {
+      getJson('/client-config')
+        .then((res) => res.json)
+        .then((data) => setClientConfig(data))
+        .catch((err) => console.error('Error :', err));
+    }, []);
 
     const handleClose = () => {
         const url = window.location.search;
@@ -460,18 +487,20 @@ export default function NewBibleContent() {
                                         }}
                                     />
                                 </Grid2>
-                                <FormGroup>
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox
-                                                color='secondary'
-                                                checked={protestantOnly}
-                                                onChange={() => setProtestantOnly(!protestantOnly)}
-                                            />
-                                        }
-                                        label={doI18n("pages:core-contenthandler_text_translation:protestant_books_only", i18nRef.current)}
-                                    />
-                                </FormGroup>
+                                {isProtestantBooksOnlyCheckboxEnabled && (
+                                    <FormGroup>
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    color='secondary'
+                                                    checked={protestantOnly}
+                                                    onChange={() => setProtestantOnly(!protestantOnly)}
+                                                />
+                                            }
+                                            label={doI18n("pages:core-contenthandler_text_translation:protestant_books_only", i18nRef.current)}
+                                        />
+                                    </FormGroup>
+                                )}
                                 <FormGroup>
                                     <FormControlLabel
                                         control={
