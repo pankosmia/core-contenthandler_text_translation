@@ -71,6 +71,10 @@ export default function NewBibleContent() {
       ?.fields?.find((field) => field.id === 'protestantBooksOnlyDefaultChecked')?.value !== false;
 
     useEffect(() => {
+      setProtestantOnly(isProtestantBooksOnlyDefaultChecked);
+    }, [isProtestantBooksOnlyDefaultChecked]);
+
+    useEffect(() => {
       getJson('/client-config')
         .then((res) => res.json)
         .then((data) => setClientConfig(data))
