@@ -138,45 +138,45 @@
       "id": "Pratinjau PDF"
     },
     "export_as_usfm": {
-      "en": "Share as USFM",
+      "en": "Save as USFM",
       "es": "@Exportar Contenido como USFM",
-      "fr": "Partager au format USFM",
-      "id": "@Ekspor konten sebagai USFM"
+      "fr": "Sauvegarder au format USFM",
+      "id": "Simpan konten sebagai USFM"
     },
     "export_as_zip": {
-      "en": "Share as ZIP",
+      "en": "Save as ZIP",
       "es": "@Exportar Contenido como ZIP",
-      "fr": "Partager au format ZIP",
-      "id": "@Ekspor Konten sebagai ZIP"
+      "fr": "Sauvegarder au format ZIP",
+      "id": "Simpan Konten sebagai ZIP"
     },
     "generate_as_pdf": {
-      "en": "Share as PDF",
-      "fr": "Partager au format PDF",
-      "id": "@Hasilkan PDF"
+      "en": "Save as PDF",
+      "fr": "Sauvegarder au format PDF",
+      "id": "Save as PDF"
     },
     "pick_one_book_export": {
-      "en": "Choose a book to share",
+      "en": "Choose a book to save",
       "es": "@Elige uno libro para exportar",
-      "fr": "Choisir un livre à partager",
-      "id": "@Pilih buku buat diekspor"
+      "fr": "Choisir un livre à sauvegarder",
+      "id": "Pilih buku buat disimpan"
     },
     "export_zip": {
-      "en": "Share as ZIP",
+      "en": "Save as ZIP",
       "es": "@Exportar como ZIP",
-      "fr": "Partager au format ZIP",
-      "id": "@Ekspor sebagai ZIP"
+      "fr": "Sauvegarder au format ZIP",
+      "id": "Simpan sebagai ZIP"
     },
     "export_usfm": {
-      "en": "Share as USFM",
+      "en": "Save as USFM",
       "es": "@Exportar como USFM",
-      "fr": "Partager au format USFM",
-      "id": "@Ekspor USFM"
+      "fr": "Sauvegarder au format USFM",
+      "id": "Simpan sebagai USFM"
     },
     "export_pdf": {
-      "en": "Share as PDF",
+      "en": "Save as PDF",
       "es": "@Exportar como PDF",
-      "fr": "Partager au format PDF",
-      "id": "@Ekspor sebagai PDF"
+      "fr": "Sauvegarder au format PDF",
+      "id": "Simpan sebagai PDF"
     },
     "show_by_verse": {
       "en": "Format verse-by-verse",
@@ -251,10 +251,10 @@
       "id": "Pilih jumlah kolum-kolum"
     },
     "export_label": {
-      "en": "Share",
+      "en": "Save",
       "es": "@EXPORTAR",
-      "fr": "Partager",
-      "id": "@EKSPOR"
+      "fr": "Sauvegarder",
+      "id": "Simpan"
     },
     "no_books_selected": {
       "en": "No books were selected so nothing was exported",
@@ -263,16 +263,16 @@
       "es": "No se seleccionaron libros así que no se exportó nada"
     },
     "export_all": {
-      "en": "Share all books",
+      "en": "Save all books",
       "es": "@Exportar todos los libros",
-      "fr": "Partager tous les livres",
-      "id": "@Ekspor semua buku"
+      "fr": "Sauvegarder tous les livres",
+      "id": "Simpan semua buku"
     },
     "pick_one_or_more_books_export": {
-      "en": "Choose one or more books to share",
+      "en": "Choose one or more books to save",
       "es": "@Elige uno o más libros para exportar",
-      "fr": "Choisir un ou des livres à partager",
-      "id": "@Pilih satuh lebih buku buat diekspor"
+      "fr": "Choisir un ou des livres à sauvegarder",
+      "id": "Pilih satuh lebih buku buat disimpan"
     },
     "book_created": {
       "en": "Book created",

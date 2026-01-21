@@ -29,7 +29,6 @@ import {
     getJson,
     Header,
     getAndSetJson,
-
 } from "pithekos-lib";
 import sx from "./Selection.styles";
 import ListMenuItem from "./ListMenuItem";
@@ -46,7 +45,7 @@ export default function NewTextTranslationBook() {
     const { i18nRef } = useContext(i18nContext);
     const { debugRef } = useContext(debugContext);
     const [bookCodes, setBookCodes] = useState([]);
-    const [protestantOnly, setProtestantOnly] = useState(true);
+    const [protestantOnly, setProtestantOnly] = useState(null);
     const [bookName, setBookName] = useState([]);
     const [errorDialogOpen, setErrorDialogOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
@@ -54,6 +53,29 @@ export default function NewTextTranslationBook() {
     const [versificationCodes, setVersificationCodes] = useState([]);
     const [fileVrs, setFileVrs] = useState(false);
     const [nameProject, setNameProject] = useState("");
+
+    const [clientConfig, setClientConfig] = useState({});
+
+    const isProtestantBooksOnlyCheckboxEnabled =
+    clientConfig?.['core-contenthandler_text_translation']
+      ?.find((section) => section.id === 'config')
+      ?.fields?.find((field) => field.id === 'protestantBooksOnlyCheckbox')?.value !== false;
+
+    const isProtestantBooksOnlyDefaultChecked =
+    clientConfig?.['core-contenthandler_text_translation']
+      ?.find((section) => section.id === 'config')
+      ?.fields?.find((field) => field.id === 'protestantBooksOnlyDefaultChecked')?.value !== false;
+    
+    useEffect(() => {
+      setProtestantOnly(isProtestantBooksOnlyDefaultChecked);
+    }, [isProtestantBooksOnlyDefaultChecked]);
+
+    useEffect(() => {
+      getJson('/client-config')
+        .then((res) => res.json)
+        .then((data) => setClientConfig(data))
+        .catch((err) => console.error('Error :', err));
+    }, []);
    
     const getProjectSummaries = async () => {
         const hash = window.location.hash;
@@ -332,21 +354,23 @@ export default function NewTextTranslationBook() {
                                 }}
                             />
                         </Grid2>
-                        <FormGroup>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        color="secondary"
-                                        checked={protestantOnly}
-                                        onChange={() => setProtestantOnly(!protestantOnly)}
-                                    />
-                                }
-                                label={doI18n(
-                                    "pages:core-contenthandler_text_translation:protestant_books_only",
-                                    i18nRef.current
-                                )}
-                            />
-                        </FormGroup>
+                        {isProtestantBooksOnlyCheckboxEnabled && (
+                            <FormGroup>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            color="secondary"
+                                            checked={protestantOnly}
+                                            onChange={() => setProtestantOnly(!protestantOnly)}
+                                        />
+                                    }
+                                    label={doI18n(
+                                        "pages:core-contenthandler_text_translation:protestant_books_only",
+                                        i18nRef.current
+                                    )}
+                                />
+                            </FormGroup>
+                        )}
                         <FormGroup>
                             <FormControlLabel
                                 control={
