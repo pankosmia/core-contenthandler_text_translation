@@ -1,11 +1,8 @@
 import { useState, useContext, useEffect } from 'react';
 import {
-    AppBar,
     Button, Checkbox,
     FormControl, FormControlLabel, FormGroup,
-    Stack,
     TextField,
-    Toolbar,
     Typography,
     Select,
     MenuItem,
@@ -17,7 +14,8 @@ import {
     Tooltip,
     FormLabel,
     RadioGroup, Radio,
-    DialogContentText
+    DialogContentText,
+    Autocomplete
 } from "@mui/material";
 import {
     i18nContext,
@@ -42,8 +40,9 @@ export default function NewBibleContent() {
     const [contentName, setContentName] = useState("");
     const [contentAbbr, setContentAbbr] = useState("");
     const [contentType, setContentType] = useState("text_translation");
-    const [contentLanguageCode, setContentLanguageCode] = useState("und");
+    const [contentLanguageCode, setContentLanguageCode] = useState([]);
     const [contentOption, setContentOption] = useState("book");
+    const [languageOption, setLanguageOption] = useState("BCP47list");
     const [metadataSummaries, setMetadataSummaries] = useState({});
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [bookCode, setBookCode] = useState("TIT");
@@ -57,28 +56,28 @@ export default function NewBibleContent() {
     const [protestantOnly, setProtestantOnly] = useState(true);
     const [localRepos, setLocalRepos] = useState([]);
     const [repoExists, setRepoExists] = useState(false);
-
+   
     const [clientConfig, setClientConfig] = useState({});
 
     const isProtestantBooksOnlyCheckboxEnabled =
-    clientConfig?.['core-contenthandler_text_translation']
-      ?.find((section) => section.id === 'config')
-      ?.fields?.find((field) => field.id === 'protestantBooksOnlyCheckbox')?.value !== false;
+        clientConfig?.['core-contenthandler_text_translation']
+            ?.find((section) => section.id === 'config')
+            ?.fields?.find((field) => field.id === 'protestantBooksOnlyCheckbox')?.value !== false;
 
     const isProtestantBooksOnlyDefaultChecked =
-    clientConfig?.['core-contenthandler_text_translation']
-      ?.find((section) => section.id === 'config')
-      ?.fields?.find((field) => field.id === 'protestantBooksOnlyDefaultChecked')?.value !== false;
+        clientConfig?.['core-contenthandler_text_translation']
+            ?.find((section) => section.id === 'config')
+            ?.fields?.find((field) => field.id === 'protestantBooksOnlyDefaultChecked')?.value !== false;
 
     useEffect(() => {
-      setProtestantOnly(isProtestantBooksOnlyDefaultChecked);
+        setProtestantOnly(isProtestantBooksOnlyDefaultChecked);
     }, [isProtestantBooksOnlyDefaultChecked]);
 
     useEffect(() => {
-      getJson('/client-config')
-        .then((res) => res.json)
-        .then((data) => setClientConfig(data))
-        .catch((err) => console.error('Error :', err));
+        getJson('/client-config')
+            .then((res) => res.json)
+            .then((data) => setClientConfig(data))
+            .catch((err) => console.error('Error :', err));
     }, []);
 
     const handleClose = () => {
@@ -148,6 +147,21 @@ export default function NewBibleContent() {
         [open]
     );
 
+    useEffect(
+        () => {
+            if (open) {
+                getAndSetJson({
+                    url: "/app-resources/lookups/bcp47-language_codes.json",
+                    setter: setContentLanguageCode
+                }).then()
+            }
+        },
+        [open]
+    );
+    const LanguageCodes = Object.entries(contentLanguageCode).map(([key, value]) => ({
+        LanguageCode: key,
+        language: value.en,
+    }));
     useEffect(
         () => {
             setContentName("");
@@ -363,7 +377,65 @@ export default function NewBibleContent() {
                                 setContentType(event.target.value);
                             }}
                         />
-                        <TextField
+                        <FormControl>
+                            <FormLabel
+                                id="languageCode-create-options">
+                                {doI18n("pages:core-contenthandler_text_translation:add_content", i18nRef.current)}
+                            </FormLabel>
+                            <RadioGroup
+                                row
+                                aria-labelledby="languageCode-create-options"
+                                name="languageCode-create-options-radio-group"
+                                value={languageOption}
+                                onClick={event => setLanguageOption(event.target.value)}
+                            >
+                                <FormControlLabel value="BCP47list" control={<Radio />}
+                                    label="list officielle" />
+                                <FormControlLabel value="burrito" control={<Radio />}
+                                    label="burrito" />
+                                <FormControlLabel value="customLanguage" control={<Radio />}
+                                    label="custom language" />
+                            </RadioGroup>
+                        </FormControl>
+                        {languageOption === "BCP47list" &&
+                            <Autocomplete
+                                disablePortal
+                                options={LanguageCodes}
+                                getOptionLabel={(option) =>
+                                    `${option.language || ''} (${option.LanguageCode})`}
+                                sx={{ width: 300 }}
+                                renderInput={(params) => <TextField {...params} label="Language" />}
+                            />
+                        }
+                        {languageOption === "burrito" &&
+                            <FormGroup row>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                color='secondary'
+                                                //checked={showVersification}
+                                                //onChange={() => setShowVersification(!showVersification)}
+                                                defaultChecked
+                                            />
+                                        }
+                                        label="local only"
+                                    />
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                color='secondary'
+                                                //checked={showVersification}
+                                                //onChange={() => setShowVersification(!showVersification)}
+                                            />
+                                        }
+                                        label="ressources"
+                                    />
+                                </FormGroup>
+                        }
+                        {languageOption === "customLanguage" &&
+                            <Typography> Custum language </Typography>
+                        }
+                        {/* <TextField
                             id="languageCode"
                             required
                             label={doI18n("pages:core-contenthandler_text_translation:lang_code", i18nRef.current)}
@@ -371,7 +443,7 @@ export default function NewBibleContent() {
                             onChange={(event) => {
                                 setContentLanguageCode(event.target.value);
                             }}
-                        />
+                        /> */}
                         {
                             contentOption !== "plan" &&
                             <FormControl sx={{ width: "100%" }}>
