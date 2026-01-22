@@ -15,7 +15,7 @@ import {
     FormLabel,
     RadioGroup, Radio,
     DialogContentText,
-    Autocomplete
+    useTheme,
 } from "@mui/material";
 import {
     i18nContext,
@@ -28,7 +28,7 @@ import {
 } from "pithekos-lib";
 import sx from "./Selection.styles";
 import ListMenuItem from "./ListMenuItem";
-import { PanDialog, PanDialogActions } from "pankosmia-rcl";
+import { PanDialog, PanDialogActions, PanFilteredMenu } from "pankosmia-rcl";
 
 export default function NewBibleContent() {
 
@@ -42,7 +42,7 @@ export default function NewBibleContent() {
     const [contentType, setContentType] = useState("text_translation");
     const [contentLanguageCode, setContentLanguageCode] = useState([]);
     const [contentOption, setContentOption] = useState("book");
-    const [languageOption, setLanguageOption] = useState("BCP47list");
+    const [languageOption, setLanguageOption] = useState("BCP47List");
     const [metadataSummaries, setMetadataSummaries] = useState({});
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [bookCode, setBookCode] = useState("TIT");
@@ -56,8 +56,10 @@ export default function NewBibleContent() {
     const [protestantOnly, setProtestantOnly] = useState(true);
     const [localRepos, setLocalRepos] = useState([]);
     const [repoExists, setRepoExists] = useState(false);
-   
     const [clientConfig, setClientConfig] = useState({});
+    const [localRepoOnly, setLocalRepoOnly] = useState(true);
+    const [resourcesBurrito, setResourcesBurrito] = useState(false)
+    const theme = useTheme()
 
     const isProtestantBooksOnlyCheckboxEnabled =
         clientConfig?.['core-contenthandler_text_translation']
@@ -158,10 +160,14 @@ export default function NewBibleContent() {
         },
         [open]
     );
-    const LanguageCodes = Object.entries(contentLanguageCode).map(([key, value]) => ({
+    const languageCodes = Object.entries(contentLanguageCode).map(([key, value]) => ({
         LanguageCode: key,
         language: value.en,
     }));
+    const burritos = localRepos.filter(burrito =>
+        (localRepoOnly && burrito.startsWith("_local_")) || (resourcesBurrito && burrito.startsWith("git"))
+    );
+
     useEffect(
         () => {
             setContentName("");
@@ -323,6 +329,7 @@ export default function NewBibleContent() {
                 titleLabel={doI18n("pages:core-contenthandler_text_translation:create_content_text_translation", i18nRef.current)}
                 isOpen={open}
                 closeFn={() => handleCloseCreate()}
+                theme={theme}
             >
                 <DialogContentText
                     variant='subtitle2'
@@ -377,11 +384,10 @@ export default function NewBibleContent() {
                                 setContentType(event.target.value);
                             }}
                         />
-                        <FormControl>
+                        {/* <FormControl required >
                             <FormLabel
                                 id="languageCode-create-options">
-                                {doI18n("pages:core-contenthandler_text_translation:add_content", i18nRef.current)}
-                            </FormLabel>
+                                {doI18n("pages:core-contenthandler_text_translation:lang_code", i18nRef.current)}                            </FormLabel>
                             <RadioGroup
                                 row
                                 aria-labelledby="languageCode-create-options"
@@ -389,7 +395,7 @@ export default function NewBibleContent() {
                                 value={languageOption}
                                 onClick={event => setLanguageOption(event.target.value)}
                             >
-                                <FormControlLabel value="BCP47list" control={<Radio />}
+                                <FormControlLabel value="BCP47List" control={<Radio />}
                                     label="list officielle" />
                                 <FormControlLabel value="burrito" control={<Radio />}
                                     label="burrito" />
@@ -397,24 +403,24 @@ export default function NewBibleContent() {
                                     label="custom language" />
                             </RadioGroup>
                         </FormControl>
-                        {languageOption === "BCP47list" &&
-                            <Autocomplete
-                                disablePortal
-                                options={LanguageCodes}
+                        {languageOption === "BCP47List" &&
+                            <PanFilteredMenu
+                                data={languageCodes}
                                 getOptionLabel={(option) =>
                                     `${option.language || ''} (${option.LanguageCode})`}
                                 sx={{ width: 300 }}
-                                renderInput={(params) => <TextField {...params} label="Language" />}
+                                titleLabel="language"
                             />
                         }
                         {languageOption === "burrito" &&
-                            <FormGroup row>
+                            <>
+                                <FormGroup row required>
                                     <FormControlLabel
                                         control={
                                             <Checkbox
                                                 color='secondary'
-                                                //checked={showVersification}
-                                                //onChange={() => setShowVersification(!showVersification)}
+                                                checked={localRepoOnly}
+                                                onChange={() => setLocalRepoOnly(!localRepoOnly)}
                                                 defaultChecked
                                             />
                                         }
@@ -424,26 +430,34 @@ export default function NewBibleContent() {
                                         control={
                                             <Checkbox
                                                 color='secondary'
-                                                //checked={showVersification}
-                                                //onChange={() => setShowVersification(!showVersification)}
+                                                checked={resourcesBurrito}
+                                                onChange={() => setResourcesBurrito(!resourcesBurrito)}
                                             />
                                         }
                                         label="ressources"
                                     />
                                 </FormGroup>
+                                <PanFilteredMenu
+                                    data={burritos}
+                                    getOptionLabel={(option) => `${option}`}
+                                    sx={{ width: 300 }}
+                                    titleLabel="Burrito"
+                                />
+                            </>
+
                         }
                         {languageOption === "customLanguage" &&
                             <Typography> Custum language </Typography>
-                        }
-                        {/* <TextField
+                        } */}
+                        <TextField
                             id="languageCode"
-                            required
+                            
                             label={doI18n("pages:core-contenthandler_text_translation:lang_code", i18nRef.current)}
                             value={contentLanguageCode}
                             onChange={(event) => {
                                 setContentLanguageCode(event.target.value);
                             }}
-                        /> */}
+                        />
                         {
                             contentOption !== "plan" &&
                             <FormControl sx={{ width: "100%" }}>
