@@ -42,7 +42,6 @@ export default function NewBibleContent() {
     const [contentType, setContentType] = useState("text_translation");
     const [contentLanguageCode, setContentLanguageCode] = useState([]);
     const [contentOption, setContentOption] = useState("book");
-    const [languageOption, setLanguageOption] = useState("BCP47List");
     const [metadataSummaries, setMetadataSummaries] = useState({});
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [bookCode, setBookCode] = useState("TIT");
@@ -57,6 +56,7 @@ export default function NewBibleContent() {
     const [localRepos, setLocalRepos] = useState([]);
     const [repoExists, setRepoExists] = useState(false);
     const [clientConfig, setClientConfig] = useState({});
+    const [languageOption, setLanguageOption] = useState("BCP47List");
     const [localRepoOnly, setLocalRepoOnly] = useState(true);
     const [resourcesBurrito, setResourcesBurrito] = useState(false)
     const theme = useTheme()
@@ -173,7 +173,7 @@ export default function NewBibleContent() {
             setContentName("");
             setContentAbbr("");
             setContentType("text_translation");
-            setContentLanguageCode("und");
+            setContentLanguageCode([]);
             setBookCode("TIT");
             setBookTitle("Titus");
             setBookAbbr("Ti");
@@ -384,10 +384,11 @@ export default function NewBibleContent() {
                                 setContentType(event.target.value);
                             }}
                         />
-                        {/* <FormControl required >
+                        <FormControl required >
                             <FormLabel
                                 id="languageCode-create-options">
-                                {doI18n("pages:core-contenthandler_text_translation:lang_code", i18nRef.current)}                            </FormLabel>
+                                {doI18n("pages:core-contenthandler_text_translation:lang_code", i18nRef.current)}
+                            </FormLabel>
                             <RadioGroup
                                 row
                                 aria-labelledby="languageCode-create-options"
@@ -396,21 +397,25 @@ export default function NewBibleContent() {
                                 onClick={event => setLanguageOption(event.target.value)}
                             >
                                 <FormControlLabel value="BCP47List" control={<Radio />}
-                                    label="list officielle" />
+                                    label={doI18n("pages:core-contenthandler_text_translation:lang_code_bcp47_list", i18nRef.current)} />
                                 <FormControlLabel value="burrito" control={<Radio />}
-                                    label="burrito" />
+                                    label={doI18n("pages:core-contenthandler_text_translation:lang_code_burrito", i18nRef.current)} />
                                 <FormControlLabel value="customLanguage" control={<Radio />}
-                                    label="custom language" />
+                                    label={doI18n("pages:core-contenthandler_text_translation:lang_code_custom_language", i18nRef.current)} />
                             </RadioGroup>
                         </FormControl>
                         {languageOption === "BCP47List" &&
-                            <PanFilteredMenu
-                                data={languageCodes}
-                                getOptionLabel={(option) =>
-                                    `${option.language || ''} (${option.LanguageCode})`}
-                                sx={{ width: 300 }}
-                                titleLabel="language"
-                            />
+                            <>
+                                <Typography>{doI18n("pages:core-contenthandler_text_translation:description_bcp47_list", i18nRef.current)}</Typography>
+                                <PanFilteredMenu
+                                    data={languageCodes}
+                                    getOptionLabel={(option) =>
+                                        `${option.language || ''} (${option.LanguageCode})`}
+                                    sx={{ width: 300 }}
+                                    titleLabel="language"
+                                />
+                            </>
+
                         }
                         {languageOption === "burrito" &&
                             <>
@@ -447,17 +452,35 @@ export default function NewBibleContent() {
 
                         }
                         {languageOption === "customLanguage" &&
-                            <Typography> Custum language </Typography>
-                        } */}
-                        <TextField
-                            id="languageCode"
-                            
-                            label={doI18n("pages:core-contenthandler_text_translation:lang_code", i18nRef.current)}
-                            value={contentLanguageCode}
-                            onChange={(event) => {
-                                setContentLanguageCode(event.target.value);
-                            }}
-                        />
+                            <>
+                                <Grid2 container spacing={2} justifyItems="flex-end" alignItems="stretch">
+                                    <Grid2 item size={6}>
+                                        <TextField
+                                            id="bookAbbr"
+                                            required
+                                            sx={{ width: "100%" }}
+                                            label={doI18n("pages:core-contenthandler_text_translation:book_abbr", i18nRef.current)}
+                                            value={bookAbbr}
+                                            onChange={(event) => {
+                                                setBookAbbr(event.target.value);
+                                            }}
+                                        />
+                                    </Grid2>
+                                    <Grid2 item size={6}>
+                                        <TextField
+                                            id="bookAbbr"
+                                            required
+                                            sx={{ width: "100%" }}
+                                            label={doI18n("pages:core-contenthandler_text_translation:book_abbr", i18nRef.current)}
+                                            value={bookAbbr}
+                                            onChange={(event) => {
+                                                setBookAbbr(event.target.value);
+                                            }}
+                                        />
+                                    </Grid2>
+                                </Grid2>
+                            </>
+                        }
                         {
                             contentOption !== "plan" &&
                             <FormControl sx={{ width: "100%" }}>
@@ -658,7 +681,7 @@ export default function NewBibleContent() {
                             contentName.trim().length > 0 &&
                             contentAbbr.trim().length > 0 &&
                             contentType.trim().length > 0 &&
-                            contentLanguageCode.trim().length > 0 &&
+                            //contentLanguageCode().length > 0 &&
                             versification.trim().length === 3 &&
                             (
                                 !(contentOption === "book") || (

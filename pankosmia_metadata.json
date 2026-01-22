@@ -406,11 +406,33 @@
       "en": "The book could not be created",
       "fr": "Le livre n'a pas pu être créé",
       "id": "@Kesalahan terjadi: Buku tidak jadi terbuat"
-    },"new_translation_text": {
-  "en": "New Translation Text",
-  "es": "Nuevo texto de traducción",
-  "fr": "Nouveau texte de traduction",
-  "id": "Teks Terjemahan Baru"
-}
+    },
+    "new_translation_text": {
+      "en": "New Translation Text",
+      "es": "Nuevo texto de traducción",
+      "fr": "Nouveau texte de traduction",
+      "id": "Teks Terjemahan Baru"
+    },
+    "lang_code_bcp47_list":{
+      "en":" From BCP47 List"
+    },
+    "lang_code_burrito":{
+      "en":" From anthor Burrito"
+    },
+     "lang_code_custom_language":{
+      "en":" Create custom language"
+    },
+    "description_bcp47_list":{
+      "en":"Choose a standard (BCP 47) language code from the list.",
+      "fr":"Choisissez un code standard (BCP 47) à partir de la liste."
+    },
+    "description_lang_code_burrito":{
+      "en":"Copy language details from an existing document.",
+      "fr":"Copiez les informations linguistiques d'un autre document."
+    },
+     "description_custom_language":{
+      "en":"Supply your own custom language code and name. The code should begin with 'x-'.",
+      "fr":"Fournissez votre propre code et nom de langue. Le code doit commencer avec 'x-'. "
+    }
   }
 }
