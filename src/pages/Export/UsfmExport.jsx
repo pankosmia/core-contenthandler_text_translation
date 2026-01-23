@@ -1,22 +1,18 @@
 import { useContext, useState, useEffect } from 'react';
 import {
-    AppBar,
     Box,
-    Button,
-    Dialog,
-    DialogActions,
     DialogContent,
     DialogContentText,
     List,
     ListItem,
     ListItemText,
-    Toolbar,
     Typography,
     useTheme,
 } from "@mui/material";
 import { getText, debugContext, i18nContext, doI18n, getJson, Header } from "pithekos-lib";
 import { enqueueSnackbar } from "notistack";
 import { saveAs } from 'file-saver';
+import { PanDialog, PanDialogActions } from "pankosmia-rcl";
 import Color from 'color';
 
 function UsfmExport() {
@@ -104,7 +100,6 @@ function UsfmExport() {
         []
     );
 
-
     return (
 
         <Box>
@@ -127,25 +122,14 @@ function UsfmExport() {
                 currentId="content"
                 requireNet={false}
             />
-            <Dialog
-                open={open}
-                onClose={handleClose}
-                slotProps={{
-                    paper: {
-                        component: 'form',
-                    },
-                }}
-                sx={{
-                    backdropFilter: "blur(3px)",
-                }}
+
+            <PanDialog
+                titleLabel={doI18n("pages:core-contenthandler_text_translation:export_as_usfm", i18nRef.current)}
+                closeFn={() => handleClose()}
+                isOpen={open}
+                theme={theme}
+                fullWidth={false}
             >
-                <AppBar color='secondary' sx={{ position: 'relative', borderTopLeftRadius: 4, borderTopRightRadius: 4 }}>
-                    <Toolbar>
-                        <Typography variant="h6" component="div">
-                            {doI18n("pages:core-contenthandler_text_translation:export_as_usfm", i18nRef.current)}
-                        </Typography>
-                    </Toolbar>
-                </AppBar>
                 <DialogContent sx={{ mt: 1 }} style={{ overflow: "hidden" }}>
                     <Box sx={{ maxHeight: '269px' }}>
                         <DialogContentText>
@@ -182,37 +166,27 @@ function UsfmExport() {
                         </List>
                     </Box>
                 </DialogContent>
-                <DialogActions>
-                    <Button
-                        variant="text"
-                        color="primary"
-                        onClick={() => {
-                            setSelectedBooks([]);
-                            handleClose()
-                        }}
-                    >
-                        {doI18n("pages:content:cancel", i18nRef.current)}
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        disabled={selectedBooks.length === 0}
-                        onClick={() => {
-                            if (!selectedBooks || selectedBooks.length === 0) {
-                                enqueueSnackbar(
-                                    doI18n("pages:core-contenthandler_text_translation:no_books_selected", i18nRef.current),
-                                    { variant: "warning" }
-                                );
-                            } else {
-                                selectedBooks.forEach(usfmExportOneBook);
-                            }
-                            handleCloseCreate();
-                        }}
-                    >
-                        {doI18n("pages:core-contenthandler_text_translation:export_label", i18nRef.current)}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                <PanDialogActions
+                    closeFn={() => {
+                        setSelectedBooks([]);
+                        handleClose()
+                    }}
+                    closeLabel={doI18n("pages:content:cancel", i18nRef.current)}
+                    actionFn={() => {
+                        if (!selectedBooks || selectedBooks.length === 0) {
+                            enqueueSnackbar(
+                                doI18n("pages:core-contenthandler_text_translation:no_books_selected", i18nRef.current),
+                                { variant: "warning" }
+                            );
+                        } else {
+                            selectedBooks.forEach(usfmExportOneBook);
+                        }
+                        handleCloseCreate();
+                    }}
+                    actionLabel={doI18n("pages:core-contenthandler_text_translation:export_label", i18nRef.current)}
+                    isDisabled={selectedBooks.length === 0}
+                />
+            </PanDialog>
         </Box>
     );
 }
