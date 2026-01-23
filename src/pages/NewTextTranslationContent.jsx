@@ -422,8 +422,8 @@ export default function NewBibleContent() {
                             value={contentOption}
                             onClick={event => setContentOption(event.target.value)}
                         >
-                            <FormControlLabel value="none" control={<Radio />}
-                                label={doI18n("pages:core-contenthandler_text_translation:no_content_radio", i18nRef.current)} />
+                            {/*<FormControlLabel value="none" control={<Radio />}
+                                label={doI18n("pages:core-contenthandler_text_translation:no_content_radio", i18nRef.current)} />*/}
                             <FormControlLabel value="book" control={<Radio />}
                                 label={doI18n("pages:core-contenthandler_text_translation:book_content_radio", i18nRef.current)} />
                             <FormControlLabel value="plan" control={<Radio />}
