@@ -83,11 +83,12 @@
       "en": "core-contenthandler_text_translation"
     },
     "stub_content": {
-      "en": "Content goes here"
+      "en": "Documents go here"
     },
     "create_content_text_translation": {
-      "en": "Bible",
-      "fr": "Bible"
+      "en": "Biblical Text",
+      "fr": "Texte biblique",
+      "id": "Teks Alkitabiah"
     },
     "name_is_taken": {
       "en": "The name is already taken",
@@ -410,8 +411,9 @@
       "id": "@Kesalahan terjadi: Buku tidak jadi terbuat"
     },
     "new_translation_text": {
-      "en": "Scripture Text",
-      "fr": "Texte biblique"
+      "en": "Biblical Text",
+      "fr": "Texte biblique",
+      "id": "Teks alkitabiah"
     }
   }
 }
