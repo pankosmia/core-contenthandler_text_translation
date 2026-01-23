@@ -217,8 +217,11 @@ export default function NewBibleContent() {
                 let chapterNo = 0;
                 let usfmBits = [];
                 usfmBits.push(`\\id ${bookCode} -- ${planJson.short_name} -- v${planJson.version} -- ${planJson.copyright}`);
+                const printableBookCode = ["1", "2", "3"].includes(bookCode[0]) ?
+                    `${bookCode[0]} ${bookCode[1]}${bookCode[2].toLowerCase()}`:
+                    `${bookCode[0]}${bookCode[1].toLowerCase()}${bookCode[2].toLowerCase()}`;
                 for (const headerTag of ["toc1", "toc2", "toc3", "mt"]) {
-                    usfmBits.push(`\\${headerTag} ${planJson.name} (${bookCode})`);
+                    usfmBits.push(`\\${headerTag} ${printableBookCode}`);
                 }
                 for (const bookSection of bookSections) {
                     usfmBits.push(`\\rem ${bookSection.cv[0]}-${bookSection.cv[1]}`);
