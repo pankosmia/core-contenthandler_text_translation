@@ -309,6 +309,7 @@ export default function NewBibleContent() {
                 isOpen={open}
                 closeFn={() => handleCloseCreate()}
                 theme={theme}
+                maxWidth={"lg"}
             >
                 <DialogContentText
                     variant='subtitle2'

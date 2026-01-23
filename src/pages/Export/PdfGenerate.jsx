@@ -1,8 +1,5 @@
 import { useRef, useContext, useState, useEffect } from 'react';
 import {
-    Button,
-    Dialog,
-    DialogActions,
     DialogContent,
     DialogContentText,
     FormControl,
@@ -10,7 +7,6 @@ import {
     Menu,
     MenuItem,
     OutlinedInput,
-    Typography,
     List,
     ListItem,
     ListItemButton,
@@ -18,8 +14,6 @@ import {
     ListItemText,
     Checkbox,
     Switch,
-    Toolbar,
-    AppBar,
     Box,
     useTheme
 } from "@mui/material";
@@ -34,6 +28,7 @@ import { enqueueSnackbar } from "notistack";
 import { getCVTexts, getBookName } from "../helpers/cv";
 import GraphiteTest from './GraphiteTest';
 import TextDir from '../helpers/TextDir';
+import { PanDialog, PanDialogActions } from "pankosmia-rcl";
 
 function PdfGenerate() {
 
@@ -95,14 +90,14 @@ function PdfGenerate() {
     // If/when we use adjSelectedFontClass on an element, then reduce to `const computedStyles = window.getComputedStyle(elementRef.current);`
     const [adjSelectedFontFamilies, setAdjSelectedFontFamilies] = useState(null);
     useEffect(() => {
-      const tempElement = document.createElement('div'); // Temporary element with adjSelectedFontClass className
-      tempElement.className = adjSelectedFontClass;
-      document.body.appendChild(tempElement);
+        const tempElement = document.createElement('div'); // Temporary element with adjSelectedFontClass className
+        tempElement.className = adjSelectedFontClass;
+        document.body.appendChild(tempElement);
 
-      const computedStyles = window.getComputedStyle(tempElement); // Get font-family from adjSelectedFontClass
-      setAdjSelectedFontFamilies(computedStyles.fontFamily);
+        const computedStyles = window.getComputedStyle(tempElement); // Get font-family from adjSelectedFontClass
+        setAdjSelectedFontFamilies(computedStyles.fontFamily);
 
-      document.body.removeChild(tempElement); // Remove temporary element
+        document.body.removeChild(tempElement); // Remove temporary element
     }, [adjSelectedFontClass]);
 
     const theme = useTheme(); // used for DOM preview print button style
@@ -231,11 +226,11 @@ function PdfGenerate() {
         const textDir = await TextDir(pdfHtml);
 
         const cssFile = () => {
-          if (pdfType === "para") {
-            return (textDir === "ltr" ? "/app-resources/pdf/para_bible_page_styles.css" : "/app-resources/pdf/para_bible_page_styles_rtl.css");
-          } else {
-            return (textDir === "ltr" ? "/app-resources/pdf/bcv_bible_page_styles.css" : "/app-resources/pdf/bcv_bible_page_styles_rtl.css");
-          }
+            if (pdfType === "para") {
+                return (textDir === "ltr" ? "/app-resources/pdf/para_bible_page_styles.css" : "/app-resources/pdf/para_bible_page_styles_rtl.css");
+            } else {
+                return (textDir === "ltr" ? "/app-resources/pdf/bcv_bible_page_styles.css" : "/app-resources/pdf/bcv_bible_page_styles_rtl.css");
+            }
         }
 
         // Extract names of font css files called by the font class
@@ -251,9 +246,9 @@ function PdfGenerate() {
         const adjSelectedFontFamiliesStr = adjSelectedFontFamilies.replace(/"/g, "'");
 
         const openPagedPreviewForPdf = async () => {
-          const server = window.location.origin;
-          const dirAttr = textDir === 'rtl' ? ' dir="rtl"' : '';
-          const contentHtml = `
+            const server = window.location.origin;
+            const dirAttr = textDir === 'rtl' ? ' dir="rtl"' : '';
+            const contentHtml = `
               <div id="content"${dirAttr} style="font-family: ${adjSelectedFontFamiliesStr};">
                   ${pdfHtml}
               </div>
@@ -416,66 +411,66 @@ function PdfGenerate() {
                 </script>
           `;
 
-          const openFn = (url => window.open(url, '_blank'));
-          const previewWin = openFn('about:blank');
-          if (!previewWin) return; // window.open failed or was blocked
-          try {
-             void previewWin.document; // attempt to read document property
-          } catch (e) {
-            return; // window currently inaccessible (e.g., not yet initialized or cross‑origin)
-          }
-          // Pass values to previewWin
-          previewWin.__printButtonText = doI18n("pages:core-contenthandler_text_translation:print", i18nRef.current);
-          previewWin.__printButtonBackgroundColor = theme.palette.primary.main;
-          previewWin.__printButtonColor = theme.palette.primary.contrastText;
+            const openFn = (url => window.open(url, '_blank'));
+            const previewWin = openFn('about:blank');
+            if (!previewWin) return; // window.open failed or was blocked
+            try {
+                void previewWin.document; // attempt to read document property
+            } catch (e) {
+                return; // window currently inaccessible (e.g., not yet initialized or cross‑origin)
+            }
+            // Pass values to previewWin
+            previewWin.__printButtonText = doI18n("pages:core-contenthandler_text_translation:print", i18nRef.current);
+            previewWin.__printButtonBackgroundColor = theme.palette.primary.main;
+            previewWin.__printButtonColor = theme.palette.primary.contrastText;
 
-          // Initial Content
-          previewWin.document.open();
-          previewWin.document.write(contentHtml);
-          previewWin.document.close();
+            // Initial Content
+            previewWin.document.open();
+            previewWin.document.write(contentHtml);
+            previewWin.document.close();
 
-          // Ensure head exists
-          if (!previewWin.document.head) {
-            const head = previewWin.document.createElement('head');
-            previewWin.document.documentElement.insertBefore(head, previewWin.document.documentElement.firstChild);
-          }
+            // Ensure head exists
+            if (!previewWin.document.head) {
+                const head = previewWin.document.createElement('head');
+                previewWin.document.documentElement.insertBefore(head, previewWin.document.documentElement.firstChild);
+            }
 
-          // Set the page title.
-          previewWin.document.title = doI18n("pages:core-contenthandler_text_translation:pdf_preview", i18nRef.current);
+            // Set the page title.
+            previewWin.document.title = doI18n("pages:core-contenthandler_text_translation:pdf_preview", i18nRef.current);
 
-          // Wait until document.body is present, retrying until body exists or timeout.
-          const waitForBody = (win, timeout = 3000) => {
-            return new Promise((resolve, reject) => {
-              const start = Date.now();
-              const check = () => {
-                try {
-                  if (win.document && win.document.body) return resolve();
-                } catch (e) {
-                    // Access may throw while the new window is not ready or is cross-origin; Retry until timeout.
-                }
-                if (Date.now() - start > timeout) return reject(new Error('preview body timeout'));
-                setTimeout(check, 25);
-              };
-              check();
-            });
-          };
-          await waitForBody(previewWin);
+            // Wait until document.body is present, retrying until body exists or timeout.
+            const waitForBody = (win, timeout = 3000) => {
+                return new Promise((resolve, reject) => {
+                    const start = Date.now();
+                    const check = () => {
+                        try {
+                            if (win.document && win.document.body) return resolve();
+                        } catch (e) {
+                            // Access may throw while the new window is not ready or is cross-origin; Retry until timeout.
+                        }
+                        if (Date.now() - start > timeout) return reject(new Error('preview body timeout'));
+                        setTimeout(check, 25);
+                    };
+                    check();
+                });
+            };
+            await waitForBody(previewWin);
 
-          // Append PagedJS
-          const script = previewWin.document.createElement('script');
-          script.src = `${server}/app-resources/pdf/paged.polyfill.js`;
-          previewWin.document.head.appendChild(script);
+            // Append PagedJS
+            const script = previewWin.document.createElement('script');
+            script.src = `${server}/app-resources/pdf/paged.polyfill.js`;
+            previewWin.document.head.appendChild(script);
 
-          const loadStyles = (href) => {
-              const link = previewWin.document.createElement('link');
-              link.rel = "stylesheet";
-              link.href = href;
-              previewWin.document.head.appendChild(link);
-          };
+            const loadStyles = (href) => {
+                const link = previewWin.document.createElement('link');
+                link.rel = "stylesheet";
+                link.href = href;
+                previewWin.document.head.appendChild(link);
+            };
 
-          // Load styles
-          loadStyles(`${server}${cssFile()}`);
-          fontUrlFilenames.forEach(loadStyles);
+            // Load styles
+            loadStyles(`${server}${cssFile()}`);
+            fontUrlFilenames.forEach(loadStyles);
 
         };
 
@@ -570,34 +565,16 @@ function PdfGenerate() {
                 currentId="content"
                 requireNet={false}
             />
-            <Dialog
-                open={open}
-                onClose={handleClose}
-                slotProps={{
-                    paper: {
-                        component: 'form',
-                        style: {
-                            minWidth: '250px',
-                            minHeight: calculateDialogHeight(bookNames.length),
-                        },
-                    },
-                }}
-                sx={{
-                    backdropFilter: "blur(3px)",
-                }}
+            <PanDialog
+                titleLabel={doI18n("pages:core-contenthandler_text_translation:generate_as_pdf", i18nRef.current)}
+                isOpen={open}
+                closeFn={() => handleClose()}
+                theme={theme}
+                fullWidth={false}
             >
-                <AppBar color='secondary' sx={{ position: 'relative', borderTopLeftRadius: 4, borderTopRightRadius: 4 }}>
-                    <Toolbar>
-                        <Typography variant="h6" component="div">
-                            {doI18n("pages:core-contenthandler_text_translation:generate_as_pdf", i18nRef.current)}
-                        </Typography>
-                    </Toolbar>
-                </AppBar>
                 <DialogContent sx={{ mt: 1, pt: 0 }}>
                     <DialogContentText>
-                        <Typography>
-                            {doI18n("pages:core-contenthandler_text_translation:pick_one_book_export", i18nRef.current)}
-                        </Typography>
+                        {doI18n("pages:core-contenthandler_text_translation:pick_one_book_export", i18nRef.current)}
                     </DialogContentText>
                     <FormControl fullWidth>
                         <Select
@@ -611,7 +588,7 @@ function PdfGenerate() {
                                 PaperProps: {
                                     style: {
                                         maxHeight: 224,
-                                        minWidth: 250,
+                                        minWidth: 200,
                                     },
                                 },
                             }}
@@ -757,35 +734,27 @@ function PdfGenerate() {
                         </DialogContentText>
                     }
                 </DialogContent>
-                <DialogActions>
-                    <Button
-                        variant="text"
-                        color="primary"
-                        onClick={() => {
-                            handleClose()
-                            setSelectedBooks(null);
-                        }}
-                    >
-                        {doI18n("pages:content:cancel", i18nRef.current)}
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        disabled={!selectedBooks}
-                        onClick={() => {
-                            if (!fileExport.current) {
-                                enqueueSnackbar(
-                                    doI18n("pages:core-contenthandler_text_translation:no_books_selected", i18nRef.current),
-                                    { variant: "warning" }
-                                );
-                            } else {
-                                generatePdf(fileExport.current, showByVerse ? "bcv" : "para").then();
-                            }
-                            handleCloseCreate();
-                        }}
-                    >{doI18n("pages:core-contenthandler_text_translation:export_label", i18nRef.current)}</Button>
-                </DialogActions>
-            </Dialog>
+                <PanDialogActions
+                    closeFn={() => {
+                        handleClose()
+                        setSelectedBooks(null);
+                    }}
+                    closeLabel={doI18n("pages:content:cancel", i18nRef.current)}
+                    actionFn={() => {
+                        if (!fileExport.current) {
+                            enqueueSnackbar(
+                                doI18n("pages:core-contenthandler_text_translation:no_books_selected", i18nRef.current),
+                                { variant: "warning" }
+                            );
+                        } else {
+                            generatePdf(fileExport.current, showByVerse ? "bcv" : "para").then();
+                        }
+                        handleCloseCreate();
+                    }}
+                    actionLabel={doI18n("pages:core-contenthandler_text_translation:export_label", i18nRef.current)}
+                    isDisabled={!selectedBooks}
+                />
+            </PanDialog>
         </Box>
     );
 }
