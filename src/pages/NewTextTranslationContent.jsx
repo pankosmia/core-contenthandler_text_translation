@@ -1,11 +1,8 @@
 import { useState, useContext, useEffect } from 'react';
 import {
-    AppBar,
     Button, Checkbox,
     FormControl, FormControlLabel, FormGroup,
-    Stack,
     TextField,
-    Toolbar,
     Typography,
     Select,
     MenuItem,
@@ -17,7 +14,8 @@ import {
     Tooltip,
     FormLabel,
     RadioGroup, Radio,
-    DialogContentText
+    DialogContentText,
+    useTheme
 } from "@mui/material";
 import {
     i18nContext,
@@ -57,6 +55,7 @@ export default function NewBibleContent() {
     const [protestantOnly, setProtestantOnly] = useState(true);
     const [localRepos, setLocalRepos] = useState([]);
     const [repoExists, setRepoExists] = useState(false);
+    const theme = useTheme();
 
     const [clientConfig, setClientConfig] = useState({});
 
@@ -309,6 +308,7 @@ export default function NewBibleContent() {
                 titleLabel={doI18n("pages:core-contenthandler_text_translation:create_content_text_translation", i18nRef.current)}
                 isOpen={open}
                 closeFn={() => handleCloseCreate()}
+                theme={theme}
             >
                 <DialogContentText
                     variant='subtitle2'

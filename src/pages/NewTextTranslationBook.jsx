@@ -19,6 +19,7 @@ import {
     Box,
     DialogContent,
     DialogContentText,
+    useTheme,
 } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
 import {
@@ -53,7 +54,8 @@ export default function NewTextTranslationBook() {
     const [versificationCodes, setVersificationCodes] = useState([]);
     const [fileVrs, setFileVrs] = useState(false);
     const [nameProject, setNameProject] = useState("");
-
+    const theme = useTheme();
+    
     const [clientConfig, setClientConfig] = useState({});
 
     const isProtestantBooksOnlyCheckboxEnabled =
@@ -225,6 +227,7 @@ export default function NewTextTranslationBook() {
                 titleLabel={`${doI18n("pages:core-contenthandler_text_translation:new_book", i18nRef.current)} - ${nameProject}`}
                 isOpen={open}
                 closeFn={() => handleClose()}
+                theme={theme}
             >
                 <DialogContentText sx={{ ml: 1, p: 1 }} variant='subtitle2'>
                     {doI18n(`pages:core-contenthandler_text_translation:required_field`, i18nRef.current)}
