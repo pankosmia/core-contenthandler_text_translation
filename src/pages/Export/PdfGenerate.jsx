@@ -223,7 +223,7 @@ function PdfGenerate() {
             throw new Error(`Unexpected pdfType '${pdfType}'`);
         }
 
-        const textDir = await TextDir(pdfHtml);
+        const textDir = await TextDir(pdfHtml, 'html');
 
         const cssFile = () => {
             if (pdfType === "para") {
