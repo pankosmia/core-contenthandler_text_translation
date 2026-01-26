@@ -16,6 +16,7 @@ import {
     RadioGroup, Radio,
     DialogContentText,
     useTheme,
+    Autocomplete,
 } from "@mui/material";
 import {
     i18nContext,
@@ -43,6 +44,7 @@ export default function NewBibleContent() {
     const [contentLanguageCode, setContentLanguageCode] = useState([]);
     const [contentOption, setContentOption] = useState("book");
     const [metadataSummaries, setMetadataSummaries] = useState({});
+    console.log("metas",metadataSummaries)
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [bookCode, setBookCode] = useState("TIT");
     const [bookTitle, setBookTitle] = useState("Tit");
@@ -56,9 +58,13 @@ export default function NewBibleContent() {
     const [localRepos, setLocalRepos] = useState([]);
     const [repoExists, setRepoExists] = useState(false);
     const [clientConfig, setClientConfig] = useState({});
+
     const [languageOption, setLanguageOption] = useState("BCP47List");
+    const [currentLanguageCode, setCurrentLanguageCode] = useState(null);
+    console.log("current", currentLanguageCode);
     const [localRepoOnly, setLocalRepoOnly] = useState(true);
-    const [resourcesBurrito, setResourcesBurrito] = useState(false)
+    const [resourcesBurrito, setResourcesBurrito] = useState(false);
+    const [burritoSelected, setBurritoSelected] = useState("");
     const theme = useTheme()
 
     const isProtestantBooksOnlyCheckboxEnabled =
@@ -160,9 +166,20 @@ export default function NewBibleContent() {
         },
         [open]
     );
+
+    useEffect(() => {
+        if (burritoSelected) {
+            getJson(`/burrito/metadata/summary/${burritoSelected}`)
+                .then((res) => res.json)
+                .then((data) => setCurrentLanguageCode({ ...currentLanguageCode, languageCode: data.language_code }))
+                .catch((err) => console.error('Error :', err));
+        }
+
+    }, [open, burritoSelected]);
+
     const languageCodes = Object.entries(contentLanguageCode).map(([key, value]) => ({
-        LanguageCode: key,
-        language: value.en,
+        languageCode: key,
+        languageName: value.en,
     }));
     const burritos = localRepos.filter(burrito =>
         (localRepoOnly && burrito.startsWith("_local_")) || (resourcesBurrito && burrito.startsWith("git"))
@@ -179,6 +196,7 @@ export default function NewBibleContent() {
             setBookAbbr("Ti");
             setShowVersification(true);
             setVersification("eng");
+            setContentLanguageCode({});
         },
         [postCount]
     );
@@ -207,13 +225,14 @@ export default function NewBibleContent() {
             content_name: contentName,
             content_abbr: contentAbbr,
             content_type: contentType,
-            content_language_code: contentLanguageCode,
+            content_language_code: currentLanguageCode,
             versification: submittedVersification,
             add_book: contentOption === "book",
             book_code: contentOption === "book" ? bookCode : null,
             book_title: contentOption === "book" ? bookTitle : null,
             book_abbr: contentOption === "book" ? bookAbbr : null,
             add_cv: contentOption === "book" ? showVersification : null,
+
         };
         const response = await postJson(
             "/git/new-text-translation",
@@ -302,6 +321,12 @@ export default function NewBibleContent() {
         setErrorDialogOpen(false);
         handleClose();
     };
+
+    useEffect(() => {
+        if (languageOption) {
+            setCurrentLanguageCode(null)
+        }
+    }, [setCurrentLanguageCode, languageOption])
 
     return (
         <Box>
@@ -407,18 +432,32 @@ export default function NewBibleContent() {
                         {languageOption === "BCP47List" &&
                             <>
                                 <Typography>{doI18n("pages:core-contenthandler_text_translation:description_bcp47_list", i18nRef.current)}</Typography>
-                                <PanFilteredMenu
+                                {/* <PanFilteredMenu
+                                    value={currentLanguageCode ? currentLanguageCode : {}}
+                                    onChange={(event, newValue) => {
+                                        setCurrentLanguageCode(newValue)
+                                    }}
                                     data={languageCodes}
                                     getOptionLabel={(option) =>
                                         `${option.language || ''} (${option.LanguageCode})`}
-                                    sx={{ width: 300 }}
                                     titleLabel="language"
+                                /> */}
+                                <Autocomplete
+                                    options={languageCodes}
+                                    value={currentLanguageCode ?? null}
+                                    onChange={(event, newValue) => {
+                                        setCurrentLanguageCode(newValue)
+                                    }}
+                                    getOptionLabel={(option) =>
+                                        `${option.languageName || ''} (${option.languageCode})`}
+                                    sx={{ width: 300 }}
+                                    renderInput={(params) => <TextField {...params} label="Movie" />}
                                 />
                             </>
-
                         }
                         {languageOption === "burrito" &&
                             <>
+                                <Typography>{doI18n("pages:core-contenthandler_text_translation:description_lang_code_burrito", i18nRef.current)}</Typography>
                                 <FormGroup row required>
                                     <FormControlLabel
                                         control={
@@ -442,39 +481,53 @@ export default function NewBibleContent() {
                                         label="ressources"
                                     />
                                 </FormGroup>
-                                <PanFilteredMenu
+                                {/* <PanFilteredMenu
                                     data={burritos}
+                                    value={currentLanguageCode ? currentLanguageCode : {}}
+                                    onChange={(event, newValue) => {
+                                        setCurrentLanguageCode(newValue)
+                                    }}
+                                    getOptionLabel={(option) => `${option}`}
+                                    titleLabel="Burrito"
+                                /> */}
+                                <Autocomplete
+                                    options={burritos}
+                                    value={burritoSelected}
+                                    onChange={(event, newValue) => {
+                                        setBurritoSelected(newValue)
+                                    }}
                                     getOptionLabel={(option) => `${option}`}
                                     sx={{ width: 300 }}
-                                    titleLabel="Burrito"
+                                    renderInput={(params) => <TextField {...params} label="Movie" />}
                                 />
                             </>
 
                         }
                         {languageOption === "customLanguage" &&
                             <>
+                                <Typography>{doI18n("pages:core-contenthandler_text_translation:description_custom_language", i18nRef.current)}</Typography>
                                 <Grid2 container spacing={2} justifyItems="flex-end" alignItems="stretch">
                                     <Grid2 item size={6}>
                                         <TextField
-                                            id="bookAbbr"
+                                            id="languageName"
                                             required
                                             sx={{ width: "100%" }}
-                                            label={doI18n("pages:core-contenthandler_text_translation:book_abbr", i18nRef.current)}
-                                            value={bookAbbr}
+                                            label={doI18n("pages:core-contenthandler_text_translation:lang_name", i18nRef.current)}
+                                            value={currentLanguageCode ? currentLanguageCode.languageName : null}
                                             onChange={(event) => {
-                                                setBookAbbr(event.target.value);
+                                                setCurrentLanguageCode({ ...currentLanguageCode, languageName: event.target.value });
                                             }}
                                         />
                                     </Grid2>
                                     <Grid2 item size={6}>
                                         <TextField
-                                            id="bookAbbr"
+                                            id="languageCode"
                                             required
                                             sx={{ width: "100%" }}
-                                            label={doI18n("pages:core-contenthandler_text_translation:book_abbr", i18nRef.current)}
-                                            value={bookAbbr}
+                                            label={doI18n("pages:core-contenthandler_text_translation:lang_code", i18nRef.current)}
+                                            value={currentLanguageCode ? currentLanguageCode.languageCode : null}
                                             onChange={(event) => {
-                                                setBookAbbr(event.target.value);
+                                                setCurrentLanguageCode({ ...currentLanguageCode, languageCode: event.target.value });
                                             }}
                                         />
                                     </Grid2>

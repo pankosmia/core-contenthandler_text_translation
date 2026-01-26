@@ -402,7 +402,11 @@
       "es": "Código del Idioma (si no está determinado, use 'und')",
       "fr": "Code Langue (si non déterminé, utilisez 'und')",
       "id": "Kode Bahasa ('und' buat yg tak dpt ditentukan)"
-    }, "book_creation_error": {
+    },
+    "lang_name":{
+      "en":"Language name"
+    },
+    "book_creation_error": {
       "en": "The book could not be created",
       "fr": "Le livre n'a pas pu être créé",
       "id": "@Kesalahan terjadi: Buku tidak jadi terbuat"
@@ -417,7 +421,7 @@
       "en":" From BCP47 List"
     },
     "lang_code_burrito":{
-      "en":" From anthor Burrito"
+      "en":" From another Burrito"
     },
      "lang_code_custom_language":{
       "en":" Create custom language"
