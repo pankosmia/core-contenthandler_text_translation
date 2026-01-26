@@ -171,7 +171,7 @@ export default function NewBibleContent() {
         if (burritoSelected) {
             getJson(`/burrito/metadata/summary/${burritoSelected}`)
                 .then((res) => res.json)
-                .then((data) => setCurrentLanguageCode({ ...currentLanguageCode, languageCode: data.language_code }))
+                .then((data) => setCurrentLanguageCode({ ...currentLanguageCode, languageCode: data.language_code, languageName:data.language_name }))
                 .catch((err) => console.error('Error :', err));
         }
 
