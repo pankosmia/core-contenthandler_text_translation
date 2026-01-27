@@ -43,7 +43,6 @@ export default function NewBibleContent() {
     const [contentLanguageCode, setContentLanguageCode] = useState([]);
     const [contentOption, setContentOption] = useState("book");
     const [metadataSummaries, setMetadataSummaries] = useState({});
-    console.log("metas",metadataSummaries)
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [bookCode, setBookCode] = useState("TIT");
     const [bookTitle, setBookTitle] = useState("Tit");
@@ -59,11 +58,12 @@ export default function NewBibleContent() {
     const [clientConfig, setClientConfig] = useState({});
 
     const [languageOption, setLanguageOption] = useState("BCP47List");
-    const [currentLanguageCode, setCurrentLanguageCode] = useState(null);
-    console.log("current", currentLanguageCode);
+    const [currentLanguageCode, setCurrentLanguageCode] = useState({ language_code: "", language_name: "" });
     const [localRepoOnly, setLocalRepoOnly] = useState(true);
     const [resourcesBurrito, setResourcesBurrito] = useState(false);
-    const [burritoSelected, setBurritoSelected] = useState("");
+    const [burritoSelected, setBurritoSelected] = useState("")
+    const [errorLangCode, setErrorLangCode] = useState(false);
+    const [errorAbbreviation, setErrorAbbreviation] = useState(false);
     const theme = useTheme()
 
     const isProtestantBooksOnlyCheckboxEnabled =
@@ -170,7 +170,7 @@ export default function NewBibleContent() {
         if (burritoSelected) {
             getJson(`/burrito/metadata/summary/${burritoSelected}`)
                 .then((res) => res.json)
-                .then((data) => setCurrentLanguageCode({ ...currentLanguageCode, language_code: data.language_code, language_name:data.language_name }))
+                .then((data) => setCurrentLanguageCode({ ...currentLanguageCode, language_code: data.language_code, language_name: data.language_name }))
                 .catch((err) => console.error('Error :', err));
         }
 
@@ -224,7 +224,8 @@ export default function NewBibleContent() {
             content_name: contentName,
             content_abbr: contentAbbr,
             content_type: contentType,
-            content_language_code: currentLanguageCode,
+            content_language_code: currentLanguageCode.language_code,
+            content_language_name: currentLanguageCode.language_name,
             versification: submittedVersification,
             add_book: contentOption === "book",
             book_code: contentOption === "book" ? bookCode : null,
@@ -323,10 +324,12 @@ export default function NewBibleContent() {
 
     useEffect(() => {
         if (languageOption) {
-            setCurrentLanguageCode(null)
+            setCurrentLanguageCode({ language_code: "", language_name: "" })
         }
     }, [setCurrentLanguageCode, languageOption])
 
+    const regexLangCode = /^x-[a-z]{3}$/
+    const regexAbbreviation = /^[A-Za-z0-9][A-Za-z0-9_]{0,6}[A-Za-z0-9]$/
     return (
         <Box>
             <Box
@@ -382,18 +385,21 @@ export default function NewBibleContent() {
                         />
                         <Tooltip
                             open={repoExists}
-
                             slotProps={{ popper: { modifiers: [{ name: 'offset', options: { offset: [0, -7] } }] } }}
-                            title={doI18n("pages:core-contenthandler_text_translation:name_is_taken", i18nRef.current)} placement="top-start"
+                            title={doI18n("pages:core-contenthandler_text_translation:helper_abbreviation", i18nRef.current)} placement="top-start"
                         >
                             <TextField
                                 id="abbr"
+                                error={errorAbbreviation}
+                                helperText={errorAbbreviation ? `${doI18n("pages:core-contenthandler_text_translation:helper_abbreviation", i18nRef.current)}` : ""}
                                 required
                                 label={doI18n("pages:core-contenthandler_text_translation:abbreviation", i18nRef.current)}
                                 value={contentAbbr}
                                 onChange={(event) => {
-                                    setRepoExists(localRepos.map(l => l.split("/")[2]).includes(event.target.value));
-                                    setContentAbbr(event.target.value);
+                                    const value = event.target.value
+                                    setRepoExists(localRepos.map(l => l.split("/")[2]).includes(value));
+                                    setContentAbbr(value);
+                                    setErrorAbbreviation(!regexAbbreviation.test(value))
                                 }}
                             />
                         </Tooltip>
@@ -411,7 +417,7 @@ export default function NewBibleContent() {
                         <FormControl required >
                             <FormLabel
                                 id="language_code-create-options">
-                                {doI18n("pages:core-contenthandler_text_translation:lang_code", i18nRef.current)}
+                                {doI18n("pages:core-contenthandler_text_translation:language", i18nRef.current)}
                             </FormLabel>
                             <RadioGroup
                                 row
@@ -432,24 +438,14 @@ export default function NewBibleContent() {
                             <>
                                 <Typography>{doI18n("pages:core-contenthandler_text_translation:description_bcp47_list", i18nRef.current)}</Typography>
                                 <PanFilteredMenu
-                                    value={currentLanguageCode ? currentLanguageCode : null}
-                                    onChange={setCurrentLanguageCode}
-                                    data={languageCodes}
-                                    getOptionLabel={(option) =>
-                                        `${option.language_name || ''} (${option.language_code})`}
-                                    titleLabel="language"
-                                /> 
-                                {/* <Autocomplete
-                                    options={languageCodes}
-                                    value={currentLanguageCode ?? null}
                                     onChange={(event, newValue) => {
                                         setCurrentLanguageCode(newValue)
                                     }}
+                                    data={languageCodes}
                                     getOptionLabel={(option) =>
-                                        `${option.language_name || ''} (${option.language_code})`}
-                                    sx={{ width: 300 }}
-                                    renderInput={(params) => <TextField {...params} label="Movie" />}
-                                /> */}
+                                        `${option.language_name || ''} (${option.language_code || ""})`}
+                                    titleLabel={doI18n("pages:core-contenthandler_text_translation:language", i18nRef.current)}
+                                />
                             </>
                         }
                         {languageOption === "burrito" &&
@@ -465,7 +461,7 @@ export default function NewBibleContent() {
                                                 defaultChecked
                                             />
                                         }
-                                        label="local only"
+                                        label={doI18n("pages:core-contenthandler_text_translation:local_project", i18nRef.current)}
                                     />
                                     <FormControlLabel
                                         control={
@@ -475,26 +471,18 @@ export default function NewBibleContent() {
                                                 onChange={() => setResourcesBurrito(!resourcesBurrito)}
                                             />
                                         }
-                                        label="ressources"
+                                        label={doI18n("pages:core-contenthandler_text_translation:burrito_resources", i18nRef.current)}
                                     />
                                 </FormGroup>
                                 <PanFilteredMenu
                                     data={burritos}
-                                    value={burritoSelected}
-                                    onChange={setCurrentLanguageCode}
-                                    getOptionLabel={(option) => `${option}`}
-                                    titleLabel="Burrito"
-                                />
-                                {/* <Autocomplete
-                                    options={burritos}
-                                    value={burritoSelected}
+                                    //value={burritoSelected}
                                     onChange={(event, newValue) => {
                                         setBurritoSelected(newValue)
                                     }}
                                     getOptionLabel={(option) => `${option}`}
-                                    sx={{ width: 300 }}
-                                    renderInput={(params) => <TextField {...params} label="Movie" />}
-                                /> */}
+                                    titleLabel="Burrito"
+                                />
                             </>
 
                         }
@@ -510,19 +498,25 @@ export default function NewBibleContent() {
                                             label={doI18n("pages:core-contenthandler_text_translation:lang_name", i18nRef.current)}
                                             value={currentLanguageCode ? currentLanguageCode.language_name : null}
                                             onChange={(event) => {
-                                                setCurrentLanguageCode({ ...currentLanguageCode, language_name: event.target.value });
+                                                const value = event.target.value.toLocaleLowerCase();
+                                                setCurrentLanguageCode({ ...currentLanguageCode, language_name: value });
                                             }}
                                         />
                                     </Grid2>
                                     <Grid2 item size={6}>
                                         <TextField
                                             id="language_code"
+                                            placeholder='x-abc'
+                                            error={errorLangCode}
+                                            helperText={errorLangCode ? `${doI18n("pages:core-contenthandler_text_translation:helper_language_code", i18nRef.current)}` : ""}
                                             required
                                             sx={{ width: "100%" }}
                                             label={doI18n("pages:core-contenthandler_text_translation:lang_code", i18nRef.current)}
                                             value={currentLanguageCode ? currentLanguageCode.language_code : null}
                                             onChange={(event) => {
-                                                setCurrentLanguageCode({ ...currentLanguageCode, language_code: event.target.value });
+                                                const value = event.target.value.toLocaleLowerCase();
+                                                setCurrentLanguageCode({ ...currentLanguageCode, language_code: value });
+                                                setErrorLangCode(!regexLangCode.test(value))
                                             }}
                                         />
                                     </Grid2>
@@ -729,8 +723,9 @@ export default function NewBibleContent() {
                             contentName.trim().length > 0 &&
                             contentAbbr.trim().length > 0 &&
                             contentType.trim().length > 0 &&
-                            //contentLanguageCode().length > 0 &&
                             versification.trim().length === 3 &&
+                            currentLanguageCode?.language_code?.trim().length > 0 &&
+                            currentLanguageCode?.language_name?.trim().length > 0 &&
                             (
                                 !(contentOption === "book") || (
                                     bookCode.trim().length === 3 &&
@@ -740,7 +735,7 @@ export default function NewBibleContent() {
                             ) &&
                             (
                                 !(contentOption === "plan") || selectedPlan
-                            )
+                            ) && (errorAbbreviation === false && errorLangCode === false)
                         )
                         ||
                         repoExists
