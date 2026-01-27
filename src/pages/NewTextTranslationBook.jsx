@@ -379,7 +379,8 @@ export default function NewTextTranslationBook() {
                                 control={
                                     <Checkbox
                                         color="secondary"
-                                        checked={addCV}
+                                        checked={true}
+                                        disabled={true}
                                         onChange={() => setAddCV(!addCV)}
                                     />
                                 }

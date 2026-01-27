@@ -673,7 +673,8 @@ export default function NewBibleContent() {
                                         control={
                                             <Checkbox
                                                 color='secondary'
-                                                checked={showVersification}
+                                                checked={true}
+                                                disabled
                                                 onChange={() => setShowVersification(!showVersification)}
                                             />
                                         }
