@@ -390,7 +390,7 @@ export default function NewBibleContent() {
                         <Tooltip
                             open={repoExists}
                             slotProps={{ popper: { modifiers: [{ name: 'offset', options: { offset: [0, -7] } }] } }}
-                            title={doI18n("pages:core-contenthandler_text_translation:helper_abbreviation", i18nRef.current)} placement="top-start"
+                            title={doI18n("pages:core-contenthandler_text_translation:name_is_taken", i18nRef.current)} placement="top-start"
                         >
                             <TextField
                                 id="abbr"
