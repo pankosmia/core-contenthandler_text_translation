@@ -502,7 +502,7 @@ export default function NewBibleContent() {
                                             label={doI18n("pages:core-contenthandler_text_translation:lang_name", i18nRef.current)}
                                             value={currentLanguageCode ? currentLanguageCode.language_name : null}
                                             onChange={(event) => {
-                                                const value = event.target.value.toLocaleLowerCase();
+                                                const value = event.target.value;
                                                 setCurrentLanguageCode({ ...currentLanguageCode, language_name: value });
                                             }}
                                         />
