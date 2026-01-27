@@ -457,8 +457,8 @@
       "fr":"\"x-\" suivi de 3 lettres minuscules (a-z)"
     },
      "helper_abbreviation":{
-      "en":"Between 2 and 8 characters ",
-      "fr":"Entre 2 et 8 caractères"
+      "en":"Between 2 and 8 letters or numbers, with underline okay in the middle ",
+      "fr":"@Entre 2 et 8 caractères"
     }
   }
 }
