@@ -16,7 +16,6 @@ import {
     RadioGroup, Radio,
     DialogContentText,
     useTheme,
-    Autocomplete,
 } from "@mui/material";
 import {
     i18nContext,
@@ -171,15 +170,15 @@ export default function NewBibleContent() {
         if (burritoSelected) {
             getJson(`/burrito/metadata/summary/${burritoSelected}`)
                 .then((res) => res.json)
-                .then((data) => setCurrentLanguageCode({ ...currentLanguageCode, languageCode: data.language_code, languageName:data.language_name }))
+                .then((data) => setCurrentLanguageCode({ ...currentLanguageCode, language_code: data.language_code, language_name:data.language_name }))
                 .catch((err) => console.error('Error :', err));
         }
 
     }, [open, burritoSelected]);
 
     const languageCodes = Object.entries(contentLanguageCode).map(([key, value]) => ({
-        languageCode: key,
-        languageName: value.en,
+        language_code: key,
+        language_name: value.en,
     }));
     const burritos = localRepos.filter(burrito =>
         (localRepoOnly && burrito.startsWith("_local_")) || (resourcesBurrito && burrito.startsWith("git"))
@@ -411,13 +410,13 @@ export default function NewBibleContent() {
                         />
                         <FormControl required >
                             <FormLabel
-                                id="languageCode-create-options">
+                                id="language_code-create-options">
                                 {doI18n("pages:core-contenthandler_text_translation:lang_code", i18nRef.current)}
                             </FormLabel>
                             <RadioGroup
                                 row
-                                aria-labelledby="languageCode-create-options"
-                                name="languageCode-create-options-radio-group"
+                                aria-labelledby="language_code-create-options"
+                                name="language_code-create-options-radio-group"
                                 value={languageOption}
                                 onClick={event => setLanguageOption(event.target.value)}
                             >
@@ -432,27 +431,25 @@ export default function NewBibleContent() {
                         {languageOption === "BCP47List" &&
                             <>
                                 <Typography>{doI18n("pages:core-contenthandler_text_translation:description_bcp47_list", i18nRef.current)}</Typography>
-                                {/* <PanFilteredMenu
-                                    value={currentLanguageCode ? currentLanguageCode : {}}
-                                    onChange={(event, newValue) => {
-                                        setCurrentLanguageCode(newValue)
-                                    }}
+                                <PanFilteredMenu
+                                    value={currentLanguageCode ? currentLanguageCode : null}
+                                    onChange={setCurrentLanguageCode}
                                     data={languageCodes}
                                     getOptionLabel={(option) =>
-                                        `${option.language || ''} (${option.LanguageCode})`}
+                                        `${option.language_name || ''} (${option.language_code})`}
                                     titleLabel="language"
-                                /> */}
-                                <Autocomplete
+                                /> 
+                                {/* <Autocomplete
                                     options={languageCodes}
                                     value={currentLanguageCode ?? null}
                                     onChange={(event, newValue) => {
                                         setCurrentLanguageCode(newValue)
                                     }}
                                     getOptionLabel={(option) =>
-                                        `${option.languageName || ''} (${option.languageCode})`}
+                                        `${option.language_name || ''} (${option.language_code})`}
                                     sx={{ width: 300 }}
                                     renderInput={(params) => <TextField {...params} label="Movie" />}
-                                />
+                                /> */}
                             </>
                         }
                         {languageOption === "burrito" &&
@@ -481,16 +478,14 @@ export default function NewBibleContent() {
                                         label="ressources"
                                     />
                                 </FormGroup>
-                                {/* <PanFilteredMenu
+                                <PanFilteredMenu
                                     data={burritos}
-                                    value={currentLanguageCode ? currentLanguageCode : {}}
-                                    onChange={(event, newValue) => {
-                                        setCurrentLanguageCode(newValue)
-                                    }}
+                                    value={burritoSelected}
+                                    onChange={setCurrentLanguageCode}
                                     getOptionLabel={(option) => `${option}`}
                                     titleLabel="Burrito"
-                                /> */}
-                                <Autocomplete
+                                />
+                                {/* <Autocomplete
                                     options={burritos}
                                     value={burritoSelected}
                                     onChange={(event, newValue) => {
@@ -499,7 +494,7 @@ export default function NewBibleContent() {
                                     getOptionLabel={(option) => `${option}`}
                                     sx={{ width: 300 }}
                                     renderInput={(params) => <TextField {...params} label="Movie" />}
-                                />
+                                /> */}
                             </>
 
                         }
@@ -509,25 +504,25 @@ export default function NewBibleContent() {
                                 <Grid2 container spacing={2} justifyItems="flex-end" alignItems="stretch">
                                     <Grid2 item size={6}>
                                         <TextField
-                                            id="languageName"
+                                            id="language_name"
                                             required
                                             sx={{ width: "100%" }}
                                             label={doI18n("pages:core-contenthandler_text_translation:lang_name", i18nRef.current)}
-                                            value={currentLanguageCode ? currentLanguageCode.languageName : null}
+                                            value={currentLanguageCode ? currentLanguageCode.language_name : null}
                                             onChange={(event) => {
-                                                setCurrentLanguageCode({ ...currentLanguageCode, languageName: event.target.value });
+                                                setCurrentLanguageCode({ ...currentLanguageCode, language_name: event.target.value });
                                             }}
                                         />
                                     </Grid2>
                                     <Grid2 item size={6}>
                                         <TextField
-                                            id="languageCode"
+                                            id="language_code"
                                             required
                                             sx={{ width: "100%" }}
                                             label={doI18n("pages:core-contenthandler_text_translation:lang_code", i18nRef.current)}
-                                            value={currentLanguageCode ? currentLanguageCode.languageCode : null}
+                                            value={currentLanguageCode ? currentLanguageCode.language_code : null}
                                             onChange={(event) => {
-                                                setCurrentLanguageCode({ ...currentLanguageCode, languageCode: event.target.value });
+                                                setCurrentLanguageCode({ ...currentLanguageCode, language_code: event.target.value });
                                             }}
                                         />
                                     </Grid2>
