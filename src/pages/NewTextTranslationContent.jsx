@@ -15,7 +15,8 @@ import {
     FormLabel,
     RadioGroup, Radio,
     DialogContentText,
-    useTheme
+    useTheme,
+
 } from "@mui/material";
 import {
     i18nContext,
@@ -28,7 +29,7 @@ import {
 } from "pithekos-lib";
 import sx from "./Selection.styles";
 import ListMenuItem from "./ListMenuItem";
-import { PanDialog, PanDialogActions } from "pankosmia-rcl";
+import { PanDialog, PanDialogActions, PanFilteredMenu } from "pankosmia-rcl";
 
 export default function NewBibleContent() {
 
@@ -40,7 +41,7 @@ export default function NewBibleContent() {
     const [contentName, setContentName] = useState("");
     const [contentAbbr, setContentAbbr] = useState("");
     const [contentType, setContentType] = useState("text_translation");
-    const [contentLanguageCode, setContentLanguageCode] = useState("und");
+    const [contentLanguageCode, setContentLanguageCode] = useState([]);
     const [contentOption, setContentOption] = useState("book");
     const [metadataSummaries, setMetadataSummaries] = useState({});
     const [selectedPlan, setSelectedPlan] = useState(null);
@@ -55,29 +56,36 @@ export default function NewBibleContent() {
     const [protestantOnly, setProtestantOnly] = useState(true);
     const [localRepos, setLocalRepos] = useState([]);
     const [repoExists, setRepoExists] = useState(false);
-    const theme = useTheme();
-
     const [clientConfig, setClientConfig] = useState({});
 
+    const [languageOption, setLanguageOption] = useState("BCP47List");
+    const [currentLanguageCode, setCurrentLanguageCode] = useState({ language_code: "", language_name: "" });
+    const [localRepoOnly, setLocalRepoOnly] = useState(true);
+    const [resourcesBurrito, setResourcesBurrito] = useState(false);
+    const [burritoSelected, setBurritoSelected] = useState("")
+    const [errorLangCode, setErrorLangCode] = useState(false);
+    const [errorAbbreviation, setErrorAbbreviation] = useState(false);
+    const theme = useTheme()
+
     const isProtestantBooksOnlyCheckboxEnabled =
-    clientConfig?.['core-contenthandler_text_translation']
-      ?.find((section) => section.id === 'config')
-      ?.fields?.find((field) => field.id === 'protestantBooksOnlyCheckbox')?.value !== false;
+        clientConfig?.['core-contenthandler_text_translation']
+            ?.find((section) => section.id === 'config')
+            ?.fields?.find((field) => field.id === 'protestantBooksOnlyCheckbox')?.value !== false;
 
     const isProtestantBooksOnlyDefaultChecked =
-    clientConfig?.['core-contenthandler_text_translation']
-      ?.find((section) => section.id === 'config')
-      ?.fields?.find((field) => field.id === 'protestantBooksOnlyDefaultChecked')?.value !== false;
+        clientConfig?.['core-contenthandler_text_translation']
+            ?.find((section) => section.id === 'config')
+            ?.fields?.find((field) => field.id === 'protestantBooksOnlyDefaultChecked')?.value !== false;
 
     useEffect(() => {
-      setProtestantOnly(isProtestantBooksOnlyDefaultChecked);
+        setProtestantOnly(isProtestantBooksOnlyDefaultChecked);
     }, [isProtestantBooksOnlyDefaultChecked]);
 
     useEffect(() => {
-      getJson('/client-config')
-        .then((res) => res.json)
-        .then((data) => setClientConfig(data))
-        .catch((err) => console.error('Error :', err));
+        getJson('/client-config')
+            .then((res) => res.json)
+            .then((data) => setClientConfig(data))
+            .catch((err) => console.error('Error :', err));
     }, []);
 
     const handleClose = () => {
@@ -149,15 +157,46 @@ export default function NewBibleContent() {
 
     useEffect(
         () => {
+            if (open) {
+                getAndSetJson({
+                    url: "/app-resources/lookups/bcp47-language_codes.json",
+                    setter: setContentLanguageCode
+                }).then()
+            }
+        },
+        [open]
+    );
+
+    useEffect(() => {
+        if (burritoSelected) {
+            getJson(`/burrito/metadata/summary/${burritoSelected}`)
+                .then((res) => res.json)
+                .then((data) => setCurrentLanguageCode({ ...currentLanguageCode, language_code: data.language_code, language_name: data.language_name }))
+                .catch((err) => console.error('Error :', err));
+        }
+
+    }, [open, burritoSelected]);
+
+    const languageCodes = Object.entries(contentLanguageCode).map(([key, value]) => ({
+        language_code: key,
+        language_name: value.en,
+    }));
+    const burritos = localRepos.filter(burrito =>
+        (localRepoOnly && burrito.startsWith("_local_")) || (resourcesBurrito && burrito.startsWith("git"))
+    );
+
+    useEffect(
+        () => {
             setContentName("");
             setContentAbbr("");
             setContentType("text_translation");
-            setContentLanguageCode("und");
+            setContentLanguageCode([]);
             setBookCode("TIT");
             setBookTitle("Titus");
             setBookAbbr("Ti");
             setShowVersification(true);
             setVersification("eng");
+            setContentLanguageCode({});
         },
         [postCount]
     );
@@ -186,13 +225,15 @@ export default function NewBibleContent() {
             content_name: contentName,
             content_abbr: contentAbbr,
             content_type: contentType,
-            content_language_code: contentLanguageCode,
+            content_language_code: currentLanguageCode.language_code,
+            content_language_name: currentLanguageCode.language_name,
             versification: submittedVersification,
             add_book: contentOption === "book",
             book_code: contentOption === "book" ? bookCode : null,
             book_title: contentOption === "book" ? bookTitle : null,
             book_abbr: contentOption === "book" ? bookAbbr : null,
             add_cv: contentOption === "book" ? showVersification : null,
+
         };
         const response = await postJson(
             "/git/new-text-translation",
@@ -285,6 +326,14 @@ export default function NewBibleContent() {
         handleClose();
     };
 
+    useEffect(() => {
+        if (languageOption) {
+            setCurrentLanguageCode({ language_code: "", language_name: "" })
+        }
+    }, [setCurrentLanguageCode, languageOption])
+
+    const regexLangCode = /^x-[a-z]{3}$/
+    const regexAbbreviation = /^[A-Za-z0-9][A-Za-z0-9_]{0,6}[A-Za-z0-9]$/
     return (
         <Box>
             <Box
@@ -312,7 +361,6 @@ export default function NewBibleContent() {
                 isOpen={open}
                 closeFn={() => handleCloseCreate()}
                 theme={theme}
-                maxWidth={"lg"}
             >
                 <DialogContentText
                     variant='subtitle2'
@@ -341,18 +389,21 @@ export default function NewBibleContent() {
                         />
                         <Tooltip
                             open={repoExists}
-
                             slotProps={{ popper: { modifiers: [{ name: 'offset', options: { offset: [0, -7] } }] } }}
-                            title={doI18n("pages:core-contenthandler_text_translation:name_is_taken", i18nRef.current)} placement="top-start"
+                            title={doI18n("pages:core-contenthandler_text_translation:helper_abbreviation", i18nRef.current)} placement="top-start"
                         >
                             <TextField
                                 id="abbr"
+                                error={errorAbbreviation}
+                                helperText={errorAbbreviation ? `${doI18n("pages:core-contenthandler_text_translation:helper_abbreviation", i18nRef.current)}` : ""}
                                 required
                                 label={doI18n("pages:core-contenthandler_text_translation:abbreviation", i18nRef.current)}
                                 value={contentAbbr}
                                 onChange={(event) => {
-                                    setRepoExists(localRepos.map(l => l.split("/")[2]).includes(event.target.value));
-                                    setContentAbbr(event.target.value);
+                                    const value = event.target.value
+                                    setRepoExists(localRepos.map(l => l.split("/")[2]).includes(value));
+                                    setContentAbbr(value);
+                                    setErrorAbbreviation(!regexAbbreviation.test(value))
                                 }}
                             />
                         </Tooltip>
@@ -367,15 +418,115 @@ export default function NewBibleContent() {
                                 setContentType(event.target.value);
                             }}
                         />
-                        <TextField
-                            id="languageCode"
-                            required
-                            label={doI18n("pages:core-contenthandler_text_translation:lang_code", i18nRef.current)}
-                            value={contentLanguageCode}
-                            onChange={(event) => {
-                                setContentLanguageCode(event.target.value);
-                            }}
-                        />
+                        <FormControl required >
+                            <FormLabel
+                                id="language_code-create-options">
+                                {doI18n("pages:core-contenthandler_text_translation:language", i18nRef.current)}
+                            </FormLabel>
+                            <RadioGroup
+                                row
+                                aria-labelledby="language_code-create-options"
+                                name="language_code-create-options-radio-group"
+                                value={languageOption}
+                                onClick={event => setLanguageOption(event.target.value)}
+                            >
+                                <FormControlLabel value="BCP47List" control={<Radio />}
+                                    label={doI18n("pages:core-contenthandler_text_translation:lang_code_bcp47_list", i18nRef.current)} />
+                                <FormControlLabel value="burrito" control={<Radio />}
+                                    label={doI18n("pages:core-contenthandler_text_translation:lang_code_burrito", i18nRef.current)} />
+                                <FormControlLabel value="customLanguage" control={<Radio />}
+                                    label={doI18n("pages:core-contenthandler_text_translation:lang_code_custom_language", i18nRef.current)} />
+                            </RadioGroup>
+                        </FormControl>
+                        {languageOption === "BCP47List" &&
+                            <>
+                                <Typography>{doI18n("pages:core-contenthandler_text_translation:description_bcp47_list", i18nRef.current)}</Typography>
+                                <PanFilteredMenu
+                                    onChange={(event, newValue) => {
+                                        setCurrentLanguageCode(newValue)
+                                    }}
+                                    data={languageCodes}
+                                    getOptionLabel={(option) =>
+                                        `${option.language_name || ''} (${option.language_code || ""})`}
+                                    titleLabel={doI18n("pages:core-contenthandler_text_translation:language", i18nRef.current)}
+                                />
+                            </>
+                        }
+                        {languageOption === "burrito" &&
+                            <>
+                                <Typography>{doI18n("pages:core-contenthandler_text_translation:description_lang_code_burrito", i18nRef.current)}</Typography>
+                                <FormGroup row required>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                color='secondary'
+                                                checked={localRepoOnly}
+                                                onChange={() => setLocalRepoOnly(!localRepoOnly)}
+                                                defaultChecked
+                                            />
+                                        }
+                                        label={doI18n("pages:core-contenthandler_text_translation:local_project", i18nRef.current)}
+                                    />
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                color='secondary'
+                                                checked={resourcesBurrito}
+                                                onChange={() => setResourcesBurrito(!resourcesBurrito)}
+                                            />
+                                        }
+                                        label={doI18n("pages:core-contenthandler_text_translation:burrito_resources", i18nRef.current)}
+                                    />
+                                </FormGroup>
+                                <PanFilteredMenu
+                                    data={burritos}
+                                    //value={burritoSelected}
+                                    onChange={(event, newValue) => {
+                                        setBurritoSelected(newValue)
+                                    }}
+                                    getOptionLabel={(option) => `${option}`}
+                                    titleLabel="Burrito"
+                                />
+                            </>
+
+                        }
+                        {languageOption === "customLanguage" &&
+                            <>
+                                <Typography>{doI18n("pages:core-contenthandler_text_translation:description_custom_language", i18nRef.current)}</Typography>
+                                <Grid2 container spacing={2} justifyItems="flex-end" alignItems="stretch">
+                                    <Grid2 item size={6}>
+                                        <TextField
+                                            id="language_name"
+                                            required
+                                            sx={{ width: "100%" }}
+                                            label={doI18n("pages:core-contenthandler_text_translation:lang_name", i18nRef.current)}
+                                            value={currentLanguageCode ? currentLanguageCode.language_name : null}
+                                            onChange={(event) => {
+                                                const value = event.target.value.toLocaleLowerCase();
+                                                setCurrentLanguageCode({ ...currentLanguageCode, language_name: value });
+                                            }}
+                                        />
+                                    </Grid2>
+                                    <Grid2 item size={6}>
+                                        <TextField
+                                            id="language_code"
+                                            placeholder='x-abc'
+                                            error={errorLangCode}
+                                            helperText={errorLangCode ? `${doI18n("pages:core-contenthandler_text_translation:helper_language_code", i18nRef.current)}` : ""}
+                                            required
+                                            sx={{ width: "100%" }}
+                                            label={doI18n("pages:core-contenthandler_text_translation:lang_code", i18nRef.current)}
+                                            value={currentLanguageCode ? currentLanguageCode.language_code : null}
+                                            onChange={(event) => {
+                                                const value = event.target.value.toLocaleLowerCase();
+                                                setCurrentLanguageCode({ ...currentLanguageCode, language_code: value });
+                                                setErrorLangCode(!regexLangCode.test(value))
+                                            }}
+                                        />
+                                    </Grid2>
+                                </Grid2>
+                            </>
+                        }
                         {
                             contentOption !== "plan" &&
                             <FormControl sx={{ width: "100%" }}>
@@ -577,8 +728,9 @@ export default function NewBibleContent() {
                             contentName.trim().length > 0 &&
                             contentAbbr.trim().length > 0 &&
                             contentType.trim().length > 0 &&
-                            contentLanguageCode.trim().length > 0 &&
                             versification.trim().length === 3 &&
+                            currentLanguageCode?.language_code?.trim().length > 0 &&
+                            currentLanguageCode?.language_name?.trim().length > 0 &&
                             (
                                 !(contentOption === "book") || (
                                     bookCode.trim().length === 3 &&
@@ -588,7 +740,7 @@ export default function NewBibleContent() {
                             ) &&
                             (
                                 !(contentOption === "plan") || selectedPlan
-                            )
+                            ) && (errorAbbreviation === false && errorLangCode === false)
                         )
                         ||
                         repoExists

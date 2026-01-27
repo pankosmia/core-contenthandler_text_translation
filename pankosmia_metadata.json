@@ -400,10 +400,13 @@
       "id": "Jenis"
     },
     "lang_code": {
-      "en": "Language Code ('und' for undetermined)",
-      "es": "Código del Idioma (si no está determinado, use 'und')",
-      "fr": "Code Langue (si non déterminé, utilisez 'und')",
-      "id": "Kode Bahasa ('und' buat yg tak dpt ditentukan)"
+      "en": "Language Code",
+      "es": "Código del Idioma",
+      "fr": "Code Langue",
+      "id": "Kode Bahasa"
+    },
+    "lang_name":{
+      "en":"Language name"
     },
     "book_creation_error": {
       "en": "The book could not be created",
@@ -414,6 +417,48 @@
       "en": "Biblical Text",
       "fr": "Texte biblique",
       "id": "Teks alkitabiah"
+    },
+    "lang_code_bcp47_list":{
+      "en":" From BCP47 List"
+    },
+    "lang_code_burrito":{
+      "en":" From another Burrito"
+    },
+     "lang_code_custom_language":{
+      "en":" Create custom language"
+    },
+    "description_bcp47_list":{
+      "en":"Choose a standard (BCP 47) language code from the list.",
+      "fr":"Choisissez un code standard (BCP 47) à partir de la liste."
+    },
+    "description_lang_code_burrito":{
+      "en":"Copy language details from an existing document.",
+      "fr":"Copiez les informations linguistiques d'un autre document."
+    },
+     "description_custom_language":{
+      "en":"Supply your own custom language code and name. The code should begin with 'x-'.",
+      "fr":"Fournissez votre propre code et nom de langue. Le code doit commencer avec 'x-'. "
+    },
+    "local_project":{
+      "en": "Local project only",
+      "fr":"Seulement les projets locaux"
+    },
+    "burrito_resources":{
+      "en": "Resources",
+      "fr":"Ressources"
+
+    },
+    "language":{
+      "en":"Language",
+      "fr":"Langue"
+    },
+    "helper_language_code":{
+      "en":"\"x-\" followed by 3 lowercase letters",
+      "fr":"\"x-\" suivi de 3 lettres minuscules (a-z)"
+    },
+     "helper_abbreviation":{
+      "en":"Between 2 and 8 characters ",
+      "fr":"Entre 2 et 8 caractères"
     }
   }
 }
