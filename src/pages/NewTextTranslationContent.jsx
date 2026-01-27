@@ -15,7 +15,11 @@ import {
     FormLabel,
     RadioGroup, Radio,
     DialogContentText,
+<<<<<<< HEAD
     useTheme,
+=======
+    useTheme
+>>>>>>> main
 } from "@mui/material";
 import {
     i18nContext,
@@ -55,6 +59,11 @@ export default function NewBibleContent() {
     const [protestantOnly, setProtestantOnly] = useState(true);
     const [localRepos, setLocalRepos] = useState([]);
     const [repoExists, setRepoExists] = useState(false);
+<<<<<<< HEAD
+=======
+    const theme = useTheme();
+
+>>>>>>> main
     const [clientConfig, setClientConfig] = useState({});
 
     const [languageOption, setLanguageOption] = useState("BCP47List");
@@ -256,8 +265,11 @@ export default function NewBibleContent() {
                 let chapterNo = 0;
                 let usfmBits = [];
                 usfmBits.push(`\\id ${bookCode} -- ${planJson.short_name} -- v${planJson.version} -- ${planJson.copyright}`);
+                const printableBookCode = ["1", "2", "3"].includes(bookCode[0]) ?
+                    `${bookCode[0]} ${bookCode[1]}${bookCode[2].toLowerCase()}`:
+                    `${bookCode[0]}${bookCode[1].toLowerCase()}${bookCode[2].toLowerCase()}`;
                 for (const headerTag of ["toc1", "toc2", "toc3", "mt"]) {
-                    usfmBits.push(`\\${headerTag} ${planJson.name} (${bookCode})`);
+                    usfmBits.push(`\\${headerTag} ${printableBookCode}`);
                 }
                 for (const bookSection of bookSections) {
                     usfmBits.push(`\\rem ${bookSection.cv[0]}-${bookSection.cv[1]}`);
@@ -570,8 +582,8 @@ export default function NewBibleContent() {
                             value={contentOption}
                             onClick={event => setContentOption(event.target.value)}
                         >
-                            <FormControlLabel value="none" control={<Radio />}
-                                label={doI18n("pages:core-contenthandler_text_translation:no_content_radio", i18nRef.current)} />
+                            {/*<FormControlLabel value="none" control={<Radio />}
+                                label={doI18n("pages:core-contenthandler_text_translation:no_content_radio", i18nRef.current)} />*/}
                             <FormControlLabel value="book" control={<Radio />}
                                 label={doI18n("pages:core-contenthandler_text_translation:book_content_radio", i18nRef.current)} />
                             <FormControlLabel value="plan" control={<Radio />}

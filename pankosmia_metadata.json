@@ -2,78 +2,79 @@
   "id": "core-contenthandler_text_translation",
   "exclude_from_menu": true,
   "exclude_from_dashboard": true,
-  "minServerVersion":"0.12.14",
+  "minServerVersion": "0.12.14",
   "require": {
     "net": false,
     "debug": true
   },
-  "endpoints":{
-  "textTranslation": {
-    "create_document": [
-      {
-        "doc":"Create document for textTranslation Project",
-        "placeHolders":{},
-        "label": "pages:core-contenthandler_text_translation:new_translation_text",
-        "url": "/createDocument/textTranslation"
-      }
-    ],
-    "new_book": [
-      {
-        "doc":"Add a book to a textTranslation document",
-        "placeHolders": {
-          "REPO_PATH": {
-            "doc": "The path to the repo in <X>/<Y>/<Z> format"
-          }
-        },
-        "label": "pages:content:new_book",
-        "url": "/newBook?repoPath=%%REPO_PATH%%"
-      }
-    ],
-    "import_book": [
-      {
-        "doc":"Import a book into a textTranslation document",
-        "placeHolders": {
-          "REPO_PATH": {
-            "doc": "The path to the repo in <X>/<Y>/<Z> format"
-          }
-        },
-        "label": "pages:content:import_book",
-        "url": "/importBook?repoPath=%%REPO_PATH%%"
-      }
-    ],
-    "export": [
-      {
-        "subMenu": [
-          {
-            "usfm": [
-              {
-                "doc":"Export to usfm a textTranslation document",
-                "placeHolders": {
-                  "REPO_PATH": {
-                    "doc": "The path to the repo in <X>/<Y>/<Z> format"
-                  }
-                },
-                "label": "pages:content:export_usfm",
-                "url": "/export/usfm?repoPath=%%REPO_PATH%%"
-              }
-            ],
-            "pdf": [
-              {
-                "doc":"Export to pdf a textTranslation document",
-                "placeHolders": {
-                  "REPO_PATH": {
-                    "doc": "The path to the repo in <X>/<Y>/<Z> format"
-                  }
-                },
-                "label": "pages:content:export_pdf",
-                "url": "/export/pdf?repoPath=%%REPO_PATH%%"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }},
+  "endpoints": {
+    "textTranslation": {
+      "create_document": [
+        {
+          "doc": "Create document for textTranslation Project",
+          "placeHolders": {},
+          "label": "pages:core-contenthandler_text_translation:new_translation_text",
+          "url": "/createDocument/textTranslation"
+        }
+      ],
+      "new_book": [
+        {
+          "doc": "Add a book to a textTranslation document",
+          "placeHolders": {
+            "REPO_PATH": {
+              "doc": "The path to the repo in <X>/<Y>/<Z> format"
+            }
+          },
+          "label": "pages:content:new_book",
+          "url": "/newBook?repoPath=%%REPO_PATH%%"
+        }
+      ],
+      "import_book": [
+        {
+          "doc": "Import a book into a textTranslation document",
+          "placeHolders": {
+            "REPO_PATH": {
+              "doc": "The path to the repo in <X>/<Y>/<Z> format"
+            }
+          },
+          "label": "pages:content:import_book",
+          "url": "/importBook?repoPath=%%REPO_PATH%%"
+        }
+      ],
+      "export": [
+        {
+          "subMenu": [
+            {
+              "usfm": [
+                {
+                  "doc": "Export to usfm a textTranslation document",
+                  "placeHolders": {
+                    "REPO_PATH": {
+                      "doc": "The path to the repo in <X>/<Y>/<Z> format"
+                    }
+                  },
+                  "label": "pages:content:export_usfm",
+                  "url": "/export/usfm?repoPath=%%REPO_PATH%%"
+                }
+              ],
+              "pdf": [
+                {
+                  "doc": "Export to pdf a textTranslation document",
+                  "placeHolders": {
+                    "REPO_PATH": {
+                      "doc": "The path to the repo in <X>/<Y>/<Z> format"
+                    }
+                  },
+                  "label": "pages:content:export_pdf",
+                  "url": "/export/pdf?repoPath=%%REPO_PATH%%"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
   "i18n": {
     "title": {
       "en": "core-contenthandler_text_translation"
@@ -82,24 +83,25 @@
       "en": "core-contenthandler_text_translation"
     },
     "stub_content": {
-      "en": "Content goes here"
+      "en": "Documents go here"
     },
     "create_content_text_translation": {
-      "en": "Bible",
-      "fr": "Bible"
+      "en": "Biblical Text",
+      "fr": "Texte biblique",
+      "id": "Teks Alkitabiah"
     },
     "name_is_taken": {
       "en": "The name is already taken",
       "fr": "Ce nom est déjà pris",
       "es": "El nombre ya está en uso"
     },
-    "error_data":{
-      "en":"Error fetching data",
-      "fr":"Erreur lors de la récupération des données"
+    "error_data": {
+      "en": "Error fetching data",
+      "fr": "Erreur lors de la récupération des données"
     },
-    "import_local_book":{
-      "en":"Import local book",
-      "es":"Importar libro local"
+    "import_local_book": {
+      "en": "Import local book",
+      "es": "Importar libro local"
     },
     "add_content": {
       "en": "Add content to document",
@@ -412,10 +414,9 @@
       "id": "@Kesalahan terjadi: Buku tidak jadi terbuat"
     },
     "new_translation_text": {
-      "en": "New Translation Text",
-      "es": "Nuevo texto de traducción",
-      "fr": "Nouveau texte de traduction",
-      "id": "Teks Terjemahan Baru"
+      "en": "Biblical Text",
+      "fr": "Texte biblique",
+      "id": "Teks alkitabiah"
     },
     "lang_code_bcp47_list":{
       "en":" From BCP47 List"
