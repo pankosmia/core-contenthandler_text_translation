@@ -15,11 +15,8 @@ import {
     FormLabel,
     RadioGroup, Radio,
     DialogContentText,
-<<<<<<< HEAD
     useTheme,
-=======
-    useTheme
->>>>>>> main
+
 } from "@mui/material";
 import {
     i18nContext,
@@ -59,11 +56,6 @@ export default function NewBibleContent() {
     const [protestantOnly, setProtestantOnly] = useState(true);
     const [localRepos, setLocalRepos] = useState([]);
     const [repoExists, setRepoExists] = useState(false);
-<<<<<<< HEAD
-=======
-    const theme = useTheme();
-
->>>>>>> main
     const [clientConfig, setClientConfig] = useState({});
 
     const [languageOption, setLanguageOption] = useState("BCP47List");
