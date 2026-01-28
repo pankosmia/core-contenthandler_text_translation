@@ -104,16 +104,16 @@
       "es": "Importar libro local"
     },
     "add_content": {
-      "en": "Add content to document",
-      "fr": "Ajouter du contenu au document"
+      "en": "Choose inital structure",
+      "fr": "Choisir structure de départ"
     },
     "no_content_radio": {
       "en": "None",
       "fr": "Aucun"
     },
     "book_content_radio": {
-      "en": "Book",
-      "fr": "Livre"
+      "en": "Single book",
+      "fr": "un seul livre"
     },
     "plan_content_radio": {
       "en": "Translation template",
@@ -307,10 +307,10 @@
       "es": "Esquema de versificación"
     },
     "book_code": {
-      "en": "Book Code",
-      "fr": "Code du livre",
-      "es": "Código del libro",
-      "id": "Kode Buku"
+      "en": "Book",
+      "fr": "livre",
+      "es": "@Código del libro",
+      "id": "@Kode Buku"
     },
     "book_abbr": {
       "en": "Book Abbreviation",
@@ -422,7 +422,7 @@
       "en":" From BCP47 List"
     },
     "lang_code_burrito":{
-      "en":" From another Burrito"
+      "en":" From another document"
     },
      "lang_code_custom_language":{
       "en":" Create custom language"
@@ -436,29 +436,40 @@
       "fr":"Copiez les informations linguistiques d'un autre document."
     },
      "description_custom_language":{
-      "en":"Supply your own custom language code and name. The code should begin with 'x-'.",
-      "fr":"Fournissez votre propre code et nom de langue. Le code doit commencer avec 'x-'. "
+      "en":"Supply your own custom language name and code.",
+      "fr":"Fournissez votre propre nom et code de langue. "
     },
     "local_project":{
-      "en": "Local project only",
-      "fr":"Seulement les projets locaux"
+      "en": "Local projects",
+      "fr":"Les projets locaux"
     },
     "burrito_resources":{
       "en": "Resources",
       "fr":"Ressources"
-
     },
     "language":{
-      "en":"Language",
-      "fr":"Langue"
+      "en":"Choose language",
+      "fr":"Choisir langue"
     },
     "helper_language_code":{
       "en":"\"x-\" followed by 3 lowercase letters",
       "fr":"\"x-\" suivi de 3 lettres minuscules (a-z)"
     },
      "helper_abbreviation":{
-      "en":"Between 2 and 8 letters or numbers, with underline okay in the middle ",
-      "fr":"@Entre 2 et 8 caractères"
+      "en":"Unique sort label to identify your document (2-8 characters, no \" \", no \"_\" at the end)",
+      "fr":"Combinaison unique de caractères pour identifier un document (2-8 caractères, pas de \" \", pas de \"_\" à la fin)"
+    },
+      "helper_versification":{
+      "en":"Defines the system of chapters and verses",
+      "fr":"Définit le système des chapitres et des versets"
+    },
+    "helper_book":{
+      "en":"Start with title, chapter and verse numbers",
+      "fr":"Démarrer avec le titre et les numéros des chapitres et des versets"
+    },
+    "helper_template":{
+      "en":"Start with a template",
+      "fr":"Démarrer avec un modèle"
     }
   }
 }

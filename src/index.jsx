@@ -4,11 +4,11 @@ import {createHashRouter, RouterProvider} from "react-router-dom";
 import './index.css';
 import NewBibleContent from "./pages/NewTextTranslationContent";
 import NewTextTranslationBook from "./pages/NewTextTranslationBook";
-import ZipExport from "./pages/Export/ZipExport";
 import UsfmExport from "./pages/Export/UsfmExport";
 import PdfGenerate from "./pages/Export/PdfGenerate";
 import UsfmImport from "./pages/Import/UsfmImport";
 import App from "./App";
+import NameDocument from "./TextTranslationContent/NameDocument";
 
 const router = createHashRouter([
     {
@@ -18,6 +18,10 @@ const router = createHashRouter([
     {
         path: "/createDocument/textTranslation",
         element: <NewBibleContent/>
+    },
+    {
+        path: "/createDocument/textTranslation/nameDocument",
+        element: <NameDocument/>
     },
     {
         path:"newBook",

@@ -1,21 +1,15 @@
 import { useState, useContext, useEffect } from 'react';
 import {
-    Button, Checkbox,
-    FormControl, FormControlLabel, FormGroup,
-    TextField,
-    Typography,
-    Select,
-    MenuItem,
-    InputLabel, Grid2,
-    DialogActions,
-    Dialog,
+    Grid2,
     Box,
     DialogContent,
-    Tooltip,
-    FormLabel,
-    RadioGroup, Radio,
-    DialogContentText,
     useTheme,
+    Breadcrumbs,
+    Typography,
+    Button,
+    Stepper,
+    Step,
+    StepLabel,
 
 } from "@mui/material";
 import {
@@ -27,9 +21,11 @@ import {
     getJson,
     Header
 } from "pithekos-lib";
-import sx from "./Selection.styles";
-import ListMenuItem from "./ListMenuItem";
-import { PanDialog, PanDialogActions, PanFilteredMenu } from "pankosmia-rcl";
+import { PanDialog, PanDialogActions } from "pankosmia-rcl";
+import ErrorDialog from '../TextTranslationContent/ErrorDialog';
+import LanguagePicker from '../TextTranslationContent/LanguagePicker';
+import NameDocument from '../TextTranslationContent/NameDocument';
+import ContentDocument from '../TextTranslationContent/ContentDocument';
 
 export default function NewBibleContent() {
 
@@ -43,7 +39,6 @@ export default function NewBibleContent() {
     const [contentType, setContentType] = useState("text_translation");
     const [contentLanguageCode, setContentLanguageCode] = useState([]);
     const [contentOption, setContentOption] = useState("book");
-    const [metadataSummaries, setMetadataSummaries] = useState({});
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [bookCode, setBookCode] = useState("TIT");
     const [bookTitle, setBookTitle] = useState("Tit");
@@ -51,42 +46,18 @@ export default function NewBibleContent() {
     const [postCount, setPostCount] = useState(0);
     const [showVersification, setShowVersification] = useState(true);
     const [versification, setVersification] = useState("eng");
-    const [versificationCodes, setVersificationCodes] = useState([]);
     const [bookCodes, setBookCodes] = useState([]);
-    const [protestantOnly, setProtestantOnly] = useState(true);
     const [localRepos, setLocalRepos] = useState([]);
     const [repoExists, setRepoExists] = useState(false);
-    const [clientConfig, setClientConfig] = useState({});
 
-    const [languageOption, setLanguageOption] = useState("BCP47List");
     const [currentLanguageCode, setCurrentLanguageCode] = useState({ language_code: "", language_name: "" });
-    const [localRepoOnly, setLocalRepoOnly] = useState(true);
-    const [resourcesBurrito, setResourcesBurrito] = useState(false);
-    const [burritoSelected, setBurritoSelected] = useState("")
     const [errorLangCode, setErrorLangCode] = useState(false);
     const [errorAbbreviation, setErrorAbbreviation] = useState(false);
-    const theme = useTheme()
+    const theme = useTheme();
 
-    const isProtestantBooksOnlyCheckboxEnabled =
-        clientConfig?.['core-contenthandler_text_translation']
-            ?.find((section) => section.id === 'config')
-            ?.fields?.find((field) => field.id === 'protestantBooksOnlyCheckbox')?.value !== false;
-
-    const isProtestantBooksOnlyDefaultChecked =
-        clientConfig?.['core-contenthandler_text_translation']
-            ?.find((section) => section.id === 'config')
-            ?.fields?.find((field) => field.id === 'protestantBooksOnlyDefaultChecked')?.value !== false;
-
-    useEffect(() => {
-        setProtestantOnly(isProtestantBooksOnlyDefaultChecked);
-    }, [isProtestantBooksOnlyDefaultChecked]);
-
-    useEffect(() => {
-        getJson('/client-config')
-            .then((res) => res.json)
-            .then((data) => setClientConfig(data))
-            .catch((err) => console.error('Error :', err));
-    }, []);
+    const steps = ["Name", "Langue", "Content"];
+    const [activeStep, setActiveStep] = useState(0);
+    const [skipped, setSkipped] = useState(new Set());
 
     const handleClose = () => {
         const url = window.location.search;
@@ -94,9 +65,9 @@ export default function NewBibleContent() {
         const returnType = params.get("returntypepage");
 
         if (returnType === "dashboard") {
-            window.location.href = "/clients/main"
+            window.location.href = "/clients/main";
         } else {
-            window.location.href = "/clients/content"
+            window.location.href = "/clients/content";
         }
     }
 
@@ -106,28 +77,28 @@ export default function NewBibleContent() {
             window.location.href = '/clients/content';
         });
     };
+    const isStepSkipped = (step) => {
+        return skipped.has(step);
+    };
 
-    useEffect(() => {
-        if (open) {
-            getAndSetJson({
-                url: "/content-utils/versifications",
-                setter: setVersificationCodes
-            }).then()
+    const handleNext = () => {
+        let newSkipped = skipped;
+        if (isStepSkipped(activeStep)) {
+            newSkipped = new Set(newSkipped.values());
+            newSkipped.delete(activeStep);
         }
-    },
-        [open]
-    );
 
-    useEffect(() => {
-        if (open) {
-            getAndSetJson({
-                url: "/burrito/metadata/summaries",
-                setter: setMetadataSummaries
-            }).then()
-        }
-    },
-        [open]
-    );
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setSkipped(newSkipped);
+    };
+
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
+
+    const handleReset = () => {
+        setActiveStep(0);
+    };
 
     useEffect(
         () => {
@@ -155,35 +126,6 @@ export default function NewBibleContent() {
         [open]
     );
 
-    useEffect(
-        () => {
-            if (open) {
-                getAndSetJson({
-                    url: "/app-resources/lookups/bcp47-language_codes.json",
-                    setter: setContentLanguageCode
-                }).then()
-            }
-        },
-        [open]
-    );
-
-    useEffect(() => {
-        if (burritoSelected) {
-            getJson(`/burrito/metadata/summary/${burritoSelected}`)
-                .then((res) => res.json)
-                .then((data) => setCurrentLanguageCode({ ...currentLanguageCode, language_code: data.language_code, language_name: data.language_name }))
-                .catch((err) => console.error('Error :', err));
-        }
-
-    }, [open, burritoSelected]);
-
-    const languageCodes = Object.entries(contentLanguageCode).map(([key, value]) => ({
-        language_code: key,
-        language_name: value.en,
-    }));
-    const burritos = localRepos.filter(burrito =>
-        (localRepoOnly && burrito.startsWith("_local_")) || (resourcesBurrito && burrito.startsWith("git"))
-    );
 
     useEffect(
         () => {
@@ -201,6 +143,18 @@ export default function NewBibleContent() {
         [postCount]
     );
 
+    const renderStepContent = (step) => {
+        switch (step) {
+            case 1:
+                return <NameDocument contentType={contentType} setContentType={setContentType} repoExists={repoExists} setRepoExists={setRepoExists} contentName={contentName} setContentName={setContentName} contentAbbr={contentAbbr} setContentAbbr={setContentAbbr} errorAbbreviation={errorAbbreviation} setErrorAbbreviation={setErrorAbbreviation} localRepos={localRepos} />
+            case 2:
+                return <LanguagePicker currentLanguageCode={currentLanguageCode} setCurrentLanguageCode={setCurrentLanguageCode} localRepos={localRepos} contentLanguageCode={contentLanguageCode} open={open} setContentLanguageCode={setContentLanguageCode} />
+            case 3:
+                return <ContentDocument open={open} contentOption={contentOption} setContentOption={setContentOption} versification={versification} setVersification={setVersification} bookCode={bookCode} setBookCode={setBookCode} bookAbbr={bookAbbr} bookCodes={bookCodes} setBookAbbr={setBookAbbr} bookTitle={bookTitle} setBookTitle={setBookTitle} showVersification={showVersification} setShowVersification={setShowVersification} selectedPlan={selectedPlan} setSelectedPlan={setSelectedPlan} />
+            default:
+                return null;
+        }
+    }
     const handleCreate = async () => {
         // versification for plan comes from plan
         let planJson = null;
@@ -258,7 +212,7 @@ export default function NewBibleContent() {
                 let usfmBits = [];
                 usfmBits.push(`\\id ${bookCode} -- ${planJson.short_name} -- v${planJson.version} -- ${planJson.copyright}`);
                 const printableBookCode = ["1", "2", "3"].includes(bookCode[0]) ?
-                    `${bookCode[0]} ${bookCode[1]}${bookCode[2].toLowerCase()}`:
+                    `${bookCode[0]} ${bookCode[1]}${bookCode[2].toLowerCase()}` :
                     `${bookCode[0]}${bookCode[1].toLowerCase()}${bookCode[2].toLowerCase()}`;
                 for (const headerTag of ["toc1", "toc2", "toc3", "mt"]) {
                     usfmBits.push(`\\${headerTag} ${printableBookCode}`);
@@ -321,19 +275,6 @@ export default function NewBibleContent() {
         await handleCloseCreate();
     };
 
-    const handleCloseErrorDialog = () => {
-        setErrorDialogOpen(false);
-        handleClose();
-    };
-
-    useEffect(() => {
-        if (languageOption) {
-            setCurrentLanguageCode({ language_code: "", language_name: "" })
-        }
-    }, [setCurrentLanguageCode, languageOption])
-
-    const regexLangCode = /^x-[a-z]{3}$/
-    const regexAbbreviation = /^[A-Za-z0-9][A-Za-z0-9_]{0,6}[A-Za-z0-9]$/
     return (
         <Box>
             <Box
@@ -362,362 +303,55 @@ export default function NewBibleContent() {
                 closeFn={() => handleCloseCreate()}
                 theme={theme}
             >
-                <DialogContentText
-                    variant='subtitle2'
-                    sx={{ ml: 1, p: 1 }}>
-                    {doI18n(`pages:core-contenthandler_text_translation:required_field`, i18nRef.current)}
-                </DialogContentText>
+                <DialogContent>
 
-                <DialogContent
-                    spacing={2}
-                >
-                    <Grid2
-                        container
-                        spacing={2}
-                        justifyItems="flex-end"
-                        alignItems="stretch"
-                        flexDirection={"column"}
-                    >
-                        <TextField
-                            id="name"
-                            required
-                            label={doI18n("pages:core-contenthandler_text_translation:name", i18nRef.current)}
-                            value={contentName}
-                            onChange={(event) => {
-                                setContentName(event.target.value);
-                            }}
-                        />
-                        <Tooltip
-                            open={repoExists}
-                            slotProps={{ popper: { modifiers: [{ name: 'offset', options: { offset: [0, -7] } }] } }}
-                            title={doI18n("pages:core-contenthandler_text_translation:name_is_taken", i18nRef.current)} placement="top-start"
-                        >
-                            <TextField
-                                id="abbr"
-                                error={errorAbbreviation}
-                                helperText={errorAbbreviation ? `${doI18n("pages:core-contenthandler_text_translation:helper_abbreviation", i18nRef.current)}` : ""}
-                                required
-                                label={doI18n("pages:core-contenthandler_text_translation:abbreviation", i18nRef.current)}
-                                value={contentAbbr}
-                                onChange={(event) => {
-                                    const value = event.target.value
-                                    setRepoExists(localRepos.map(l => l.split("/")[2]).includes(value));
-                                    setContentAbbr(value);
-                                    setErrorAbbreviation(!regexAbbreviation.test(value))
-                                }}
-                            />
-                        </Tooltip>
-                        <TextField
-                            id="type"
-                            required
-                            disabled={true}
-                            sx={{ display: "none" }}
-                            label={doI18n("pages:core-contenthandler_text_translation:type", i18nRef.current)}
-                            value={contentType}
-                            onChange={(event) => {
-                                setContentType(event.target.value);
-                            }}
-                        />
-                        <FormControl required >
-                            <FormLabel
-                                id="language_code-create-options">
-                                {doI18n("pages:core-contenthandler_text_translation:language", i18nRef.current)}
-                            </FormLabel>
-                            <RadioGroup
-                                row
-                                aria-labelledby="language_code-create-options"
-                                name="language_code-create-options-radio-group"
-                                value={languageOption}
-                                onClick={event => setLanguageOption(event.target.value)}
-                            >
-                                <FormControlLabel value="BCP47List" control={<Radio />}
-                                    label={doI18n("pages:core-contenthandler_text_translation:lang_code_bcp47_list", i18nRef.current)} />
-                                <FormControlLabel value="burrito" control={<Radio />}
-                                    label={doI18n("pages:core-contenthandler_text_translation:lang_code_burrito", i18nRef.current)} />
-                                <FormControlLabel value="customLanguage" control={<Radio />}
-                                    label={doI18n("pages:core-contenthandler_text_translation:lang_code_custom_language", i18nRef.current)} />
-                            </RadioGroup>
-                        </FormControl>
-                        {languageOption === "BCP47List" &&
-                            <>
-                                <Typography>{doI18n("pages:core-contenthandler_text_translation:description_bcp47_list", i18nRef.current)}</Typography>
-                                <PanFilteredMenu
-                                    onChange={(event, newValue) => {
-                                        setCurrentLanguageCode(newValue)
-                                    }}
-                                    data={languageCodes}
-                                    getOptionLabel={(option) =>
-                                        `${option.language_name || ''} (${option.language_code || ""})`}
-                                    titleLabel={doI18n("pages:core-contenthandler_text_translation:language", i18nRef.current)}
-                                />
-                            </>
-                        }
-                        {languageOption === "burrito" &&
-                            <>
-                                <Typography>{doI18n("pages:core-contenthandler_text_translation:description_lang_code_burrito", i18nRef.current)}</Typography>
-                                <FormGroup row required>
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox
-                                                color='secondary'
-                                                checked={localRepoOnly}
-                                                onChange={() => setLocalRepoOnly(!localRepoOnly)}
-                                                defaultChecked
-                                            />
-                                        }
-                                        label={doI18n("pages:core-contenthandler_text_translation:local_project", i18nRef.current)}
-                                    />
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox
-                                                color='secondary'
-                                                checked={resourcesBurrito}
-                                                onChange={() => setResourcesBurrito(!resourcesBurrito)}
-                                            />
-                                        }
-                                        label={doI18n("pages:core-contenthandler_text_translation:burrito_resources", i18nRef.current)}
-                                    />
-                                </FormGroup>
-                                <PanFilteredMenu
-                                    data={burritos}
-                                    //value={burritoSelected}
-                                    onChange={(event, newValue) => {
-                                        setBurritoSelected(newValue)
-                                    }}
-                                    getOptionLabel={(option) => `${option}`}
-                                    titleLabel="Burrito"
-                                />
-                            </>
-
-                        }
-                        {languageOption === "customLanguage" &&
-                            <>
-                                <Typography>{doI18n("pages:core-contenthandler_text_translation:description_custom_language", i18nRef.current)}</Typography>
-                                <Grid2 container spacing={2} justifyItems="flex-end" alignItems="stretch">
-                                    <Grid2 item size={6}>
-                                        <TextField
-                                            id="language_name"
-                                            required
-                                            sx={{ width: "100%" }}
-                                            label={doI18n("pages:core-contenthandler_text_translation:lang_name", i18nRef.current)}
-                                            value={currentLanguageCode ? currentLanguageCode.language_name : null}
-                                            onChange={(event) => {
-                                                const value = event.target.value;
-                                                setCurrentLanguageCode({ ...currentLanguageCode, language_name: value });
-                                            }}
-                                        />
-                                    </Grid2>
-                                    <Grid2 item size={6}>
-                                        <TextField
-                                            id="language_code"
-                                            placeholder='x-abc'
-                                            error={errorLangCode}
-                                            helperText={errorLangCode ? `${doI18n("pages:core-contenthandler_text_translation:helper_language_code", i18nRef.current)}` : ""}
-                                            required
-                                            sx={{ width: "100%" }}
-                                            label={doI18n("pages:core-contenthandler_text_translation:lang_code", i18nRef.current)}
-                                            value={currentLanguageCode ? currentLanguageCode.language_code : null}
-                                            onChange={(event) => {
-                                                const value = event.target.value.toLocaleLowerCase();
-                                                setCurrentLanguageCode({ ...currentLanguageCode, language_code: value });
-                                                setErrorLangCode(!regexLangCode.test(value))
-                                            }}
-                                        />
-                                    </Grid2>
-                                </Grid2>
-                            </>
-                        }
-                        {
-                            contentOption !== "plan" &&
-                            <FormControl sx={{ width: "100%" }}>
-                                <InputLabel id="booksVersification-label" required htmlFor="booksVersification"
-                                    sx={sx.inputLabel}>
-                                    {doI18n("pages:core-contenthandler_text_translation:versification_scheme", i18nRef.current)}
-                                </InputLabel>
-                                <Select
-                                    variant="outlined"
-                                    required
-                                    labelId="booksVersification-label"
-                                    name="booksVersification"
-                                    inputProps={{
-                                        id: "bookVersification",
-                                    }}
-                                    value={versification}
-                                    label={doI18n("pages:core-contenthandler_text_translation:versification_scheme", i18nRef.current)}
-                                    onChange={(event) => {
-                                        setVersification(event.target.value);
-                                    }}
-                                    sx={sx.select}
-                                >
-                                    {
-                                        versificationCodes.map((listItem, n) => <MenuItem key={n} value={listItem}
-                                            dense>
-                                            <ListMenuItem
-                                                listItem={`${listItem.toUpperCase()} - ${doI18n(`scripture:versifications:${listItem}`, i18nRef.current)}`}
-                                            />
-                                        </MenuItem>
-                                        )
-                                    }
-                                </Select>
-                            </FormControl>
-                        }
-                    </Grid2>
-                    <FormControl>
-                        <FormLabel
-                            id="book-create-options">
-                            {doI18n("pages:core-contenthandler_text_translation:add_content", i18nRef.current)}
-                        </FormLabel>
-                        <RadioGroup
-                            row
-                            aria-labelledby="book-create-options"
-                            name="book-create-options-radio-group"
-                            value={contentOption}
-                            onClick={event => setContentOption(event.target.value)}
-                        >
-                            {/*<FormControlLabel value="none" control={<Radio />}
-                                label={doI18n("pages:core-contenthandler_text_translation:no_content_radio", i18nRef.current)} />*/}
-                            <FormControlLabel value="book" control={<Radio />}
-                                label={doI18n("pages:core-contenthandler_text_translation:book_content_radio", i18nRef.current)} />
-                            <FormControlLabel value="plan" control={<Radio />}
-                                label={doI18n("pages:core-contenthandler_text_translation:plan_content_radio", i18nRef.current)} />
-                        </RadioGroup>
-                    </FormControl>
-                    {
-                        (contentOption === "book") && <>
-                            <Grid2 container spacing={2} justifyItems="flex-end" alignItems="stretch">
-                                <Grid2 item size={4}>
-                                    <FormControl sx={{ width: "100%" }}>
-                                        <InputLabel id="bookCode-label" required htmlFor="bookCode" sx={sx.inputLabel}>
-                                            {doI18n("pages:core-contenthandler_text_translation:book_code", i18nRef.current)}
-                                        </InputLabel>
-                                        <Select
-                                            variant="outlined"
-                                            labelId="bookCode-label"
-                                            name="bookCode"
-                                            inputProps={{
-                                                id: "bookCode",
-                                            }}
-                                            value={bookCode}
-                                            label={doI18n("pages:core-contenthandler_text_translation:book_code", i18nRef.current)}
-                                            onChange={(event) => {
-                                                setBookCode(event.target.value);
-                                                setBookAbbr(
-                                                    ["1", "2", "3"].includes(event.target.value[0]) ?
-                                                        event.target.value.slice(0, 2) + event.target.value[2].toLowerCase() :
-                                                        event.target.value[0] + event.target.value.slice(1).toLowerCase()
-                                                );
-                                                setBookTitle(doI18n(`scripture:books:${event.target.value}`, i18nRef.current))
-                                            }}
-                                            sx={sx.select}
-                                        >
-                                            {
-                                                (protestantOnly ? bookCodes.slice(0, 66) : bookCodes).map((listItem, n) =>
-                                                    <MenuItem key={n} value={listItem} dense>
-                                                        <ListMenuItem
-                                                            listItem={`${listItem} - ${doI18n(`scripture:books:${listItem}`, i18nRef.current)}`} />
-                                                    </MenuItem>
-                                                )
-                                            }
-                                        </Select>
-                                    </FormControl>
-
-                                </Grid2>
-                                <Grid2 item size={4}>
-                                    <TextField
-                                        id="bookAbbr"
-                                        required
-                                        sx={{ width: "100%" }}
-                                        label={doI18n("pages:core-contenthandler_text_translation:book_abbr", i18nRef.current)}
-                                        value={bookAbbr}
-                                        onChange={(event) => {
-                                            setBookAbbr(event.target.value);
-                                        }}
-                                    />
-                                </Grid2>
-                                <Grid2 item size={4}>
-                                    <TextField
-                                        id="bookTitle"
-                                        required
-                                        sx={{ width: "100%" }}
-                                        label={doI18n("pages:core-contenthandler_text_translation:book_title", i18nRef.current)}
-                                        value={bookTitle}
-                                        onChange={(event) => {
-                                            setBookTitle(event.target.value);
-                                        }}
-                                    />
-                                </Grid2>
-                                {isProtestantBooksOnlyCheckboxEnabled && (
-                                    <FormGroup>
-                                        <FormControlLabel
-                                            control={
-                                                <Checkbox
-                                                    color='secondary'
-                                                    checked={protestantOnly}
-                                                    onChange={() => setProtestantOnly(!protestantOnly)}
-                                                />
-                                            }
-                                            label={doI18n("pages:core-contenthandler_text_translation:protestant_books_only", i18nRef.current)}
-                                        />
-                                    </FormGroup>
-                                )}
-                                <FormGroup>
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox
-                                                color='secondary'
-                                                checked={true}
-                                                disabled
-                                                onChange={() => setShowVersification(!showVersification)}
-                                            />
-                                        }
-                                        label={doI18n("pages:core-contenthandler_text_translation:add_versification_checkbox", i18nRef.current)}
-                                    />
-                                </FormGroup>
-                            </Grid2>
+                    <Stepper activeStep={activeStep}>
+                        {steps.map((label, index) => {
+                            const stepProps = {};
+                            const labelProps = {};
+                            if (isStepSkipped(index)) {
+                                stepProps.completed = false;
+                            }
+                            return (
+                                <Step key={label} {...stepProps}>
+                                    <StepLabel {...labelProps}>{label}</StepLabel>
+                                </Step>
+                            );
+                        })}
+                    </Stepper>
+                    {activeStep === steps.length ? (
+                        <>
+                            <Typography sx={{ mt: 2, mb: 1 }}>
+                                All steps completed - you&apos;re finished
+                            </Typography>
+                            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                                <Box sx={{ flex: '1 1 auto' }} />
+                                <Button onClick={handleReset}>Reset</Button>
+                            </Box>
                         </>
-                    }
-                    {
-                        (contentOption === "plan") &&
-                        <Grid2 container spacing={2} justifyItems="flex-end" alignItems="stretch">
-                            <Grid2 item size={12}>
-                                <FormControl sx={{ width: "100%" }}>
-                                    <InputLabel id="select-plan-label" required htmlFor="plan" sx={sx.inputLabel}>
-                                        {doI18n("pages:core-contenthandler_text_translation:select_plan", i18nRef.current)}
-                                    </InputLabel>
-                                    <Select
-                                        variant="outlined"
-                                        required
-                                        labelId="plan-label"
-                                        name="plan"
-                                        inputProps={{
-                                            id: "bookCode",
-                                        }}
-                                        value={selectedPlan}
-                                        label={doI18n("pages:core-contenthandler_text_translation:select_plan", i18nRef.current)}
-                                        onChange={event => {
-                                            setSelectedPlan(event.target.value);
-                                        }}
-                                        sx={sx.select}
-                                    >
-                                        {
-                                            Object.entries(metadataSummaries)
-                                                .filter(r => r[1].flavor === "x-translationplan")
-                                                .map(r =>
-                                                    <MenuItem key={r[0]} value={r[0]} dense>
-                                                        <ListMenuItem
-                                                            listItem={r[1].name} />
-                                                    </MenuItem>
-                                                )
-                                        }
-                                    </Select>
-                                </FormControl>
-                            </Grid2>
-                        </Grid2>
-                    }
+                    ) : (
+                        <>
+                            <DialogContent>{renderStepContent(activeStep + 1)}</DialogContent>
+                            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                                <Button
+                                    color="inherit"
+                                    disabled={activeStep === 0}
+                                    onClick={handleBack}
+                                    sx={{ mr: 1 }}
+                                >
+                                    Back
+                                </Button>
+                                <Box sx={{ flex: '1 1 auto' }} />
+                                <Button onClick={handleNext}>
+                                    {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                                </Button>
+                            </Box>
+                        </>
+                    )}
 
                 </DialogContent>
 
-                <PanDialogActions
+                {/* <PanDialogActions
                     closeFn={() => handleClose()}
                     closeLabel={doI18n("pages:core-contenthandler_text_translation:close", i18nRef.current)}
                     actionFn={handleCreate}
@@ -740,25 +374,15 @@ export default function NewBibleContent() {
                             ) &&
                             (
                                 !(contentOption === "plan") || selectedPlan
-                            ) && (errorAbbreviation === false && errorLangCode === false)
+                            )
+                            //&& (errorAbbreviation === false && errorLangCode === false)
                         )
                         ||
                         repoExists
                     }
-                />
+                /> */}
             </PanDialog>
-
-            {/* Error Dialog*/}
-            <Dialog open={errorDialogOpen} onClose={handleCloseErrorDialog}>
-                <DialogContent>
-                    <Typography color="error">{errorMessage}</Typography>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseErrorDialog} variant="contained" color="primary">
-                        {doI18n("pages:core-contenthandler_text_translation:close", i18nRef.current)}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <ErrorDialog setErrorDialogOpen={setErrorDialogOpen} handleClose={handleClose} errorDialogOpen={errorDialogOpen} errorMessage={errorMessage} />
         </Box>
 
     );
