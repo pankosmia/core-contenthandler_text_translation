@@ -1,15 +1,14 @@
 import { useState, useContext, useEffect } from 'react';
 import {
-    Grid2,
     Box,
     DialogContent,
     useTheme,
-    Breadcrumbs,
-    Typography,
     Button,
     Stepper,
     Step,
     StepLabel,
+    DialogActions,
+    DialogContentText,
 
 } from "@mui/material";
 import {
@@ -49,15 +48,17 @@ export default function NewBibleContent() {
     const [bookCodes, setBookCodes] = useState([]);
     const [localRepos, setLocalRepos] = useState([]);
     const [repoExists, setRepoExists] = useState(false);
-
     const [currentLanguageCode, setCurrentLanguageCode] = useState({ language_code: "", language_name: "" });
     const [errorLangCode, setErrorLangCode] = useState(false);
     const [errorAbbreviation, setErrorAbbreviation] = useState(false);
     const theme = useTheme();
-
-    const steps = ["Name", "Langue", "Content"];
     const [activeStep, setActiveStep] = useState(0);
     const [skipped, setSkipped] = useState(new Set());
+
+    const steps = [`${doI18n("pages:core-contenthandler_text_translation:name_section", i18nRef.current)}`, 
+                    `${doI18n("pages:core-contenthandler_text_translation:language", i18nRef.current)}`, 
+                    `${doI18n("pages:core-contenthandler_text_translation:content_section", i18nRef.current)}`
+                ];
 
     const handleClose = () => {
         const url = window.location.search;
@@ -81,23 +82,26 @@ export default function NewBibleContent() {
         return skipped.has(step);
     };
 
-    const handleNext = () => {
+    const handleNext = async () => {
         let newSkipped = skipped;
         if (isStepSkipped(activeStep)) {
             newSkipped = new Set(newSkipped.values());
             newSkipped.delete(activeStep);
-        }
 
+        } if (activeStep === steps.length - 1) {
+            try {
+                await handleCreate();
+            } catch (error) {
+                console.error("Erreur création projet", error)
+            }
+            return;
+        }
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
         setSkipped(newSkipped);
     };
 
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    };
-
-    const handleReset = () => {
-        setActiveStep(0);
     };
 
     useEffect(
@@ -126,7 +130,6 @@ export default function NewBibleContent() {
         [open]
     );
 
-
     useEffect(
         () => {
             setContentName("");
@@ -146,15 +149,54 @@ export default function NewBibleContent() {
     const renderStepContent = (step) => {
         switch (step) {
             case 1:
-                return <NameDocument contentType={contentType} setContentType={setContentType} repoExists={repoExists} setRepoExists={setRepoExists} contentName={contentName} setContentName={setContentName} contentAbbr={contentAbbr} setContentAbbr={setContentAbbr} errorAbbreviation={errorAbbreviation} setErrorAbbreviation={setErrorAbbreviation} localRepos={localRepos} />
+                return <NameDocument repoExists={repoExists} setRepoExists={setRepoExists} contentName={contentName} setContentName={setContentName} contentAbbr={contentAbbr} setContentAbbr={setContentAbbr} errorAbbreviation={errorAbbreviation} setErrorAbbreviation={setErrorAbbreviation} localRepos={localRepos} />
             case 2:
-                return <LanguagePicker currentLanguageCode={currentLanguageCode} setCurrentLanguageCode={setCurrentLanguageCode} localRepos={localRepos} contentLanguageCode={contentLanguageCode} open={open} setContentLanguageCode={setContentLanguageCode} />
+                return <LanguagePicker contentType={contentType} setContentType={setContentType} errorLangCode={errorLangCode} setErrorLangCode={setErrorLangCode} currentLanguageCode={currentLanguageCode} setCurrentLanguageCode={setCurrentLanguageCode} localRepos={localRepos} contentLanguageCode={contentLanguageCode} open={open} setContentLanguageCode={setContentLanguageCode} />
             case 3:
                 return <ContentDocument open={open} contentOption={contentOption} setContentOption={setContentOption} versification={versification} setVersification={setVersification} bookCode={bookCode} setBookCode={setBookCode} bookAbbr={bookAbbr} bookCodes={bookCodes} setBookAbbr={setBookAbbr} bookTitle={bookTitle} setBookTitle={setBookTitle} showVersification={showVersification} setShowVersification={setShowVersification} selectedPlan={selectedPlan} setSelectedPlan={setSelectedPlan} />
             default:
                 return null;
         }
     }
+    const isStepValid = (step) => {
+        switch (step) {
+            case 0:
+                return (
+                    contentName.trim().length > 0 &&
+                    contentAbbr.trim().length > 0 &&
+                    (errorAbbreviation === false)
+                );
+
+            case 1:
+                return (
+                    contentType.trim().length > 0 &&
+                    currentLanguageCode?.language_code?.trim().length > 0 &&
+                    currentLanguageCode?.language_name?.trim().length > 0 &&
+                    (errorLangCode === false)
+                );
+            case 2:
+
+                if (contentOption === "book") {
+                    return (
+                        versification.trim().length === 3 &&
+                        bookCode.trim().length === 3 &&
+                        bookTitle.trim().length > 0 &&
+                        bookAbbr.trim().length > 0
+                    );
+                }
+
+                if (contentOption === "plan") {
+                    return (
+                        versification.trim().length === 3 &&
+                        Boolean(selectedPlan)
+                    );
+                }
+                return true;
+            default:
+                return true;
+        }
+    };
+
     const handleCreate = async () => {
         // versification for plan comes from plan
         let planJson = null;
@@ -274,7 +316,6 @@ export default function NewBibleContent() {
         }
         await handleCloseCreate();
     };
-
     return (
         <Box>
             <Box
@@ -294,7 +335,6 @@ export default function NewBibleContent() {
                 titleKey="pages:content:title"
                 currentId="content"
                 requireNet={false}
-
             />
 
             <PanDialog
@@ -304,8 +344,7 @@ export default function NewBibleContent() {
                 theme={theme}
             >
                 <DialogContent>
-
-                    <Stepper activeStep={activeStep}>
+                    <Stepper sx={{ position: "sticky" }} activeStep={activeStep}>
                         {steps.map((label, index) => {
                             const stepProps = {};
                             const labelProps = {};
@@ -319,68 +358,36 @@ export default function NewBibleContent() {
                             );
                         })}
                     </Stepper>
-                    {activeStep === steps.length ? (
+
+                    {activeStep !== steps.length && (
                         <>
-                            <Typography sx={{ mt: 2, mb: 1 }}>
-                                All steps completed - you&apos;re finished
-                            </Typography>
-                            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                                <Box sx={{ flex: '1 1 auto' }} />
-                                <Button onClick={handleReset}>Reset</Button>
-                            </Box>
-                        </>
-                    ) : (
-                        <>
-                            <DialogContent>{renderStepContent(activeStep + 1)}</DialogContent>
-                            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                                <Button
-                                    color="inherit"
-                                    disabled={activeStep === 0}
-                                    onClick={handleBack}
-                                    sx={{ mr: 1 }}
-                                >
-                                    Back
-                                </Button>
-                                <Box sx={{ flex: '1 1 auto' }} />
-                                <Button onClick={handleNext}>
-                                    {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                                </Button>
-                            </Box>
+                            <DialogContentText
+                                variant='subtitle2'
+                                sx={{ paddingBottom: 1 }}
+                            >
+                                {doI18n(`pages:core-contenthandler_text_translation:required_field`, i18nRef.current)}
+                            </DialogContentText>
+                            {renderStepContent(activeStep + 1)}
                         </>
                     )}
-
                 </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 2 }}>
+                    <Button
+                        color="inherit"
+                        disabled={activeStep === 0}
+                        onClick={handleBack}
+                    >
+                       {doI18n("pages:core-contenthandler_text_translation:back_button", i18nRef.current)}
+                    </Button>
+                    <Box sx={{ flex: '1 1 auto' }} />
+                    <Button
+                        onClick={handleNext}
+                        disabled={!isStepValid(activeStep) || repoExists}
+                    >
+                        {activeStep === steps.length - 1 ? `${doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}` : `${doI18n("pages:core-contenthandler_text_translation:next_button", i18nRef.current)}`}
+                    </Button>
 
-                {/* <PanDialogActions
-                    closeFn={() => handleClose()}
-                    closeLabel={doI18n("pages:core-contenthandler_text_translation:close", i18nRef.current)}
-                    actionFn={handleCreate}
-                    actionLabel={doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}
-                    closeOnAction={false}
-                    isDisabled={
-                        !(
-                            contentName.trim().length > 0 &&
-                            contentAbbr.trim().length > 0 &&
-                            contentType.trim().length > 0 &&
-                            versification.trim().length === 3 &&
-                            currentLanguageCode?.language_code?.trim().length > 0 &&
-                            currentLanguageCode?.language_name?.trim().length > 0 &&
-                            (
-                                !(contentOption === "book") || (
-                                    bookCode.trim().length === 3 &&
-                                    bookTitle.trim().length > 0 &&
-                                    bookAbbr.trim().length > 0
-                                )
-                            ) &&
-                            (
-                                !(contentOption === "plan") || selectedPlan
-                            )
-                            //&& (errorAbbreviation === false && errorLangCode === false)
-                        )
-                        ||
-                        repoExists
-                    }
-                /> */}
+                </DialogActions>
             </PanDialog>
             <ErrorDialog setErrorDialogOpen={setErrorDialogOpen} handleClose={handleClose} errorDialogOpen={errorDialogOpen} errorMessage={errorMessage} />
         </Box>

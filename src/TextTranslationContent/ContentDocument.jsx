@@ -8,8 +8,8 @@ import {
     InputLabel, Grid2,
     FormLabel,
     RadioGroup, Radio,
-    DialogContentText,
     Typography,
+    FormHelperText,
 
 } from "@mui/material";
 import {
@@ -70,16 +70,10 @@ export default function ContentDocument({ open, contentOption, setContentOption,
     );
     return (
         <>
-            <DialogContentText
-                variant='subtitle2'
-            >
-                {doI18n(`pages:core-contenthandler_text_translation:required_field`, i18nRef.current)}
-            </DialogContentText>
             {
                 contentOption !== "plan" &&
                 <FormControl sx={{ width: "100%" }}>
                     <InputLabel
-                        helperText={doI18n(`pages:core-contenthandler_text_translation:helper_versification`, i18nRef.current)}
                         id="booksVersification-label"
                         required
                         htmlFor="booksVersification"
@@ -111,6 +105,7 @@ export default function ContentDocument({ open, contentOption, setContentOption,
                             )
                         }
                     </Select>
+                    <FormHelperText> {doI18n(`pages:core-contenthandler_text_translation:helper_versification`, i18nRef.current)}</FormHelperText>
                 </FormControl>
             }
 
@@ -134,10 +129,10 @@ export default function ContentDocument({ open, contentOption, setContentOption,
                         label={doI18n("pages:core-contenthandler_text_translation:plan_content_radio", i18nRef.current)} />
                 </RadioGroup>
             </FormControl>
-            <Typography sx={{padding:0}}>{contentOption === "book" ? `${doI18n("pages:core-contenthandler_text_translation:helper_book", i18nRef.current)}` : `${doI18n("pages:core-contenthandler_text_translation:helper_template", i18nRef.current)}`}</Typography>
+            <Typography sx={{ padding: 1 }}>{contentOption === "book" ? `${doI18n("pages:core-contenthandler_text_translation:helper_book", i18nRef.current)}` : `${doI18n("pages:core-contenthandler_text_translation:helper_template", i18nRef.current)}`}</Typography>
             {
                 (contentOption === "book") && <>
-                    <Grid2 container spacing={2} justifyItems="flex-end" alignItems="stretch">
+                    <Grid2 container spacing={1} justifyItems="flex-end" alignItems="stretch">
                         <Grid2 item size={4}>
                             <FormControl sx={{ width: "100%" }}>
                                 <InputLabel id="bookCode-label" required htmlFor="bookCode" sx={sx.inputLabel}>
@@ -231,7 +226,7 @@ export default function ContentDocument({ open, contentOption, setContentOption,
             }
             {
                 (contentOption === "plan") &&
-                <Grid2 container spacing={2} justifyItems="flex-end" alignItems="stretch">
+                <Grid2 container spacing={1} justifyItems="flex-end" alignItems="stretch">
                     <Grid2 item size={12}>
                         <FormControl sx={{ width: "100%" }}>
                             <InputLabel id="select-plan-label" required htmlFor="plan" sx={sx.inputLabel}>
