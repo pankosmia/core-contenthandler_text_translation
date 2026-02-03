@@ -45,6 +45,17 @@ export default function NameDocument({ contentType, setContentType, repoExists, 
                     </Tooltip>
                 </Grid2>
             </Grid2>
+            <TextField
+                id="type"
+                required
+                disabled={true}
+                sx={{ display: "none" }}
+                label={doI18n("pages:core-contenthandler_text_translation:type", i18nRef.current)}
+                value={contentType}
+                onChange={(event) => {
+                    setContentType(event.target.value);
+                }}
+            />
 
         </>
     );

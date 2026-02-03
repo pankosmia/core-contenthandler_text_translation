@@ -9,6 +9,7 @@ import PdfGenerate from "./pages/Export/PdfGenerate";
 import UsfmImport from "./pages/Import/UsfmImport";
 import App from "./App";
 import NameDocument from "./TextTranslationContent/NameDocument";
+import DeleteTextTranslationBook from "./pages/DeleteTextTranslationBook";
 
 const router = createHashRouter([
     {
@@ -26,6 +27,10 @@ const router = createHashRouter([
     {
         path:"newBook",
         element:<NewTextTranslationBook/>
+    },
+    {
+        path:"deleteBook",
+        element:<DeleteTextTranslationBook/>
     },
     {
         path:"importBook",

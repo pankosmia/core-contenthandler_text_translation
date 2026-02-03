@@ -58,6 +58,7 @@ export default function LanguagePicker({ contentType, setContentType, errorLangC
         language_code: key,
         language_name: value.en,
     }));
+    
     const burritos = localRepos.filter(burrito =>
         (localRepoOnly && burrito.startsWith("_local_")) || (resourcesBurrito && burrito.startsWith("git"))
     );

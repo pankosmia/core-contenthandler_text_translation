@@ -29,6 +29,18 @@
           "url": "/newBook?repoPath=%%REPO_PATH%%"
         }
       ],
+      "delete_book": [
+        {
+          "doc": "Delete a book to a textTranslation document",
+          "placeHolders": {
+            "REPO_PATH": {
+              "doc": "The path to the repo in <X>/<Y>/<Z> format"
+            }
+          },
+          "label": "pages:core-contenthandler_text_translation:delete_book",
+          "url": "/deleteBook?repoPath=%%REPO_PATH%%"
+        }
+      ],
       "import_book": [
         {
           "doc": "Import a book into a textTranslation document",
@@ -498,6 +510,26 @@
     "next_button":{
       "en":"Next",
       "fr":"Suivant"
+    },
+    "delete_book":{
+      "en":"Delete Book",
+      "fr":"Supprimer un livre"
+    },
+    "book_deleted":{
+      "en":"Book deleted",
+      "fr":"Livre supprimé"
+    },
+    "book_delete_error":{
+      "en":"The book could not be deleted ",
+      "fr":"Le livre ne peut pas être supprimé"
+    },
+    "delete_button":{
+      "en":"Delete",
+      "fr":"Supprimer"
+    },
+    "no_book":{
+      "en":"No book",
+      "fr":"Pas de livre"
     }
   }
 }
