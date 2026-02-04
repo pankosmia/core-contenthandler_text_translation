@@ -13,6 +13,7 @@ import { ThemeProvider } from "@emotion/react";
 import { useEffect, useState } from "react";
 import { getAndSetJson } from "pithekos-lib";
 import { createTheme } from "@mui/material";
+import { SnackbarProvider } from "notistack";
 
 const router = createHashRouter([
     {
@@ -69,15 +70,15 @@ function AppLayout() {
                 setter: setThemeSpec,
             }).then();
         }
-    },[]);
+    }, []);
 
     console.log(themeSpec);
 
     const theme = createTheme(themeSpec);
     return <ThemeProvider theme={theme}>
-        <SpaContainer>
-            <RouterProvider router={router} />
-        </SpaContainer>
+            <SpaContainer>
+                <RouterProvider router={router} />
+            </SpaContainer>
     </ThemeProvider>
 }
 createRoot(document.getElementById("root"))

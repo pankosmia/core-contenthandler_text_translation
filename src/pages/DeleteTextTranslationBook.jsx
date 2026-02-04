@@ -12,7 +12,7 @@ import {
     DialogContent,
     useTheme,
 } from "@mui/material";
-import { enqueueSnackbar } from "notistack";
+import { useSnackbar } from "notistack";
 import {
     postJson,
     doI18n,
@@ -20,9 +20,12 @@ import {
 } from "pithekos-lib";
 import sx from "./Selection.styles";
 import ListMenuItem from "./ListMenuItem";
-import { PanDialog, PanDialogActions, i18nContext,debugContext,Header } from "pankosmia-rcl";
+import { PanDialog, PanDialogActions, i18nContext, debugContext, Header } from "pankosmia-rcl";
 
 export default function DeleteTextTranslationBook() {
+    const  {enqueueSnackbar} = useSnackbar();
+    console.log("enquueu", enqueueSnackbar)
+
     const { i18nRef } = useContext(i18nContext);
     const { debugRef } = useContext(debugContext);
     const [bookCode, setBookCode] = useState("");
@@ -81,6 +84,7 @@ export default function DeleteTextTranslationBook() {
     };
 
     const handleCloseCreate = async () => {
+        await postJson(`/burrito/metadata/remake-ingredients/${repoPath}`)
         setOpen(false);
         setTimeout(() => {
             window.location.href = '/clients/content';
@@ -90,8 +94,7 @@ export default function DeleteTextTranslationBook() {
     const handleDelete = async () => {
         const deleteResponse = await postJson(`/burrito/ingredient/delete/${repoPath}?ipath=${bookCode}.usfm`, debugRef.current);
         if (deleteResponse.ok) {
-            await postJson(`/burrito/metadata/remake-ingredients/${repoPath}`)
-            enqueueSnackbar(doI18n("pages:core-contenthandler_text_translation:book_deleted", i18nRef.current), {
+            enqueueSnackbar(`${doI18n("pages:core-contenthandler_text_translation:book_deleted", i18nRef.current)}`, {
                 variant: "success",
             });
             handleCloseCreate();

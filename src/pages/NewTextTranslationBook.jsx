@@ -184,7 +184,7 @@ export default function NewTextTranslationBook() {
             debugRef.current
         );
         if (response.ok) {
-            enqueueSnackbar(doI18n("pages:core-contenthandler_text_translation:book_created", i18nRef.current), {
+            enqueueSnackbar(`${doI18n("pages:core-contenthandler_text_translation:book_created", i18nRef.current)}`, {
                 variant: "success",
             });
             handleCloseCreate();
