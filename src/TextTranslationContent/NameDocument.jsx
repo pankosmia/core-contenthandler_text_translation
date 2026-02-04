@@ -1,5 +1,6 @@
 import { DialogContentText, Grid2, TextField, Tooltip } from "@mui/material";
-import { doI18n, i18nContext } from "pithekos-lib";
+import { doI18n } from "pithekos-lib";
+import { i18nContext } from "pankosmia-rcl";
 import { useContext } from "react";
 
 export default function NameDocument({ contentType, setContentType, repoExists, setRepoExists, errorAbbreviation, setErrorAbbreviation, contentName, setContentName, contentAbbr, setContentAbbr, localRepos }) {

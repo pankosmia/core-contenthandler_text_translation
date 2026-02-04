@@ -1,8 +1,10 @@
 import { Button, Dialog, DialogActions, DialogContent, Typography } from "@mui/material";
 import {
-    i18nContext,
     doI18n,
 } from "pithekos-lib";
+import {
+    i18nContext,
+} from "pankosmia-rcl";
 import { useContext } from "react";
 
 export default function ErrorDialog({setErrorDialogOpen,handleClose,errorDialogOpen,errorMessage}) {

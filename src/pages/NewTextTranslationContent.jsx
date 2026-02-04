@@ -12,15 +12,12 @@ import {
 
 } from "@mui/material";
 import {
-    i18nContext,
-    debugContext,
     postJson,
     doI18n,
     getAndSetJson,
     getJson,
-    Header
 } from "pithekos-lib";
-import { PanDialog, PanDialogActions } from "pankosmia-rcl";
+import { PanDialog, PanDialogActions, i18nContext,debugContext, Header} from "pankosmia-rcl";
 import ErrorDialog from '../TextTranslationContent/ErrorDialog';
 import LanguagePicker from '../TextTranslationContent/LanguagePicker';
 import NameDocument from '../TextTranslationContent/NameDocument';
@@ -36,7 +33,6 @@ export default function NewBibleContent() {
     const [contentName, setContentName] = useState("");
     const [contentAbbr, setContentAbbr] = useState("");
     const [contentType, setContentType] = useState("text_translation");
-    const [contentLanguageCode, setContentLanguageCode] = useState([]);
     const [contentOption, setContentOption] = useState("book");
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [bookCode, setBookCode] = useState("TIT");
@@ -48,17 +44,17 @@ export default function NewBibleContent() {
     const [bookCodes, setBookCodes] = useState([]);
     const [localRepos, setLocalRepos] = useState([]);
     const [repoExists, setRepoExists] = useState(false);
-    const [currentLanguageCode, setCurrentLanguageCode] = useState({ language_code: "", language_name: "" });
-    const [errorLangCode, setErrorLangCode] = useState(false);
+    const [currentLanguage, setCurrentLanguage] = useState({ language_code: "", language_name: "" });
+    const [languageIsValid, setLanguageIsValid] = useState(false);
     const [errorAbbreviation, setErrorAbbreviation] = useState(false);
     const theme = useTheme();
     const [activeStep, setActiveStep] = useState(0);
     const [skipped, setSkipped] = useState(new Set());
 
-    const steps = [`${doI18n("pages:core-contenthandler_text_translation:name_section", i18nRef.current)}`, 
-                    `${doI18n("pages:core-contenthandler_text_translation:language", i18nRef.current)}`, 
-                    `${doI18n("pages:core-contenthandler_text_translation:content_section", i18nRef.current)}`
-                ];
+    const steps = [`${doI18n("pages:core-contenthandler_text_translation:name_section", i18nRef.current)}`,
+    `${doI18n("pages:core-contenthandler_text_translation:language", i18nRef.current)}`,
+    `${doI18n("pages:core-contenthandler_text_translation:content_section", i18nRef.current)}`
+    ];
 
     const handleClose = () => {
         const url = window.location.search;
@@ -135,13 +131,11 @@ export default function NewBibleContent() {
             setContentName("");
             setContentAbbr("");
             setContentType("text_translation");
-            setContentLanguageCode([]);
             setBookCode("TIT");
             setBookTitle("Titus");
             setBookAbbr("Ti");
             setShowVersification(true);
             setVersification("eng");
-            setContentLanguageCode({});
         },
         [postCount]
     );
@@ -149,9 +143,9 @@ export default function NewBibleContent() {
     const renderStepContent = (step) => {
         switch (step) {
             case 1:
-                return <NameDocument repoExists={repoExists} setRepoExists={setRepoExists} contentName={contentName} setContentName={setContentName} contentAbbr={contentAbbr} setContentAbbr={setContentAbbr} errorAbbreviation={errorAbbreviation} setErrorAbbreviation={setErrorAbbreviation} localRepos={localRepos} />
+                return <NameDocument contentType={contentType} setContentType={setContentType} repoExists={repoExists} setRepoExists={setRepoExists} contentName={contentName} setContentName={setContentName} contentAbbr={contentAbbr} setContentAbbr={setContentAbbr} errorAbbreviation={errorAbbreviation} setErrorAbbreviation={setErrorAbbreviation} localRepos={localRepos} />
             case 2:
-                return <LanguagePicker contentType={contentType} setContentType={setContentType} errorLangCode={errorLangCode} setErrorLangCode={setErrorLangCode} currentLanguageCode={currentLanguageCode} setCurrentLanguageCode={setCurrentLanguageCode} localRepos={localRepos} contentLanguageCode={contentLanguageCode} open={open} setContentLanguageCode={setContentLanguageCode} />
+                return <LanguagePicker currentLanguage={currentLanguage} setCurrentLanguage={setCurrentLanguage} setIsValid={setLanguageIsValid} />
             case 3:
                 return <ContentDocument open={open} contentOption={contentOption} setContentOption={setContentOption} versification={versification} setVersification={setVersification} bookCode={bookCode} setBookCode={setBookCode} bookAbbr={bookAbbr} bookCodes={bookCodes} setBookAbbr={setBookAbbr} bookTitle={bookTitle} setBookTitle={setBookTitle} showVersification={showVersification} setShowVersification={setShowVersification} selectedPlan={selectedPlan} setSelectedPlan={setSelectedPlan} />
             default:
@@ -170,9 +164,9 @@ export default function NewBibleContent() {
             case 1:
                 return (
                     contentType.trim().length > 0 &&
-                    currentLanguageCode?.language_code?.trim().length > 0 &&
-                    currentLanguageCode?.language_name?.trim().length > 0 &&
-                    (errorLangCode === false)
+                    currentLanguage?.language_code?.trim().length > 0 &&
+                    currentLanguage?.language_name?.trim().length > 0 &&
+                    (isStepValid === true)
                 );
             case 2:
 
@@ -221,8 +215,8 @@ export default function NewBibleContent() {
             content_name: contentName,
             content_abbr: contentAbbr,
             content_type: contentType,
-            content_language_code: currentLanguageCode.language_code,
-            content_language_name: currentLanguageCode.language_name,
+            content_language_code: currentLanguage.language_code,
+            content_language_name: currentLanguage.language_name,
             versification: submittedVersification,
             add_book: contentOption === "book",
             book_code: contentOption === "book" ? bookCode : null,
@@ -377,7 +371,7 @@ export default function NewBibleContent() {
                         disabled={activeStep === 0}
                         onClick={handleBack}
                     >
-                       {doI18n("pages:core-contenthandler_text_translation:back_button", i18nRef.current)}
+                        {doI18n("pages:core-contenthandler_text_translation:back_button", i18nRef.current)}
                     </Button>
                     <Box sx={{ flex: '1 1 auto' }} />
                     <Button

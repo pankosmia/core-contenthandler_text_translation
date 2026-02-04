@@ -1,5 +1,5 @@
 import {createRoot} from "react-dom/client";
-import {SpaContainer} from "pithekos-lib";
+import {SpaContainer} from "pankosmia-rcl";
 import {createHashRouter, RouterProvider} from "react-router-dom";
 import './index.css';
 import NewBibleContent from "./pages/NewTextTranslationContent";

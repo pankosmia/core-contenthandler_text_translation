@@ -12,7 +12,9 @@ import {
     Stack
 } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
-import {i18nContext, doI18n, getJson, debugContext, postJson, Header} from "pithekos-lib";
+import {doI18n, getJson,  postJson} from "pithekos-lib";
+import {i18nContext, debugContext, Header} from "pankosmia-rcl";
+
 import { FilePicker } from 'react-file-picker';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import {Proskomma} from "proskomma-core";

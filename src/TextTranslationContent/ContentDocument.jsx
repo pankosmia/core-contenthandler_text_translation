@@ -13,13 +13,13 @@ import {
 
 } from "@mui/material";
 import {
-    i18nContext,
     doI18n,
     getAndSetJson,
     getJson,
 } from "pithekos-lib";
 import sx from "../pages/Selection.styles";
 import ListMenuItem from "../pages/ListMenuItem";
+import { i18nContext } from 'pankosmia-rcl';
 export default function ContentDocument({ open, contentOption, setContentOption, versification, setVersification, bookCode, setBookCode, bookAbbr, setBookAbbr, bookCodes, bookTitle, setBookTitle, showVersification, setShowVersification, selectedPlan, setSelectedPlan }) {
     const { i18nRef } = useContext(i18nContext);
     const [protestantOnly, setProtestantOnly] = useState(true);
