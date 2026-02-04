@@ -9,6 +9,7 @@ import {
     StepLabel,
     DialogActions,
     DialogContentText,
+    ThemeProvider,
 
 } from "@mui/material";
 import {
@@ -17,7 +18,7 @@ import {
     getAndSetJson,
     getJson,
 } from "pithekos-lib";
-import { PanDialog, PanDialogActions, i18nContext,debugContext, Header} from "pankosmia-rcl";
+import { PanDialog, PanDialogActions, i18nContext, debugContext, Header } from "pankosmia-rcl";
 import ErrorDialog from '../TextTranslationContent/ErrorDialog';
 import LanguagePicker from '../TextTranslationContent/LanguagePicker';
 import NameDocument from '../TextTranslationContent/NameDocument';
@@ -158,15 +159,15 @@ export default function NewBibleContent() {
                 return (
                     contentName.trim().length > 0 &&
                     contentAbbr.trim().length > 0 &&
+                    contentType.trim().length > 0 &&
                     (errorAbbreviation === false)
                 );
 
             case 1:
                 return (
-                    contentType.trim().length > 0 &&
                     currentLanguage?.language_code?.trim().length > 0 &&
                     currentLanguage?.language_name?.trim().length > 0 &&
-                    (isStepValid === true)
+                    (languageIsValid === true)
                 );
             case 2:
 
@@ -311,80 +312,78 @@ export default function NewBibleContent() {
         await handleCloseCreate();
     };
     return (
-        <Box>
-            <Box
-                sx={{
-                    position: "absolute",
-                    width: "100%",
-                    height: "100%",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    zIndex: -1,
-                    backgroundImage:
-                        'url("/app-resources/pages/content/background_blur.png")',
-                    backgroundRepeat: "no-repeat",
-                }}
-            />
-            <Header
-                titleKey="pages:content:title"
-                currentId="content"
-                requireNet={false}
-            />
+            <Box>
+                <Box
+                    sx={{
+                        position: "absolute",
+                        width: "100%",
+                        height: "100%",
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        zIndex: -1,
+                        backgroundImage:
+                            'url("/app-resources/pages/content/background_blur.png")',
+                        backgroundRepeat: "no-repeat",
+                    }}
+                />
+                <Header
+                    titleKey="pages:content:title"
+                    currentId="content"
+                    requireNet={false}
+                />
 
-            <PanDialog
-                titleLabel={doI18n("pages:core-contenthandler_text_translation:create_content_text_translation", i18nRef.current)}
-                isOpen={open}
-                closeFn={() => handleCloseCreate()}
-                theme={theme}
-            >
-                <DialogContent>
-                    <Stepper sx={{ position: "sticky" }} activeStep={activeStep}>
-                        {steps.map((label, index) => {
-                            const stepProps = {};
-                            const labelProps = {};
-                            if (isStepSkipped(index)) {
-                                stepProps.completed = false;
-                            }
-                            return (
-                                <Step key={label} {...stepProps}>
-                                    <StepLabel {...labelProps}>{label}</StepLabel>
-                                </Step>
-                            );
-                        })}
-                    </Stepper>
+                <PanDialog
+                    titleLabel={doI18n("pages:core-contenthandler_text_translation:create_content_text_translation", i18nRef.current)}
+                    isOpen={open}
+                    closeFn={() => handleCloseCreate()}
+                >
+                    <DialogContent>
+                        <Stepper sx={{ position: "sticky" }} activeStep={activeStep}>
+                            {steps.map((label, index) => {
+                                const stepProps = {};
+                                const labelProps = {};
+                                if (isStepSkipped(index)) {
+                                    stepProps.completed = false;
+                                }
+                                return (
+                                    <Step key={label} {...stepProps}>
+                                        <StepLabel {...labelProps}>{label}</StepLabel>
+                                    </Step>
+                                );
+                            })}
+                        </Stepper>
 
-                    {activeStep !== steps.length && (
-                        <>
-                            <DialogContentText
-                                variant='subtitle2'
-                                sx={{ paddingBottom: 1 }}
-                            >
-                                {doI18n(`pages:core-contenthandler_text_translation:required_field`, i18nRef.current)}
-                            </DialogContentText>
-                            {renderStepContent(activeStep + 1)}
-                        </>
-                    )}
-                </DialogContent>
-                <DialogActions sx={{ px: 3, pb: 2 }}>
-                    <Button
-                        color="inherit"
-                        disabled={activeStep === 0}
-                        onClick={handleBack}
-                    >
-                        {doI18n("pages:core-contenthandler_text_translation:back_button", i18nRef.current)}
-                    </Button>
-                    <Box sx={{ flex: '1 1 auto' }} />
-                    <Button
-                        onClick={handleNext}
-                        disabled={!isStepValid(activeStep) || repoExists}
-                    >
-                        {activeStep === steps.length - 1 ? `${doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}` : `${doI18n("pages:core-contenthandler_text_translation:next_button", i18nRef.current)}`}
-                    </Button>
+                        {activeStep !== steps.length && (
+                            <>
+                                <DialogContentText
+                                    variant='subtitle2'
+                                    sx={{ paddingBottom: 1 }}
+                                >
+                                    {doI18n(`pages:core-contenthandler_text_translation:required_field`, i18nRef.current)}
+                                </DialogContentText>
+                                {renderStepContent(activeStep + 1)}
+                            </>
+                        )}
+                    </DialogContent>
+                    <DialogActions sx={{ px: 3, pb: 2 }}>
+                        <Button
+                            color="inherit"
+                            disabled={activeStep === 0}
+                            onClick={handleBack}
+                        >
+                            {doI18n("pages:core-contenthandler_text_translation:back_button", i18nRef.current)}
+                        </Button>
+                        <Box sx={{ flex: '1 1 auto' }} />
+                        <Button
+                            onClick={handleNext}
+                            disabled={!isStepValid(activeStep) || repoExists}
+                        >
+                            {activeStep === steps.length - 1 ? `${doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}` : `${doI18n("pages:core-contenthandler_text_translation:next_button", i18nRef.current)}`}
+                        </Button>
 
-                </DialogActions>
-            </PanDialog>
-            <ErrorDialog setErrorDialogOpen={setErrorDialogOpen} handleClose={handleClose} errorDialogOpen={errorDialogOpen} errorMessage={errorMessage} />
-        </Box>
-
+                    </DialogActions>
+                </PanDialog>
+                <ErrorDialog setErrorDialogOpen={setErrorDialogOpen} handleClose={handleClose} errorDialogOpen={errorDialogOpen} errorMessage={errorMessage} />
+            </Box>
     );
 }
