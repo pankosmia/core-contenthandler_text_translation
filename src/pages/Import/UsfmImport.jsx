@@ -25,7 +25,7 @@ function UsfmImport() {
     const [usfmImportAnchorEl, setUsfmImportAnchorEl] = useState(true);
     const usfmImportOpen = Boolean(usfmImportAnchorEl);
     const [filePicked, setFilePicked] = useState({});
-    const [localBookContent, setLocalBookContent] = useState(null);
+    const [localBookContent, setLocalBookContent] = useState();
     const [repoBooks, setRepoBooks] = useState([]);
     const [repoPath, setRepoPath] = useState([]);
     const [isUsfmValid, setIsUsfmValid] = useState(false);
