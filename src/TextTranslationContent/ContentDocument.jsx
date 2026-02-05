@@ -26,6 +26,9 @@ export default function ContentDocument({ open, contentOption, setContentOption,
     const [versificationCodes, setVersificationCodes] = useState([]);
     const [clientConfig, setClientConfig] = useState({});
     const [metadataSummaries, setMetadataSummaries] = useState({});
+    const planResources = Object.entries(metadataSummaries)
+        .filter(r => r[1].flavor === "x-translationplan")
+        .map(r => r[1].name)
 
     useEffect(() => {
         if (open) {
@@ -119,13 +122,15 @@ export default function ContentDocument({ open, contentOption, setContentOption,
                     aria-labelledby="book-create-options"
                     name="book-create-options-radio-group"
                     value={contentOption}
-                    onClick={event => setContentOption(event.target.value)}
+                    onChange={event => setContentOption(event.target.value)}
                 >
                     {/*<FormControlLabel value="none" control={<Radio />}
                                 label={doI18n("pages:core-contenthandler_text_translation:no_content_radio", i18nRef.current)} />*/}
                     <FormControlLabel value="book" control={<Radio />}
                         label={doI18n("pages:core-contenthandler_text_translation:book_content_radio", i18nRef.current)} />
-                    <FormControlLabel value="plan" control={<Radio />}
+                    <FormControlLabel value="plan"
+                        disabled={planResources.length === 0} 
+                        control={<Radio />}
                         label={doI18n("pages:core-contenthandler_text_translation:plan_content_radio", i18nRef.current)} />
                 </RadioGroup>
             </FormControl>

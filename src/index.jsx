@@ -72,8 +72,6 @@ function AppLayout() {
         }
     }, []);
 
-    console.log(themeSpec);
-
     const theme = createTheme(themeSpec);
     const CustomSnackbarContent = styled(MaterialDesignContent)(() => ({
     "&.notistack-MuiContent-error": {

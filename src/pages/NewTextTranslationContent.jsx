@@ -2,14 +2,12 @@ import { useState, useContext, useEffect } from 'react';
 import {
     Box,
     DialogContent,
-    useTheme,
     Button,
     Stepper,
     Step,
     StepLabel,
     DialogActions,
     DialogContentText,
-    ThemeProvider,
 
 } from "@mui/material";
 import {
@@ -18,7 +16,7 @@ import {
     getAndSetJson,
     getJson,
 } from "pithekos-lib";
-import { PanDialog, PanDialogActions, i18nContext, debugContext, Header } from "pankosmia-rcl";
+import { PanDialog, i18nContext, debugContext, Header } from "pankosmia-rcl";
 import ErrorDialog from '../TextTranslationContent/ErrorDialog';
 import LanguagePicker from '../TextTranslationContent/LanguagePicker';
 import NameDocument from '../TextTranslationContent/NameDocument';
@@ -46,9 +44,8 @@ export default function NewBibleContent() {
     const [localRepos, setLocalRepos] = useState([]);
     const [repoExists, setRepoExists] = useState(false);
     const [currentLanguage, setCurrentLanguage] = useState({ language_code: "", language_name: "" });
-    const [languageIsValid, setLanguageIsValid] = useState(false);
+    const [languageIsValid, setLanguageIsValid] = useState(true);
     const [errorAbbreviation, setErrorAbbreviation] = useState(false);
-    const theme = useTheme();
     const [activeStep, setActiveStep] = useState(0);
     const [skipped, setSkipped] = useState(new Set());
 
