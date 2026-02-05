@@ -141,24 +141,24 @@ function UsfmImport() {
 
 
     useEffect(() => {
-            if (isUsfmValid) {
+        if (isUsfmValid) {
 
+            try {
+                pk.importDocument({ lang: "eng", abbr: `${localBookContent.split("toc1")[0].split(" ")[1]}` }, `${filePicked.name.split(".")[1]}`, localBookContent);
                 try {
-                    pk.importDocument({ lang: "eng", abbr: `${localBookContent.split("toc1")[0].split(" ")[1]}` }, `${filePicked.name.split(".")[1]}`, localBookContent);
-                    try {
-                        const res = pk.gqlQuerySync(initialQuery);
+                    const res = pk.gqlQuerySync(initialQuery);
 
-                        setValidationResult(res);
-                    } catch (error) {
-                        console.error("An error occurred while a query on the instance:", error.message);
-                    }
+                    setValidationResult(res);
                 } catch (error) {
-                    console.error("An error occurred while validating the USFM:", error.message);
+                    console.error("An error occurred while a query on the instance:", error.message);
                 }
-            
+            } catch (error) {
+                console.error("An error occurred while validating the USFM:", error.message);
+            }
+
         }
 
-    }, [localBookContent,isUsfmValid])
+    }, [localBookContent, isUsfmValid])
 
     return (
         <Box>
@@ -191,16 +191,23 @@ function UsfmImport() {
                         onChange={(file) => { handleFilePicked(file); setFilePicked(file) }}
                         onError={error => { enqueueSnackbar(`${error}`, { variant: "error", }); setLoading(false); }}
                     >
-                        <Button
-                            type="button"
-                            disabled={loading}
-                            variant="contained"
-                            color="primary"
-                            component="span"
-                            startIcon={<UploadFileIcon />}
+                        <Tooltip
+                            open={localBookContent ? (bookIsDuplicate || !isUsfmValid) : false}
+                            title={!isUsfmValid ? doI18n("pages:core-contenthandler_text_translation:usfm_invalid", i18nRef.current) : doI18n("pages:core-contenthandler_text_translation:book_already_exists", i18nRef.current)}
+                            placement="bottom-end"
                         >
-                            {loading ? 'Reading File...' : (filePicked.name ? filePicked.name : doI18n("pages:core-contenthandler_text_translation:import_click", i18nRef.current))}
-                        </Button>
+                            <Button
+                                type="button"
+                                disabled={loading}
+                                variant="contained"
+                                color="primary"
+                                component="span"
+                                startIcon={<UploadFileIcon />}
+                            >
+                                {loading ? 'Reading File...' : (filePicked.name ? filePicked.name : doI18n("pages:core-contenthandler_text_translation:import_click", i18nRef.current))}
+                            </Button>
+
+                        </Tooltip>
                     </FilePicker>
                     {(Object.keys(validationResult).length > 0 && !bookIsDuplicate) &&
                         <Stack spacing={2} sx={{ mt: 0.5 }}>
@@ -215,12 +222,7 @@ function UsfmImport() {
                             </Typography>
                         </Stack>
                     }
-                    <Tooltip
-                        open={localBookContent ? (bookIsDuplicate || !isUsfmValid) : false}
-                        title={!isUsfmValid ? doI18n("pages:core-contenthandler_text_translation:usfm_invalid", i18nRef.current) : doI18n("pages:core-contenthandler_text_translation:book_already_exists", i18nRef.current)}
-                        placement="bottom-end"
-                    >
-                    </Tooltip>
+
                 </DialogContent>
                 <PanDialogActions
                     closeFn={() => { setLocalBookContent(null); setUsfmImportAnchorEl(null); handleClose() }}
