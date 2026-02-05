@@ -9,7 +9,9 @@ import {
     Typography,
     useTheme,
 } from "@mui/material";
-import { getText, debugContext, i18nContext, doI18n, getJson, Header } from "pithekos-lib";
+import { getText, doI18n, getJson } from "pithekos-lib";
+import { debugContext, i18nContext, Header } from "pankosmia-rcl";
+
 import { enqueueSnackbar } from "notistack";
 import { saveAs } from 'file-saver';
 import { PanDialog, PanDialogActions } from "pankosmia-rcl";

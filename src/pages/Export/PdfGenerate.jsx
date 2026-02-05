@@ -23,7 +23,9 @@ import Looks3OutlinedIcon from '@mui/icons-material/Looks3Outlined';
 import ViewHeadlineOutlinedIcon from '@mui/icons-material/ViewHeadlineOutlined';
 import { Proskomma } from 'proskomma-core';
 import { SofriaRenderFromProskomma, render } from "proskomma-json-tools";
-import { getText, debugContext, i18nContext, doI18n, typographyContext, getJson, Header } from "pithekos-lib";
+import { getText, doI18n, getJson } from "pithekos-lib";
+import {debugContext, i18nContext, typographyContext, Header } from "pankosmia-rcl";
+
 import { enqueueSnackbar } from "notistack";
 import { getCVTexts, getBookName } from "../helpers/cv";
 import GraphiteTest from './GraphiteTest';

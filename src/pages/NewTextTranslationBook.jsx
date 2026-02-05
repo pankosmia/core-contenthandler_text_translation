@@ -23,17 +23,15 @@ import {
 } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
 import {
-    i18nContext,
-    debugContext,
     postJson,
     doI18n,
     getJson,
-    Header,
     getAndSetJson,
 } from "pithekos-lib";
+
 import sx from "./Selection.styles";
 import ListMenuItem from "./ListMenuItem";
-import { PanDialog, PanDialogActions } from "pankosmia-rcl";
+import { PanDialog, PanDialogActions,i18nContext,debugContext,Header} from "pankosmia-rcl";
 
 
 export default function NewTextTranslationBook() {
@@ -186,7 +184,7 @@ export default function NewTextTranslationBook() {
             debugRef.current
         );
         if (response.ok) {
-            enqueueSnackbar(doI18n("pages:core-contenthandler_text_translation:book_created", i18nRef.current), {
+            enqueueSnackbar(`${doI18n("pages:core-contenthandler_text_translation:book_created", i18nRef.current)}`, {
                 variant: "success",
             });
             handleCloseCreate();
