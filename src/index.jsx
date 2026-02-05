@@ -12,8 +12,8 @@ import DeleteTextTranslationBook from "./pages/DeleteTextTranslationBook";
 import { ThemeProvider } from "@emotion/react";
 import { useEffect, useState } from "react";
 import { getAndSetJson } from "pithekos-lib";
-import { createTheme } from "@mui/material";
-import { SnackbarProvider } from "notistack";
+import { createTheme, styled } from "@mui/material";
+import { SnackbarProvider,  MaterialDesignContent, } from "notistack";
 
 const router = createHashRouter([
     {
@@ -75,10 +75,39 @@ function AppLayout() {
     console.log(themeSpec);
 
     const theme = createTheme(themeSpec);
+    const CustomSnackbarContent = styled(MaterialDesignContent)(() => ({
+    "&.notistack-MuiContent-error": {
+      backgroundColor: "#FDEDED",
+      color: "#D32F2F",
+    },
+    "&.notistack-MuiContent-info": {
+      backgroundColor: "#E5F6FD",
+      color: "#0288D1",
+    },
+    "&.notistack-MuiContent-warning": {
+      backgroundColor: "#FFF4E5",
+      color: "#EF6C00",
+    },
+    "&.notistack-MuiContent-success": {
+      backgroundColor: "#EDF7ED",
+      color: "#2E7D32",
+    },
+  }));
     return <ThemeProvider theme={theme}>
+        <SnackbarProvider
+            Components={{
+                error: CustomSnackbarContent,
+                info: CustomSnackbarContent,
+                warning: CustomSnackbarContent,
+                success: CustomSnackbarContent,
+            }}
+            maxSnack={6}
+        >
             <SpaContainer>
                 <RouterProvider router={router} />
             </SpaContainer>
+        </SnackbarProvider>
+
     </ThemeProvider>
 }
 createRoot(document.getElementById("root"))
