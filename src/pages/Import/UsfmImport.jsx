@@ -31,6 +31,7 @@ function UsfmImport() {
     const [isUsfmValid, setIsUsfmValid] = useState(false);
     const [validationResult, setValidationResult] = useState({});
     const [bookIsDuplicate, setBookIsDuplicate] = useState(false);
+    const [nameProject, setNameProject] = useState("")
     const pk = new Proskomma();
     const initialQuery = `{
         documents {
@@ -55,6 +56,7 @@ function UsfmImport() {
         if (summariesResponse.ok) {
             const data = summariesResponse.json;
             const bookCode = data.book_codes;
+            setNameProject(data.name);
             setRepoBooks(bookCode);
         } else {
             console.error(`${doI18n("pages:core-contenthandler_text_translation:error_data", i18nRef.current)}`);
@@ -184,7 +186,7 @@ function UsfmImport() {
             <PanDialog
                 isOpen={usfmImportOpen}
                 closeFn={() => { setLocalBookContent(null); setUsfmImportAnchorEl(null); handleClose() }}
-                titleLabel={doI18n("pages:core-contenthandler_text_translation:import_content", i18nRef.current)}>
+                titleLabel={`${doI18n("pages:core-contenthandler_text_translation:import_content", i18nRef.current)} - ${nameProject}`}>
                 <DialogContent sx={{ mt: 1 }}>
                     <FilePicker
                         extensions={['usfm', 'sfm', 'txt']}
