@@ -157,7 +157,8 @@ export default function NewBibleContent() {
                     contentName.trim().length > 0 &&
                     contentAbbr.trim().length > 0 &&
                     contentType.trim().length > 0 &&
-                    (errorAbbreviation === false)
+                    (errorAbbreviation === false) &&
+                    (repoExists === false)
                 );
 
             case 1:
@@ -373,7 +374,7 @@ export default function NewBibleContent() {
                         <Box sx={{ flex: '1 1 auto' }} />
                         <Button
                             onClick={handleNext}
-                            disabled={!isStepValid(activeStep) || repoExists}
+                            disabled={!isStepValid(activeStep)}
                         >
                             {activeStep === steps.length - 1 ? `${doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}` : `${doI18n("pages:core-contenthandler_text_translation:next_button", i18nRef.current)}`}
                         </Button>
