@@ -21,9 +21,10 @@ import {
 import sx from "./Selection.styles";
 import ListMenuItem from "./ListMenuItem";
 import { PanDialog, PanDialogActions, i18nContext, debugContext, Header } from "pankosmia-rcl";
+import ErrorDialog from "../TextTranslationContent/ErrorDialog";
 
 export default function DeleteTextTranslationBook() {
-    const  {enqueueSnackbar} = useSnackbar();
+    const { enqueueSnackbar } = useSnackbar();
     console.log("enquueu", enqueueSnackbar)
 
     const { i18nRef } = useContext(i18nContext);
@@ -191,16 +192,8 @@ export default function DeleteTextTranslationBook() {
             </PanDialog>
 
             {/* Error Dialog */}
-            <Dialog open={errorDialogOpen} onClose={() => handleCloseErrorDialog()}>
-                <DialogContent>
-                    <Typography color="error">{errorMessage}</Typography>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => handleCloseErrorDialog()} variant="contained" color="primary">
-                        {doI18n("pages:core-contenthandler_text_translation:close", i18nRef.current)}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <ErrorDialog setErrorDialogOpen={setErrorDialogOpen} handleClose={handleClose} errorDialogOpen={errorDialogOpen} errorMessage={errorMessage} />
+
         </Box>
     );
 }

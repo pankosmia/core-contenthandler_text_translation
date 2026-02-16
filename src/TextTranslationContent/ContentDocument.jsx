@@ -1,22 +1,20 @@
 import { useState, useContext, useEffect } from 'react';
 import {
-    Checkbox,
-    FormControl, FormControlLabel, FormGroup,
-    TextField,
+    FormControl, 
+    FormControlLabel,
     Select,
     MenuItem,
     InputLabel, Grid2,
     FormLabel,
     RadioGroup, Radio,
-    Typography,
-    FormHelperText,
+    Typography
 
 } from "@mui/material";
 import {
     doI18n,
     getAndSetJson,
-    getJson,
 } from "pithekos-lib";
+
 import sx from "../pages/Selection.styles";
 import ListMenuItem from "../pages/ListMenuItem";
 import { i18nContext, PanVersificationPicker, PanBookPicker } from 'pankosmia-rcl';

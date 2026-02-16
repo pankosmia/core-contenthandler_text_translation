@@ -304,6 +304,7 @@ export default function NewBibleContent() {
                         <PanStepperPicker steps={steps} renderStepContent={renderStepContent} isStepValid={isStepValid} handleCreate={handleCreate}/>
                     </DialogContent>
                 </PanDialog>
+                {/* Error Dialog */}
                 <ErrorDialog setErrorDialogOpen={setErrorDialogOpen} handleClose={handleClose} errorDialogOpen={errorDialogOpen} errorMessage={errorMessage} />
             </Box>
     );
