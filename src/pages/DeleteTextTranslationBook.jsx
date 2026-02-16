@@ -1,13 +1,9 @@
 import { useState, useContext, useEffect } from "react";
 import {
-    Button,
-    Dialog,
     FormControl,
-    Typography,
     Select,
     MenuItem,
     InputLabel,
-    DialogActions,
     Box,
     DialogContent,
     useTheme,
@@ -25,7 +21,6 @@ import ErrorDialog from "../TextTranslationContent/ErrorDialog";
 
 export default function DeleteTextTranslationBook() {
     const { enqueueSnackbar } = useSnackbar();
-    console.log("enquueu", enqueueSnackbar)
 
     const { i18nRef } = useContext(i18nContext);
     const { debugRef } = useContext(debugContext);
@@ -72,7 +67,6 @@ export default function DeleteTextTranslationBook() {
         }
     }, [open]);
 
-
     const handleClose = () => {
         const url = window.location.search;
         const params = new URLSearchParams(url);
@@ -105,10 +99,6 @@ export default function DeleteTextTranslationBook() {
             setErrorDialogOpen(true);
         };
 
-    };
-    const handleCloseErrorDialog = () => {
-        setErrorDialogOpen(false);
-        handleClose();
     };
 
     return (
@@ -190,10 +180,8 @@ export default function DeleteTextTranslationBook() {
                     actionLabel={doI18n("pages:core-contenthandler_text_translation:delete_button", i18nRef.current)}
                 />
             </PanDialog>
-
             {/* Error Dialog */}
             <ErrorDialog setErrorDialogOpen={setErrorDialogOpen} handleClose={handleClose} errorDialogOpen={errorDialogOpen} errorMessage={errorMessage} />
-
         </Box>
     );
 }
