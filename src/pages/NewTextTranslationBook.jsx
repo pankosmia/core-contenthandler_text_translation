@@ -1,41 +1,21 @@
 import { useState, useContext, useEffect } from "react";
 import {
-    AppBar,
-    Button,
-    Checkbox,
-    Dialog,
-    FormControl,
-    FormControlLabel,
-    FormGroup,
-    Stack,
-    TextField,
-    Toolbar,
-    Typography,
-    Select,
-    MenuItem,
-    InputLabel,
     Grid2,
-    DialogActions,
     Box,
     DialogContent,
     DialogContentText,
-    useTheme,
 } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
 import {
     postJson,
     doI18n,
     getJson,
-    getAndSetJson,
 } from "pithekos-lib";
-
-import sx from "./Selection.styles";
-import ListMenuItem from "./ListMenuItem";
-import { PanDialog, PanDialogActions,i18nContext,debugContext,Header} from "pankosmia-rcl";
-
+import { PanDialog, PanDialogActions, i18nContext, debugContext, Header, PanVersificationPicker, PanBookPicker } from "pankosmia-rcl";
+import ErrorDialog from "../TextTranslationContent/ErrorDialog";
 
 export default function NewTextTranslationBook() {
-    const [addCV, setAddCV] = useState(true);
+    const [showVersification, setShowVersification] = useState(true);
     const [bookCode, setBookCode] = useState("");
     const [bookTitle, setBookTitle] = useState("");
     const [bookAbbr, setBookAbbr] = useState("");
@@ -44,39 +24,13 @@ export default function NewTextTranslationBook() {
     const { i18nRef } = useContext(i18nContext);
     const { debugRef } = useContext(debugContext);
     const [bookCodes, setBookCodes] = useState([]);
-    const [protestantOnly, setProtestantOnly] = useState(null);
     const [bookName, setBookName] = useState([]);
     const [errorDialogOpen, setErrorDialogOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [versification, setVersification] = useState("eng");
-    const [versificationCodes, setVersificationCodes] = useState([]);
     const [fileVrs, setFileVrs] = useState(false);
     const [nameProject, setNameProject] = useState("");
-    const theme = useTheme();
-    
-    const [clientConfig, setClientConfig] = useState({});
 
-    const isProtestantBooksOnlyCheckboxEnabled =
-    clientConfig?.['core-contenthandler_text_translation']
-      ?.find((section) => section.id === 'config')
-      ?.fields?.find((field) => field.id === 'protestantBooksOnlyCheckbox')?.value !== false;
-
-    const isProtestantBooksOnlyDefaultChecked =
-    clientConfig?.['core-contenthandler_text_translation']
-      ?.find((section) => section.id === 'config')
-      ?.fields?.find((field) => field.id === 'protestantBooksOnlyDefaultChecked')?.value !== false;
-    
-    useEffect(() => {
-      setProtestantOnly(isProtestantBooksOnlyDefaultChecked);
-    }, [isProtestantBooksOnlyDefaultChecked]);
-
-    useEffect(() => {
-      getJson('/client-config')
-        .then((res) => res.json)
-        .then((data) => setClientConfig(data))
-        .catch((err) => console.error('Error :', err));
-    }, []);
-   
     const getProjectSummaries = async () => {
         const hash = window.location.hash;
         const query = hash.includes('?') ? hash.split('?')[1] : '';
@@ -92,7 +46,6 @@ export default function NewTextTranslationBook() {
         } else {
             console.error(`${doI18n("pages:core-contenthandler_text_translation:error_data", i18nRef.current)}`);
         }
-
     };
 
     const getProjectFiles = async () => {
@@ -116,20 +69,7 @@ export default function NewTextTranslationBook() {
         () => {
             getProjectSummaries();
             getProjectFiles();
-        },
-        []
-    );
-
-    useEffect(() => {
-        if (open) {
-            getAndSetJson({
-                url: "/content-utils/versifications",
-                setter: setVersificationCodes
-            }).then()
-        }
-    },
-        [open]
-    );
+        }, []);
 
     useEffect(() => {
         const doFetch = async () => {
@@ -150,7 +90,6 @@ export default function NewTextTranslationBook() {
             doFetch().then();
         }
     }, [open]);
-
 
     const handleClose = () => {
         const url = window.location.search;
@@ -175,7 +114,7 @@ export default function NewTextTranslationBook() {
             book_code: bookCode,
             book_title: bookTitle,
             book_abbr: bookAbbr,
-            add_cv: addCV,
+            add_cv: showVersification,
             ...(fileVrs === false ? { vrs_name: versification } : {}),
         };
         const response = await postJson(
@@ -194,10 +133,6 @@ export default function NewTextTranslationBook() {
             setErrorDialogOpen(true);
         };
 
-    };
-    const handleCloseErrorDialog = () => {
-        setErrorDialogOpen(false);
-        handleClose();
     };
 
     return (
@@ -225,7 +160,6 @@ export default function NewTextTranslationBook() {
                 titleLabel={`${doI18n("pages:core-contenthandler_text_translation:new_book", i18nRef.current)} - ${nameProject}`}
                 isOpen={open}
                 closeFn={() => handleClose()}
-                theme={theme}
             >
                 <DialogContentText sx={{ ml: 1, p: 1 }} variant='subtitle2'>
                     {doI18n(`pages:core-contenthandler_text_translation:required_field`, i18nRef.current)}
@@ -238,156 +172,21 @@ export default function NewTextTranslationBook() {
                         alignItems="stretch"
                     >
                         {fileVrs === false ? (
-                            <Grid2 item size={12}>
-                                <FormControl sx={{ width: "100%" }}>
-                                    <InputLabel id="booksVersification-label" required htmlFor="booksVersification"
-                                        sx={sx.inputLabel}>
-                                        {doI18n("pages:core-contenthandler_text_translation:versification_scheme", i18nRef.current)}
-                                    </InputLabel>
-                                    <Select
-                                        variant="outlined"
-                                        required
-                                        labelId="booksVersification-label"
-                                        name="booksVersification"
-                                        inputProps={{
-                                            id: "bookVersification",
-                                        }}
-                                        value={versification}
-                                        label={doI18n("pages:core-contenthandler_text_translation:versification_scheme", i18nRef.current)}
-                                        onChange={(event) => {
-                                            setVersification(event.target.value);
-                                        }}
-                                        sx={sx.select}
-                                    >
-                                        {
-                                            versificationCodes.map((listItem, n) => <MenuItem key={n} value={listItem}
-                                                dense>
-                                                <ListMenuItem
-                                                    listItem={`${listItem.toUpperCase()} - ${doI18n(`scripture:versifications:${listItem}`, i18nRef.current)}`}
-                                                />
-                                            </MenuItem>
-                                            )
-                                        }
-                                    </Select>
-                                </FormControl>
-                            </Grid2>
+                            <PanVersificationPicker versification={versification} setVersification={setVersification} isOpen={open} />
                         ) : null}
 
-                        <Grid2 item size={4}>
-                            <FormControl sx={{ width: "100%" }}>
-                                <InputLabel
-                                    id="bookCode-label"
-                                    required
-                                    htmlFor="bookCode"
-                                    sx={sx.inputLabel}
-                                >
-                                    {doI18n("pages:core-contenthandler_text_translation:book_code", i18nRef.current)}
-                                </InputLabel>
-                                <Select
-                                    variant="outlined"
-                                    required
-                                    labelId="bookCode-label"
-                                    name="bookCode"
-                                    inputProps={{
-                                        id: "bookCode",
-                                    }}
-                                    value={bookCode}
-                                    label={doI18n("pages:core-contenthandler_text_translation:book_code", i18nRef.current)}
-                                    onChange={(event) => {
-                                        setBookCode(event.target.value);
-                                        setBookAbbr(
-                                            ["1", "2", "3"].includes(event.target.value[0])
-                                                ? event.target.value.slice(0, 2) +
-                                                event.target.value[2].toLowerCase()
-                                                : event.target.value[0] +
-                                                event.target.value.slice(1).toLowerCase()
-                                        );
-                                        setBookTitle(
-                                            doI18n(
-                                                `scripture:books:${event.target.value}`,
-                                                i18nRef.current
-                                            )
-                                        );
-                                    }}
-                                    sx={sx.select}
-                                >
-                                    {(protestantOnly ? bookCodes.slice(0, 66) : bookCodes).map(
-                                        (listItem, n) => (
-                                            <MenuItem
-                                                key={n}
-                                                value={listItem}
-                                                dense
-                                                disabled={bookName.includes(listItem)}
-                                            >
-                                                <ListMenuItem
-                                                    listItem={`${listItem} - ${doI18n(
-                                                        `scripture:books:${listItem}`,
-                                                        i18nRef.current
-                                                    )}`}
-                                                />
-                                            </MenuItem>
-                                        )
-                                    )}
-                                </Select>
-                            </FormControl>
-                        </Grid2>
-                        <Grid2 item size={4}>
-                            <TextField
-                                id="bookAbbr"
-                                required
-                                sx={{ width: "100%" }}
-                                label={doI18n("pages:core-contenthandler_text_translation:book_abbr", i18nRef.current)}
-                                value={bookAbbr}
-                                onChange={(event) => {
-                                    setBookAbbr(event.target.value);
-                                }}
-                            />
-                        </Grid2>
-                        <Grid2 item size={4}>
-                            <TextField
-                                id="bookTitle"
-                                required
-                                sx={{ width: "100%" }}
-                                label={doI18n("pages:core-contenthandler_text_translation:book_title", i18nRef.current)}
-                                value={bookTitle}
-                                onChange={(event) => {
-                                    setBookTitle(event.target.value);
-                                }}
-                            />
-                        </Grid2>
-                        {isProtestantBooksOnlyCheckboxEnabled && (
-                            <FormGroup>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            color="secondary"
-                                            checked={protestantOnly}
-                                            onChange={() => setProtestantOnly(!protestantOnly)}
-                                        />
-                                    }
-                                    label={doI18n(
-                                        "pages:core-contenthandler_text_translation:protestant_books_only",
-                                        i18nRef.current
-                                    )}
-                                />
-                            </FormGroup>
-                        )}
-                        <FormGroup>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        color="secondary"
-                                        checked={true}
-                                        disabled={true}
-                                        onChange={() => setAddCV(!addCV)}
-                                    />
-                                }
-                                label={doI18n(
-                                    "pages:core-contenthandler_text_translation:add_versification_checkbox",
-                                    i18nRef.current
-                                )}
-                            />
-                        </FormGroup>
+                        <PanBookPicker
+                            bookCode={bookCode}
+                            setBookCode={setBookCode}
+                            bookAbbr={bookAbbr}
+                            setBookAbbr={setBookAbbr}
+                            bookCodes={bookCodes}
+                            bookTitle={bookTitle}
+                            setBookTitle={setBookTitle}
+                            showVersification={showVersification}
+                            setShowVersification={setShowVersification}
+                            bookProject={bookName}
+                        />
                     </Grid2>
                 </DialogContent>
                 <PanDialogActions
@@ -405,18 +204,8 @@ export default function NewTextTranslationBook() {
                     }
                 />
             </PanDialog>
-
             {/* Error Dialog */}
-            <Dialog open={errorDialogOpen} onClose={() => handleCloseErrorDialog()}>
-                <DialogContent>
-                    <Typography color="error">{errorMessage}</Typography>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => handleCloseErrorDialog()} variant="contained" color="primary">
-                        {doI18n("pages:core-contenthandler_text_translation:close", i18nRef.current)}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <ErrorDialog setErrorDialogOpen={setErrorDialogOpen} handleClose={handleClose} errorDialogOpen={errorDialogOpen} errorMessage={errorMessage} />
         </Box>
     );
 }

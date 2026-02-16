@@ -1,13 +1,9 @@
 import { useState, useContext, useEffect } from "react";
 import {
-    Button,
-    Dialog,
     FormControl,
-    Typography,
     Select,
     MenuItem,
     InputLabel,
-    DialogActions,
     Box,
     DialogContent,
     useTheme,
@@ -21,10 +17,10 @@ import {
 import sx from "./Selection.styles";
 import ListMenuItem from "./ListMenuItem";
 import { PanDialog, PanDialogActions, i18nContext, debugContext, Header } from "pankosmia-rcl";
+import ErrorDialog from "../TextTranslationContent/ErrorDialog";
 
 export default function DeleteTextTranslationBook() {
-    const  {enqueueSnackbar} = useSnackbar();
-    console.log("enquueu", enqueueSnackbar)
+    const { enqueueSnackbar } = useSnackbar();
 
     const { i18nRef } = useContext(i18nContext);
     const { debugRef } = useContext(debugContext);
@@ -71,7 +67,6 @@ export default function DeleteTextTranslationBook() {
         }
     }, [open]);
 
-
     const handleClose = () => {
         const url = window.location.search;
         const params = new URLSearchParams(url);
@@ -104,10 +99,6 @@ export default function DeleteTextTranslationBook() {
             setErrorDialogOpen(true);
         };
 
-    };
-    const handleCloseErrorDialog = () => {
-        setErrorDialogOpen(false);
-        handleClose();
     };
 
     return (
@@ -189,18 +180,8 @@ export default function DeleteTextTranslationBook() {
                     actionLabel={doI18n("pages:core-contenthandler_text_translation:delete_button", i18nRef.current)}
                 />
             </PanDialog>
-
             {/* Error Dialog */}
-            <Dialog open={errorDialogOpen} onClose={() => handleCloseErrorDialog()}>
-                <DialogContent>
-                    <Typography color="error">{errorMessage}</Typography>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => handleCloseErrorDialog()} variant="contained" color="primary">
-                        {doI18n("pages:core-contenthandler_text_translation:close", i18nRef.current)}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <ErrorDialog setErrorDialogOpen={setErrorDialogOpen} handleClose={handleClose} errorDialogOpen={errorDialogOpen} errorMessage={errorMessage} />
         </Box>
     );
 }
