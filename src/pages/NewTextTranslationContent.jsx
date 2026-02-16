@@ -9,7 +9,7 @@ import {
     getAndSetJson,
     getJson,
 } from "pithekos-lib";
-import { PanDialog, i18nContext, debugContext, Header,PanStepperPicker } from "pankosmia-rcl";
+import { PanDialog, i18nContext, debugContext, Header, PanStepperPicker } from "pankosmia-rcl";
 import ErrorDialog from '../TextTranslationContent/ErrorDialog';
 import LanguagePicker from '../TextTranslationContent/LanguagePicker';
 import NameDocument from '../TextTranslationContent/NameDocument';
@@ -39,7 +39,10 @@ export default function NewBibleContent() {
     const [currentLanguage, setCurrentLanguage] = useState({ language_code: "", language_name: "" });
     const [languageIsValid, setLanguageIsValid] = useState(true);
     const [errorAbbreviation, setErrorAbbreviation] = useState(false);
-
+    const url = window.location.search;
+    const params = new URLSearchParams(url);
+    const returnType = params.get("returntypepage");
+    console.log("url", url)
     const steps = [`${doI18n("pages:core-contenthandler_text_translation:name_section", i18nRef.current)}`,
     `${doI18n("pages:core-contenthandler_text_translation:language", i18nRef.current)}`,
     `${doI18n("pages:core-contenthandler_text_translation:content_section", i18nRef.current)}`
@@ -49,7 +52,6 @@ export default function NewBibleContent() {
         const url = window.location.search;
         const params = new URLSearchParams(url);
         const returnType = params.get("returntypepage");
-
         if (returnType === "dashboard") {
             window.location.href = "/clients/main";
         } else {
@@ -276,36 +278,36 @@ export default function NewBibleContent() {
         await handleCloseCreate();
     };
     return (
-            <Box>
-                <Box
-                    sx={{
-                        position: "absolute",
-                        width: "100%",
-                        height: "100%",
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        zIndex: -1,
-                        backgroundImage:
-                            'url("/app-resources/pages/content/background_blur.png")',
-                        backgroundRepeat: "no-repeat",
-                    }}
-                />
-                <Header
-                    titleKey="pages:content:title"
-                    currentId="content"
-                    requireNet={false}
-                />
-                <PanDialog
-                    titleLabel={doI18n("pages:core-contenthandler_text_translation:create_content_text_translation", i18nRef.current)}
-                    isOpen={open}
-                    closeFn={() => handleCloseCreate()}
-                >
-                    <DialogContent>
-                        <PanStepperPicker steps={steps} renderStepContent={renderStepContent} isStepValid={isStepValid} handleCreate={handleCreate}/>
-                    </DialogContent>
-                </PanDialog>
-                {/* Error Dialog */}
-                <ErrorDialog setErrorDialogOpen={setErrorDialogOpen} handleClose={handleClose} errorDialogOpen={errorDialogOpen} errorMessage={errorMessage} />
-            </Box>
+        <Box>
+            <Box
+                sx={{
+                    position: "absolute",
+                    width: "100%",
+                    height: "100%",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    zIndex: -1,
+                    backgroundImage:
+                        'url("/app-resources/pages/content/background_blur.png")',
+                    backgroundRepeat: "no-repeat",
+                }}
+            />
+            <Header
+                titleKey="pages:content:title"
+                currentId="content"
+                requireNet={false}
+            />
+            <PanDialog
+                titleLabel={doI18n("pages:core-contenthandler_text_translation:create_content_text_translation", i18nRef.current)}
+                isOpen={open}
+                closeFn={() => handleClose()}
+            >
+                <DialogContent>
+                    <PanStepperPicker steps={steps} renderStepContent={renderStepContent} isStepValid={isStepValid} handleCreate={handleCreate} />
+                </DialogContent>
+            </PanDialog>
+            {/* Error Dialog */}
+            <ErrorDialog setErrorDialogOpen={setErrorDialogOpen} handleClose={handleClose} errorDialogOpen={errorDialogOpen} errorMessage={errorMessage} />
+        </Box>
     );
 }
