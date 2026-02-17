@@ -42,29 +42,23 @@ export default function NewBibleContent() {
     const url = window.location.search;
     const params = new URLSearchParams(url);
     const returnType = params.get("returntypepage");
-    console.log("url", url)
     const steps = [`${doI18n("pages:core-contenthandler_text_translation:name_section", i18nRef.current)}`,
     `${doI18n("pages:core-contenthandler_text_translation:language", i18nRef.current)}`,
     `${doI18n("pages:core-contenthandler_text_translation:content_section", i18nRef.current)}`
     ];
 
     const handleClose = () => {
-        const url = window.location.search;
-        const params = new URLSearchParams(url);
-        const returnType = params.get("returntypepage");
+        setOpen(false);
         if (returnType === "dashboard") {
-            window.location.href = "/clients/main";
+            setTimeout(() => {
+                window.location.href = '/clients/main';
+            });
         } else {
-            window.location.href = "/clients/content";
+            setTimeout(() => {
+                window.location.href = '/clients/content';
+            });
         }
     }
-
-    const handleCloseCreate = async () => {
-        setOpen(false);
-        setTimeout(() => {
-            window.location.href = '/clients/content';
-        });
-    };
 
     useEffect(
         () => {
@@ -275,7 +269,7 @@ export default function NewBibleContent() {
                 }
             }
         }
-        await handleCloseCreate();
+        await handleClose();
     };
     return (
         <Box>
@@ -293,7 +287,7 @@ export default function NewBibleContent() {
                 }}
             />
             <Header
-                titleKey="pages:content:title"
+                titleKey={returnType === "dashboard" ? "pages:core-dashboard:title" : "pages:content:title"}
                 currentId="content"
                 requireNet={false}
             />

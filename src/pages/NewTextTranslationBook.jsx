@@ -30,12 +30,12 @@ export default function NewTextTranslationBook() {
     const [versification, setVersification] = useState("eng");
     const [fileVrs, setFileVrs] = useState(false);
     const [nameProject, setNameProject] = useState("");
+    const hash = window.location.hash;
+    const query = hash.includes('?') ? hash.split('?')[1] : '';
+    const params = new URLSearchParams(query);
+    const path = params.get('repoPath');
 
     const getProjectSummaries = async () => {
-        const hash = window.location.hash;
-        const query = hash.includes('?') ? hash.split('?')[1] : '';
-        const params = new URLSearchParams(query);
-        const path = params.get('repoPath');
         setRepoPath(path);
         const summariesResponse = await getJson(`/burrito/metadata/summary/${path}`, debugContext.current);
         if (summariesResponse.ok) {
@@ -49,10 +49,6 @@ export default function NewTextTranslationBook() {
     };
 
     const getProjectFiles = async () => {
-        const hash = window.location.hash;
-        const query = hash.includes('?') ? hash.split('?')[1] : '';
-        const params = new URLSearchParams(query);
-        const path = params.get('repoPath');
         const filesResponse = await getJson(`/burrito/paths/${path}`, debugContext.current);
         if (filesResponse.ok) {
             const data = await filesResponse.json;
@@ -62,7 +58,6 @@ export default function NewTextTranslationBook() {
         } else {
             console.error(`${doI18n("pages:core-contenthandler_text_translation:error_data", i18nRef.current)}`);
         }
-
     };
 
     useEffect(
@@ -91,18 +86,7 @@ export default function NewTextTranslationBook() {
         }
     }, [open]);
 
-    const handleClose = () => {
-        const url = window.location.search;
-        const params = new URLSearchParams(url);
-        const returnType = params.get("returntypepage");
-        if (returnType === "dashboard") {
-            window.location.href = "/clients/main";
-        } else {
-            window.location.href = "/clients/content";
-        }
-    };
-
-    const handleCloseCreate = async () => {
+    const handleClose = async () => {
         setOpen(false);
         setTimeout(() => {
             window.location.href = '/clients/content';
@@ -126,7 +110,7 @@ export default function NewTextTranslationBook() {
             enqueueSnackbar(`${doI18n("pages:core-contenthandler_text_translation:book_created", i18nRef.current)}`, {
                 variant: "success",
             });
-            handleCloseCreate();
+            handleClose();
         } else {
             setErrorMessage(`${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${response.status
                 }`);
