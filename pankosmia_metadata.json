@@ -137,7 +137,7 @@
     },
     "could_not_fetch": {
       "en": "Could not fetch data",
-      "es": "@No se pudo obtener",
+      "es": "No se pudieron obtener los datos",
       "fr": "Les données n'ont pas pu être récupérées",
       "id": "@Tidak dapat ambil"
     },
@@ -153,13 +153,13 @@
     },
     "export_as_usfm": {
       "en": "Save as USFM",
-      "es": "@Exportar Contenido como USFM",
+      "es": "Guardar como USFM",
       "fr": "Sauvegarder au format USFM",
       "id": "Simpan konten sebagai USFM"
     },
     "export_as_zip": {
       "en": "Save as ZIP",
-      "es": "@Exportar Contenido como ZIP",
+      "es": "Guardar como ZIP",
       "fr": "Sauvegarder au format ZIP",
       "id": "Simpan Konten sebagai ZIP"
     },
@@ -170,31 +170,31 @@
     },
     "pick_one_book_export": {
       "en": "Choose a book to save",
-      "es": "@Elige uno libro para exportar",
+      "es": "Elige un libro para guardar",
       "fr": "Choisir un livre à sauvegarder",
       "id": "Pilih buku buat disimpan"
     },
     "export_zip": {
       "en": "Save as ZIP",
-      "es": "@Exportar como ZIP",
+      "es": "Guardar como ZIP",
       "fr": "Sauvegarder au format ZIP",
       "id": "Simpan sebagai ZIP"
     },
     "export_usfm": {
       "en": "Save as USFM",
-      "es": "@Exportar como USFM",
+      "es": "Guardar como USFM",
       "fr": "Sauvegarder au format USFM",
       "id": "Simpan sebagai USFM"
     },
     "export_pdf": {
       "en": "Save as PDF",
-      "es": "@Exportar como PDF",
+      "es": "Guardar como PDF",
       "fr": "Sauvegarder au format PDF",
       "id": "Simpan sebagai PDF"
     },
     "show_by_verse": {
       "en": "Format verse-by-verse",
-      "es": "@Mostrar por versículos",
+      "es": "Formatear por versículos",
       "fr": "Formater verset par verset",
       "id": "@Tampil per ayat"
     },
@@ -236,25 +236,25 @@
     },
     "show_character_markup": {
       "en": "Show character formatting marks",
-      "es": "@Mostrar el marcado de caracteres",
+      "es": "Mostrar el marcado de caracteres",
       "fr": "Afficher les marques de formatage des caractères",
       "id": "@Tampil markup karakter"
     },
     "show_chapter_labels": {
       "en": "Show chapter numbers",
-      "es": "@Mostrar los nombres de los capítulos",
+      "es": "Mostrar los números de los capítulos",
       "fr": "Afficher les numéros de chapitre",
       "id": "@Tampil label fasal"
     },
     "show_verses_labels": {
       "en": "Show verse numbers",
-      "es": "@Mostrar los nomnbres de los versículos",
+      "es": "Mostrar los números de los versículos",
       "fr": "Afficher les numéros de verset",
       "id": "@Tampil label ayat"
     },
     "show_first_verse_label": {
       "en": "Show verse one",
-      "es": "@Mostrar el nombre del primer versículo",
+      "es": "Mostrar el primer versículo",
       "fr": "Afficher le verset un",
       "id": "@Tampil label ayat"
     },
@@ -266,7 +266,7 @@
     },
     "export_label": {
       "en": "Save",
-      "es": "@EXPORTAR",
+      "es": "Guardar",
       "fr": "Sauvegarder",
       "id": "Simpan"
     },
@@ -278,13 +278,13 @@
     },
     "export_all": {
       "en": "Save all books",
-      "es": "@Exportar todos los libros",
+      "es": "Guardar todos los libros",
       "fr": "Sauvegarder tous les livres",
       "id": "Simpan semua buku"
     },
     "pick_one_or_more_books_export": {
       "en": "Choose one or more books to save",
-      "es": "@Elige uno o más libros para exportar",
+      "es": "Elige uno o más libros para guardar",
       "fr": "Choisir un ou des livres à sauvegarder",
       "id": "Pilih satuh lebih buku buat disimpan"
     },
@@ -298,7 +298,7 @@
       "en": "The document could not be created",
       "fr": "Le document n'a pas pu être créé",
       "id": "@Kesalahan terjadi sambil coba buat konten",
-      "es": "@Ocurrió un error al intentar crear contenido"
+      "es": "No se pudo crear el documento"
     },
     "new_book": {
       "en": "New Book",
@@ -321,7 +321,7 @@
     "book_code": {
       "en": "Book",
       "fr": "livre",
-      "es": "@Código del libro",
+      "es": "Libro",
       "id": "@Kode Buku"
     },
     "book_abbr": {
@@ -362,7 +362,7 @@
     },
     "import_content": {
       "en": "Import from computer",
-      "es": "@Cargar Contenido",
+      "es": "Importar desde la computadora",
       "fr": "Importer depuis l'ordinateur",
       "id": "Impor dari komputer"
     },
@@ -386,16 +386,16 @@
     "usfm_invalid": {
       "en": "The file should be in the USFM format",
       "fr": "Le fichier devrait être au format USFM",
-      "es": "@Este USFM no es válido"
+      "es": "Este archivo debe estar en formato USFM"
     },
     "import_click": {
       "en": "Import USFM file",
       "fr": "Importer fichier USFM",
-      "es": "@Subir archivo USFM"
+      "es": "Importar el archivo USFM"
     },
     "name": {
       "en": "Document name",
-      "es": "@Nombre",
+      "es": "Nombre del documento",
       "fr": "Nom du document",
       "id": "@Nama"
     },

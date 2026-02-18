@@ -65,44 +65,19 @@ export default function NewBibleContent() {
     const params = new URLSearchParams(url);
     const returnType = params.get("returntypepage");
 
-    if (returnType === "dashboard") {
-      window.location.href = "/clients/main";
-    } else {
-      window.location.href = "/clients/content";
+        if (returnType === "dashboard") {
+            window.location.href = "/clients/main";
+        } else {
+            window.location.href = "/clients/content";
+        }
     }
-  };
-  console.log(clientInterfacesRef.current)
-  const handleCloseCreate = async () => {
-    setOpen(false);
-    setTimeout(() => {
-      window.location.href = "/clients/content";
-    });
-  };
-  const isStepSkipped = (step) => {
-    return skipped.has(step);
-  };
 
-  const handleNext = async () => {
-    let newSkipped = skipped;
-    if (isStepSkipped(activeStep)) {
-      newSkipped = new Set(newSkipped.values());
-      newSkipped.delete(activeStep);
-    }
-    if (activeStep === steps.length - 1) {
-      try {
-        await handleCreate();
-      } catch (error) {
-        console.error("Erreur création projet", error);
-      }
-      return;
-    }
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped(newSkipped);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
+    const handleCloseCreate = async () => {
+        setOpen(false);
+        setTimeout(() => {
+            window.location.href = '/clients/content';
+        });
+    };
 
   useEffect(() => {
     const doFetch = async () => {
@@ -141,7 +116,7 @@ export default function NewBibleContent() {
 
   const renderStepContent = (step) => {
     switch (step) {
-      case 1:
+      case 0:
         return (
           <NameDocument
             contentType={contentType}
@@ -157,7 +132,7 @@ export default function NewBibleContent() {
             localRepos={localRepos}
           />
         );
-      case 2:
+      case 1:
         return (
           <LanguagePicker
             currentLanguage={currentLanguage}
@@ -165,7 +140,7 @@ export default function NewBibleContent() {
             setIsValid={setLanguageIsValid}
           />
         );
-      case 3:
+      case 2:
         return uuid ? (
           <ContentZip
             open={open}
@@ -208,7 +183,8 @@ export default function NewBibleContent() {
           contentName.trim().length > 0 &&
           contentAbbr.trim().length > 0 &&
           contentType.trim().length > 0 &&
-          errorAbbreviation === false
+          errorAbbreviation === false &&
+                    (repoExists === false)
         );
 
       case 1:
