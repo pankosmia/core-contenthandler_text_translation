@@ -10,7 +10,13 @@ import {
   DialogContentText,
 } from "@mui/material";
 import { postJson, doI18n, getAndSetJson, getJson } from "pithekos-lib";
-import { PanDialog, i18nContext, debugContext, Header,clientInterfacesContext } from "pankosmia-rcl";
+import {
+  PanDialog,
+  i18nContext,
+  debugContext,
+  Header,
+  clientInterfacesContext,
+} from "pankosmia-rcl";
 import ErrorDialog from "../TextTranslationContent/ErrorDialog";
 import LanguagePicker from "../TextTranslationContent/LanguagePicker";
 import NameDocument from "../TextTranslationContent/NameDocument";
@@ -25,7 +31,7 @@ export default function NewBibleContent() {
   const [errorMessage, setErrorMessage] = useState("");
   const { i18nRef } = useContext(i18nContext);
   const { debugRef } = useContext(debugContext);
-  const {clientInterfacesRef} = useContext(clientInterfacesContext)
+  const { clientInterfacesRef } = useContext(clientInterfacesContext);
   const [contentName, setContentName] = useState("");
   const [contentAbbr, setContentAbbr] = useState("");
   const [contentType, setContentType] = useState("text_translation");
@@ -71,7 +77,7 @@ export default function NewBibleContent() {
       window.location.href = "/clients/content";
     }
   };
-  console.log(clientInterfacesRef.current)
+  console.log(clientInterfacesRef.current);
   const handleCloseCreate = async () => {
     setOpen(false);
     setTimeout(() => {
@@ -235,7 +241,6 @@ export default function NewBibleContent() {
         return true;
     }
   };
-  console.log(contentOption);
   const handleCreate = async () => {
     // versification for plan comes from plan
     let planJson = null;
