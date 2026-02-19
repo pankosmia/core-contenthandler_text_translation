@@ -10,22 +10,30 @@ import {
   DialogContentText,
 } from "@mui/material";
 import { postJson, doI18n, getAndSetJson, getJson } from "pithekos-lib";
-import { PanDialog, i18nContext, debugContext, Header,clientInterfacesContext } from "pankosmia-rcl";
+import {
+  PanDialog,
+  i18nContext,
+  debugContext,
+  Header,
+  PanStepperPicker,
+  clientInterfacesContext,
+} from "pankosmia-rcl";
 import ErrorDialog from "../TextTranslationContent/ErrorDialog";
 import LanguagePicker from "../TextTranslationContent/LanguagePicker";
 import NameDocument from "../TextTranslationContent/NameDocument";
 import ContentDocument from "../TextTranslationContent/ContentDocument";
-import JSZip from "jszip";
-import yaml from "js-yaml";
+import ContentZip from "../TextTranslationContent/ContentZip";
 import { useSearchParams } from "react-router-dom";
-import { ContentZip } from "../TextTranslationContent/ContentZip";
+import yaml from "js-yaml"
+import JSZip from "jszip";
+
 export default function NewBibleContent() {
   const [open, setOpen] = useState(true);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { i18nRef } = useContext(i18nContext);
   const { debugRef } = useContext(debugContext);
-  const {clientInterfacesRef} = useContext(clientInterfacesContext)
+  const { clientInterfacesRef } = useContext(clientInterfacesContext);
   const [contentName, setContentName] = useState("");
   const [contentAbbr, setContentAbbr] = useState("");
   const [contentType, setContentType] = useState("text_translation");
@@ -45,6 +53,8 @@ export default function NewBibleContent() {
 
   const [searchParams] = useSearchParams();
   const uuid = searchParams.get("uuid");
+  const returnType = searchParams.get("returntypepage");
+
   const [currentLanguage, setCurrentLanguage] = useState({
     language_code: "",
     language_name: "",
@@ -61,23 +71,24 @@ export default function NewBibleContent() {
   ];
 
   const handleClose = () => {
-    const url = window.location.search;
-    const params = new URLSearchParams(url);
-    const returnType = params.get("returntypepage");
-
-        if (returnType === "dashboard") {
-            window.location.href = "/clients/main";
-        } else {
-            window.location.href = "/clients/content";
-        }
+    setOpen(false);
+    if (returnType === "dashboard") {
+      setTimeout(() => {
+        window.location.href = "/clients/main";
+      });
+    } else {
+      setTimeout(() => {
+        window.location.href = "/clients/content";
+      });
     }
+  };
 
-    const handleCloseCreate = async () => {
-        setOpen(false);
-        setTimeout(() => {
-            window.location.href = '/clients/content';
-        });
-    };
+  const handleCloseCreate = async () => {
+    setOpen(false);
+    setTimeout(() => {
+      window.location.href = "/clients/content";
+    });
+  };
 
   useEffect(() => {
     const doFetch = async () => {
@@ -184,7 +195,7 @@ export default function NewBibleContent() {
           contentAbbr.trim().length > 0 &&
           contentType.trim().length > 0 &&
           errorAbbreviation === false &&
-                    (repoExists === false)
+          repoExists === false
         );
 
       case 1:
@@ -211,7 +222,6 @@ export default function NewBibleContent() {
         return true;
     }
   };
-  console.log(contentOption);
   const handleCreate = async () => {
     // versification for plan comes from plan
     let planJson = null;
@@ -225,7 +235,6 @@ export default function NewBibleContent() {
         planJson = planResponse.json;
         submittedVersification = planJson.versification;
       } else {
-        console.log(planResponse.error);
         setErrorMessage(
           `${doI18n("pages:core-contenthandler_text_translation:content_creation_error", i18nRef.current)}: ${planResponse.status}`,
         );
@@ -393,19 +402,13 @@ export default function NewBibleContent() {
 
     return results;
   }
-  console.log(uuid);
   useEffect(() => {
     async function fetchUuid() {
       if (uuid) {
         let download = await fetch(`/temp/bytes/${uuid}`, {
           method: "GET",
         });
-        // const download = await fetch(
-        //   "https://git.door43.org/QuentinRoca/fr_gst/archive/3bf4ccfb0f.zip",
-        // );
-
         const arrayBuffer = await download.arrayBuffer();
-
         const tree = await getZipFilesDepth2WithData(arrayBuffer);
         let t = yaml.load(tree.find((e) => e.name.includes("manifest")).data);
         prefillFromManifest(t.dublin_core);
@@ -420,7 +423,6 @@ export default function NewBibleContent() {
   }, [uuid]);
   const handleTestDlUser = async () => {};
   function prefillFromManifest(manifest) {
-    console.log(manifest);
     setContentName(manifest.title ?? "");
     setContentAbbr(manifest.identifier.toUpperCase() ?? "");
 
@@ -454,70 +456,32 @@ export default function NewBibleContent() {
         }}
       />
       <Header
-        titleKey="pages:content:title"
+        titleKey={
+          returnType === "dashboard"
+            ? "pages:core-dashboard:title"
+            : "pages:content:title"
+        }
         currentId="content"
         requireNet={false}
       />
-
       <PanDialog
         titleLabel={doI18n(
           "pages:core-contenthandler_text_translation:create_content_text_translation",
           i18nRef.current,
         )}
         isOpen={open}
-        closeFn={() => handleCloseCreate()}
+        closeFn={() => handleClose()}
       >
         <DialogContent>
-          {/* <Button onClick={() => handleTestDlUser()}>test dl zip</Button> */}
-          <Stepper sx={{ position: "sticky" }} activeStep={activeStep}>
-            {steps.map((label, index) => {
-              const stepProps = {};
-              const labelProps = {};
-              if (isStepSkipped(index)) {
-                stepProps.completed = false;
-              }
-              return (
-                <Step key={label} {...stepProps}>
-                  <StepLabel {...labelProps}>{label}</StepLabel>
-                </Step>
-              );
-            })}
-          </Stepper>
-
-          {activeStep !== steps.length && (
-            <>
-              <DialogContentText variant="subtitle2" sx={{ paddingBottom: 1 }}>
-                {doI18n(
-                  `pages:core-contenthandler_text_translation:required_field`,
-                  i18nRef.current,
-                )}
-              </DialogContentText>
-              {renderStepContent(activeStep + 1)}
-            </>
-          )}
+          <PanStepperPicker
+            steps={steps}
+            renderStepContent={renderStepContent}
+            isStepValid={isStepValid}
+            handleCreate={handleCreate}
+          />
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button
-            color="inherit"
-            disabled={activeStep === 0}
-            onClick={handleBack}
-          >
-            {doI18n(
-              "pages:core-contenthandler_text_translation:back_button",
-              i18nRef.current,
-            )}
-          </Button>
-          <Box sx={{ flex: "1 1 auto" }} />
-          <Button
-            onClick={handleNext}
-            disabled={!isStepValid(activeStep) || repoExists}
-          >
-            {activeStep === steps.length - 1
-              ? `${doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}`
-              : `${doI18n("pages:core-contenthandler_text_translation:next_button", i18nRef.current)}`}
-          </Button>
-        </DialogActions>
       </PanDialog>
+      {/* Error Dialog */}
       <ErrorDialog
         setErrorDialogOpen={setErrorDialogOpen}
         handleClose={handleClose}

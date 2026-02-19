@@ -20,7 +20,7 @@ import ListMenuItem from "../pages/ListMenuItem";
 
 import sx from "../pages/Selection.styles";
 import { i18nContext } from "pankosmia-rcl";
-export function ContentZip({
+export default function ContentZip({
   open,
   versification,
   setVersification,
