@@ -1,31 +1,21 @@
 import { useState, useContext, useEffect } from "react";
-import {
-  Box,
-  DialogContent,
-  Button,
-  Stepper,
-  Step,
-  StepLabel,
-  DialogActions,
-  DialogContentText,
-} from "@mui/material";
+import { Box, DialogContent } from "@mui/material";
 import { postJson, doI18n, getAndSetJson, getJson } from "pithekos-lib";
 import {
   PanDialog,
   i18nContext,
   debugContext,
   Header,
-  clientInterfacesContext,
-  PanStepperPicker
+  PanStepperPicker,
 } from "pankosmia-rcl";
 import ErrorDialog from "../TextTranslationContent/ErrorDialog";
 import LanguagePicker from "../TextTranslationContent/LanguagePicker";
 import NameDocument from "../TextTranslationContent/NameDocument";
 import ContentDocument from "../TextTranslationContent/ContentDocument";
-import JSZip from "jszip";
-import yaml from "js-yaml";
+import ContentZip from "../TextTranslationContent/ContentZip";
 import { useSearchParams } from "react-router-dom";
-import { ContentZip } from "../TextTranslationContent/ContentZip";
+import yaml from "js-yaml";
+import JSZip from "jszip";
 
 export default function NewBibleContent() {
   const [open, setOpen] = useState(true);
@@ -33,7 +23,6 @@ export default function NewBibleContent() {
   const [errorMessage, setErrorMessage] = useState("");
   const { i18nRef } = useContext(i18nContext);
   const { debugRef } = useContext(debugContext);
-  const { clientInterfacesRef } = useContext(clientInterfacesContext);
   const [contentName, setContentName] = useState("");
   const [contentAbbr, setContentAbbr] = useState("");
   const [contentType, setContentType] = useState("text_translation");
@@ -53,14 +42,14 @@ export default function NewBibleContent() {
 
   const [searchParams] = useSearchParams();
   const uuid = searchParams.get("uuid");
+  const returnType = searchParams.get("returntypepage");
+
   const [currentLanguage, setCurrentLanguage] = useState({
     language_code: "",
     language_name: "",
   });
   const [languageIsValid, setLanguageIsValid] = useState(true);
   const [errorAbbreviation, setErrorAbbreviation] = useState(false);
-  const [activeStep, setActiveStep] = useState(0);
-  const [skipped, setSkipped] = useState(new Set());
 
   const steps = [
     `${doI18n("pages:core-contenthandler_text_translation:name_section", i18nRef.current)}`,
@@ -69,14 +58,15 @@ export default function NewBibleContent() {
   ];
 
   const handleClose = () => {
-    const url = window.location.search;
-    const params = new URLSearchParams(url);
-    const returnType = params.get("returntypepage");
-
+    setOpen(false);
     if (returnType === "dashboard") {
-      window.location.href = "/clients/main";
+      setTimeout(() => {
+        window.location.href = "/clients/main";
+      });
     } else {
-      window.location.href = "/clients/content";
+      setTimeout(() => {
+        window.location.href = "/clients/content";
+      });
     }
   };
 
@@ -232,7 +222,6 @@ export default function NewBibleContent() {
         planJson = planResponse.json;
         submittedVersification = planJson.versification;
       } else {
-        console.log(planResponse.error);
         setErrorMessage(
           `${doI18n("pages:core-contenthandler_text_translation:content_creation_error", i18nRef.current)}: ${planResponse.status}`,
         );
@@ -400,19 +389,13 @@ export default function NewBibleContent() {
 
     return results;
   }
-  console.log(uuid);
   useEffect(() => {
     async function fetchUuid() {
       if (uuid) {
         let download = await fetch(`/temp/bytes/${uuid}`, {
           method: "GET",
         });
-        // const download = await fetch(
-        //   "https://git.door43.org/QuentinRoca/fr_gst/archive/3bf4ccfb0f.zip",
-        // );
-
         const arrayBuffer = await download.arrayBuffer();
-
         const tree = await getZipFilesDepth2WithData(arrayBuffer);
         let t = yaml.load(tree.find((e) => e.name.includes("manifest")).data);
         prefillFromManifest(t.dublin_core);
@@ -425,9 +408,7 @@ export default function NewBibleContent() {
     }
     fetchUuid();
   }, [uuid]);
-  const handleTestDlUser = async () => {};
   function prefillFromManifest(manifest) {
-    console.log(manifest);
     setContentName(manifest.title ?? "");
     setContentAbbr(manifest.identifier.toUpperCase() ?? "");
 
@@ -461,7 +442,11 @@ export default function NewBibleContent() {
         }}
       />
       <Header
-        titleKey="pages:content:title"
+        titleKey={
+          returnType === "dashboard"
+            ? "pages:core-dashboard:title"
+            : "pages:content:title"
+        }
         currentId="content"
         requireNet={false}
       />
@@ -471,7 +456,7 @@ export default function NewBibleContent() {
           i18nRef.current,
         )}
         isOpen={open}
-        closeFn={() => handleCloseCreate()}
+        closeFn={() => handleClose()}
       >
         <DialogContent>
           <PanStepperPicker
