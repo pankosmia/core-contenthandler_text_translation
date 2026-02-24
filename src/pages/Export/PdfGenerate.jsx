@@ -767,6 +767,7 @@ function PdfGenerate() {
         isOpen={open}
         theme={theme}
         fullWidth={true}
+        size={"sm"}
         sx={{ scroll:"paper" }}
       >
         <DialogContent 
