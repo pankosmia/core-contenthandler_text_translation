@@ -1,14 +1,9 @@
 import { useRef, useContext, useState, useEffect } from 'react';
 import {
     DialogContent,
-    DialogContentText,
-    FormControl,
-    FormControlLabel,
     FormGroup,
-    Select,
     Menu,
     MenuItem,
-    OutlinedInput,
     List,
     ListItem,
     ListItemButton,
@@ -27,7 +22,7 @@ import ViewHeadlineOutlinedIcon from '@mui/icons-material/ViewHeadlineOutlined';
 import { Proskomma } from 'proskomma-core';
 import { SofriaRenderFromProskomma, render } from "proskomma-json-tools";
 import { getText, doI18n, getJson } from "pithekos-lib";
-import { debugContext, i18nContext, typographyContext, Header, PanDialog, PanDialogActions, PanStepperPicker } from "pankosmia-rcl";
+import { debugContext, i18nContext, typographyContext, Header, PanDialog, PanStepperPicker } from "pankosmia-rcl";
 import { getCVTexts, getBookName } from "../helpers/cv";
 import GraphiteTest from './GraphiteTest';
 import TextDir from '../helpers/TextDir';
