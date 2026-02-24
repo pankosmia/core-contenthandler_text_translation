@@ -530,6 +530,14 @@
     "no_book":{
       "en":"No book",
       "fr":"Pas de livre"
+    },
+    "pick_book": {
+      "en": "Select book",
+      "es": "Elige un libro"
+    },
+    "pick_book_format": {
+      "en": "Choose format",
+      "es": "Elige el formato"
     }
   }
 }
