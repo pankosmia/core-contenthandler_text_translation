@@ -137,10 +137,11 @@ function UsfmExport() {
         closeFn={() => handleClose()}
         isOpen={open}
         theme={theme}
-        fullWidth={false}
+        fullWidth={true}
+        size={"sm"}
       >
         <DialogContent sx={{ mt: 1 }} style={{ overflow: "hidden" }}>
-          <Box sx={{ maxHeight: "269px" }}>
+          <Box /* sx={{ maxHeight: "269px" }} */>
             <DialogContentText>
               <Typography>
                 {doI18n(
@@ -156,7 +157,7 @@ function UsfmExport() {
                 </Typography>
               )}
             </DialogContentText>
-            <List dense style={{ maxHeight: 300, overflowY: "auto" }}>
+            <List dense style={{ /* maxHeight: 300, */ overflowY: "auto" }}>
               {bookCodes
                 .filter((item) => bookNames.includes(item))
                 .map((bookName) => (
