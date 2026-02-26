@@ -582,7 +582,7 @@ function PdfGenerate() {
             >
                 <DialogContent sx={{ mt: 1, pt: 0 }}>
                     <DialogContentText sx={{py: 2}}>
-                        <Typography variant="body2" >@* Required fields.</Typography>
+                        <Typography variant="body2" >{`* ${doI18n("pages:core-contenthandler_text_translation:required_fields", i18nRef.current)}`}</Typography>
                     </DialogContentText>
                     <FormControl fullWidth>
                         <InputLabel id="book-select-label">{`${doI18n("pages:core-contenthandler_text_translation:pick_book", i18nRef.current)} *`}</InputLabel>
@@ -622,7 +622,7 @@ function PdfGenerate() {
                             ))}
                         </Select>
                     </FormControl>
-                    <Typography variant="subtitle2" fontWeight="bold" sx={{ pt:2 }}>Formatting template</Typography>
+                    <Typography variant="subtitle2" fontWeight="bold" sx={{ pt:2 }}>{doI18n("pages:core-contenthandler_text_translation:formatting_template", i18nRef.current)}</Typography>
                     <FormGroup>
                         <FormControlLabel 
                             label={doI18n("pages:core-contenthandler_text_translation:show_by_verse", i18nRef.current)}
@@ -635,7 +635,7 @@ function PdfGenerate() {
                                 />}
                         />
                     </FormGroup>
-                    <Typography variant="subtitle2" fontWeight="bold" sx={{ pt:2 }}>Custom formatting</Typography>
+                    <Typography variant="subtitle2" fontWeight="bold" sx={{ pt:2 }}>{doI18n("pages:core-contenthandler_text_translation:custom_formatting", i18nRef.current)}</Typography>
                     <Grid2
                         container
                         direction="row"

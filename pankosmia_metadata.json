@@ -538,6 +538,18 @@
     "pick_book_format": {
       "en": "Choose format",
       "es": "Elige el formato"
+    },
+    "formatting_template": {
+      "en": "Formatting template",
+      "es": "Plantilla de formato"
+    },
+    "required_fields": {
+      "en": "Required fields.",
+      "es": "Campos requeridos."
+    },
+    "custom_formatting": {
+      "en": "Custom formatting",
+      "es": "Formato personalizado"
     }
   }
 }
