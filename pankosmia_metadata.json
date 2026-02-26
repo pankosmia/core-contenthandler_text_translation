@@ -259,10 +259,10 @@
       "id": "@Tampil label ayat"
     },
     "number_of_columns": {
-      "en": "Select the number of columns",
-      "es": "Seleccione el número de columnas",
-      "fr": "Sélectionner le nombre de colonnes",
-      "id": "Pilih jumlah kolum-kolum"
+      "en": "Number of columns",
+      "es": "Número de columnas",
+      "fr": "Nombre de colonnes",
+      "id": "Jumlah kolum-kolum"
     },
     "export_label": {
       "en": "Save",
@@ -532,7 +532,7 @@
       "fr":"Pas de livre"
     },
     "pick_book": {
-      "en": "Select book",
+      "en": "Select a book",
       "es": "Elige un libro"
     },
     "pick_book_format": {
