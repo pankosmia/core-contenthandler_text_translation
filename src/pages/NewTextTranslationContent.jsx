@@ -42,8 +42,10 @@ export default function NewBibleContent() {
 
   const [searchParams] = useSearchParams();
   const uuid = searchParams.get("uuid");
-  const returnType = searchParams.get("returntypepage");
-
+  const hash = window.location.hash;
+  const query = hash.includes("?") ? hash.split("?") : "";
+  const typePageQuery = new URLSearchParams(query[1]);
+  const returnType = typePageQuery.get("returnTypePage");
   const [currentLanguage, setCurrentLanguage] = useState({
     language_code: "",
     language_name: "",
@@ -253,8 +255,7 @@ export default function NewBibleContent() {
       setPostCount(postCount + 1);
     } else {
       setErrorMessage(
-        `${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${
-          response.status
+        `${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${response.status
         }`,
       );
       setErrorDialogOpen(true);
@@ -338,8 +339,7 @@ export default function NewBibleContent() {
         );
         if (!newBookResponse.ok) {
           setErrorMessage(
-            `${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${
-              response.status
+            `${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${response.status
             }`,
           );
           setErrorDialogOpen(true);
@@ -357,7 +357,7 @@ export default function NewBibleContent() {
         );
       }
     }
-    await handleCloseCreate();
+    await handleClose();
   };
 
   async function getZipFilesDepth2WithData(zipSource) {
