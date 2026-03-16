@@ -72,13 +72,6 @@ export default function NewBibleContent() {
     }
   };
 
-  const handleCloseCreate = async () => {
-    setOpen(false);
-    setTimeout(() => {
-      window.location.href = "/clients/content";
-    });
-  };
-
   useEffect(() => {
     const doFetch = async () => {
       const versificationResponse = await getJson(
@@ -464,6 +457,7 @@ export default function NewBibleContent() {
             renderStepContent={renderStepContent}
             isStepValid={isStepValid}
             handleCreate={handleCreate}
+            handleClose={handleClose}
           />
         </DialogContent>
       </PanDialog>
