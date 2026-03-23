@@ -6,7 +6,6 @@ import {
     InputLabel,
     Box,
     DialogContent,
-    useTheme,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import {
@@ -21,7 +20,6 @@ import ErrorDialog from "../TextTranslationContent/ErrorDialog";
 
 export default function DeleteTextTranslationBook() {
     const { enqueueSnackbar } = useSnackbar();
-
     const { i18nRef } = useContext(i18nContext);
     const { debugRef } = useContext(debugContext);
     const [bookCode, setBookCode] = useState("");
@@ -31,13 +29,15 @@ export default function DeleteTextTranslationBook() {
     const [errorDialogOpen, setErrorDialogOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [nameProject, setNameProject] = useState("");
-    const theme = useTheme();
+    const hash = window.location.hash;
+    const query = hash.includes('?') ? hash.split('?')[1] : '';
+    const repoPathQuery = new URLSearchParams(query[1]);
+    const path = repoPathQuery.get('repoPath');
+    const typePageQuery = new URLSearchParams(query[2]);
+    const returnType = typePageQuery.get("returnTypePage");
 
     const getProjectSummaries = async () => {
-        const hash = window.location.hash;
-        const query = hash.includes('?') ? hash.split('?')[1] : '';
-        const params = new URLSearchParams(query);
-        const path = params.get('repoPath');
+
         setRepoPath(path);
         const summariesResponse = await getJson(`/burrito/metadata/summary/${path}`, debugContext.current);
         if (summariesResponse.ok) {
@@ -68,9 +68,7 @@ export default function DeleteTextTranslationBook() {
     }, [open]);
 
     const handleClose = () => {
-        const url = window.location.search;
-        const params = new URLSearchParams(url);
-        const returnType = params.get("returntypepage");
+
         if (returnType === "dashboard") {
             window.location.href = "/clients/main";
         } else {
@@ -126,7 +124,6 @@ export default function DeleteTextTranslationBook() {
                 titleLabel={`${doI18n("pages:core-contenthandler_text_translation:delete_book", i18nRef.current)} - ${nameProject}`}
                 isOpen={open}
                 closeFn={() => handleClose()}
-                theme={theme}
                 fullWidth={false}
             >
                 <DialogContent>
