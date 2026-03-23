@@ -54,7 +54,7 @@ export default function AboutRepo() {
                     ? repoData.path?.startsWith("_local_/_sideloaded_")
                         ? doI18n('pages:content:local_resource', i18nRef.current)
                         : doI18n('pages:content:local_project', i18nRef.current)
-                    : `${repoData.path?.split("/")[1]} (${repoData.path?.split("/")[0]})`,
+                    : null,
             };
             setRepoInfo(info);
         }
@@ -87,7 +87,7 @@ export default function AboutRepo() {
                 requireNet={false}
             />
             <PanDialog
-                titleLabel={`${doI18n('pages:content:about_document', i18nRef.current)} ${repoInfo ? `${repoInfo.source} - ${repoInfo.name}` : repoData.name}`}
+                titleLabel={`${doI18n('pages:content:about_document', i18nRef.current)} ${repoInfo ? `${repoInfo.source ? doI18n(repoInfo.source,i18nRef.current) : `${repoInfo.path?.split("/")[1]} (${repoInfo.path?.split("/")[0]})`}  - ${repoInfo.name}` : repoData.name}`}
                 isOpen={open}
                 closeFn={() => handleClose()}
             >
