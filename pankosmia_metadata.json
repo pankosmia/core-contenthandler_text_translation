@@ -116,8 +116,8 @@
       "es": "Importar libro local"
     },
     "add_content": {
-      "en": "Choose inital structure",
-      "fr": "Choisir structure de départ"
+      "en": "Initial document structure",
+      "fr": "@Choisir structure de départ"
     },
     "no_content_radio": {
       "en": "None",
@@ -550,6 +550,9 @@
     "custom_formatting": {
       "en": "Custom formatting",
       "es": "Formato personalizado"
+    },
+    "create_usfm_file":{
+      "en":"Import existing USFM translation"
     }
   }
 }

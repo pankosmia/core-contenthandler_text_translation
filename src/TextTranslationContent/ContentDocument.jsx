@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from 'react';
 import {
-    FormControl, 
+    FormControl,
     FormControlLabel,
     Select,
     MenuItem,
@@ -63,12 +63,14 @@ export default function ContentDocument({ open, contentOption, setContentOption,
                         disabled={planResources.length === 0}
                         control={<Radio />}
                         label={doI18n("pages:core-contenthandler_text_translation:plan_content_radio", i18nRef.current)} />
+                    <FormControlLabel value="usfm_file" control={<Radio />}
+                        label={doI18n("pages:core-contenthandler_text_translation:create_usfm_file", i18nRef.current)} />
                 </RadioGroup>
             </FormControl>
             <Typography sx={{ padding: 1 }}>{contentOption === "book" ? `${doI18n("pages:core-contenthandler_text_translation:helper_book", i18nRef.current)}` : `${doI18n("pages:core-contenthandler_text_translation:helper_template", i18nRef.current)}`}</Typography>
             {
                 (contentOption === "book") &&
-                <PanBookPicker 
+                <PanBookPicker
                     bookCode={bookCode}
                     setBookCode={setBookCode}
                     bookAbbr={bookAbbr}
@@ -77,7 +79,7 @@ export default function ContentDocument({ open, contentOption, setContentOption,
                     bookTitle={bookTitle}
                     setBookTitle={setBookTitle}
                     showVersification={showVersification}
-                    setShowVersification={setShowVersification} 
+                    setShowVersification={setShowVersification}
                 />
             }
             {
