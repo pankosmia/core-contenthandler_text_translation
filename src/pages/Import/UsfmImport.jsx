@@ -1,19 +1,15 @@
 import { useContext, useState, useEffect } from 'react';
 import {
     Button,
-    Dialog,
-    DialogActions,
     DialogContent,
     Tooltip,
     Box,
-    AppBar,
-    Toolbar,
     Typography,
     Stack
 } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
-import {doI18n, getJson,  postJson} from "pithekos-lib";
-import {i18nContext, debugContext, Header} from "pankosmia-rcl";
+import { doI18n, getJson, postJson } from "pithekos-lib";
+import { i18nContext, debugContext, Header } from "pankosmia-rcl";
 import { FilePicker } from 'react-file-picker';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { Proskomma } from "proskomma-core";
@@ -33,6 +29,12 @@ function UsfmImport() {
     const [validationResult, setValidationResult] = useState({});
     const [bookIsDuplicate, setBookIsDuplicate] = useState(false);
     const [nameProject, setNameProject] = useState("")
+    const hash = window.location.hash;
+    const query = hash.includes('?') ? hash.split('?')[1] : '';
+    const repoPathQuery = new URLSearchParams(query[1]);
+    const typePageQuery = new URLSearchParams(query[2]);
+    const path = repoPathQuery.get('repoPath');
+    const returnType = typePageQuery.get("returnTypePage");
     const pk = new Proskomma();
     const initialQuery = `{
         documents {
@@ -48,10 +50,7 @@ function UsfmImport() {
     const cvIndexes = Object.keys(validationResult).length > 0 ? validationResult.data.documents[0].cvIndexes : [];
 
     const getProjectSummaries = async () => {
-        const hash = window.location.hash;
-        const query = hash.includes('?') ? hash.split('?')[1] : '';
-        const params = new URLSearchParams(query);
-        const path = params.get('repoPath');
+
         setRepoPath(path);
         const summariesResponse = await getJson(`/burrito/metadata/summary/${path}`, debugContext.current);
         if (summariesResponse.ok) {
@@ -83,9 +82,7 @@ function UsfmImport() {
     };
 
     const handleClose = () => {
-        const url = window.location.search;
-        const params = new URLSearchParams(url);
-        const returnType = params.get("returntypepage");
+
         if (returnType === "dashboard") {
             window.location.href = "/clients/main";
         } else {

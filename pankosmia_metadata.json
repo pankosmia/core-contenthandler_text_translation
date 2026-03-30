@@ -29,6 +29,18 @@
           "url": "/newBook?repoPath=%%REPO_PATH%%"
         }
       ],
+      "about_repo": [
+        {
+          "doc": "About repo textTranslation document",
+          "placeHolders": {
+            "REPO_PATH": {
+              "doc": "The path to the repo in <X>/<Y>/<Z> format"
+            }
+          },
+          "label": "pages:content:about_repo",
+          "url": "/aboutRepo?repoPath=%%REPO_PATH%%"
+        }
+      ],
       "delete_book": [
         {
           "doc": "Delete a book to a textTranslation document",
@@ -451,9 +463,17 @@
       "en":"Supply your own custom language name and code.",
       "fr":"Fournissez votre propre nom et code de langue. "
     },
-    "local_project":{
-      "en": "Local projects",
-      "fr":"Les projets locaux"
+    "local_resource": {
+      "en": "Local resource",
+      "fr": "Ressource locale",
+      "es": "Recurso local",
+      "id": "Sumber daya lokal"
+    },
+    "local_project": {
+      "en": "Local project",
+      "fr": "Projet local",
+      "es": "Proyecto local",
+      "id": "Proyek lokal"
     },
     "burrito_resources":{
       "en": "Resources",
