@@ -502,9 +502,12 @@ function PdfGenerate() {
         setAnchorEl(null);
         setOpen(false);
         if (returnTypePage === "dashboard") {
-            setTimeout(() => {
-                window.location.href = "/clients/main";
-            });
+            await new Promise(resolve =>
+                setTimeout(() => {
+                    window.location.href = '/clients/main';
+                    resolve();
+                }, 1500)
+            );
         } else {
             await new Promise(resolve =>
                 setTimeout(() => {
