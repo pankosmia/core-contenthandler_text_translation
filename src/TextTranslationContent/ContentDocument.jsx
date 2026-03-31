@@ -68,62 +68,64 @@ export default function ContentDocument({ open, contentOption, setContentOption,
                         label={doI18n("pages:core-contenthandler_text_translation:create_usfm_file", i18nRef.current)} />
                 </RadioGroup>
             </FormControl>
-            <Typography sx={{ padding: 1 }}>{contentOption === "book" ? `${doI18n("pages:core-contenthandler_text_translation:helper_book", i18nRef.current)}` : `${doI18n("pages:core-contenthandler_text_translation:helper_template", i18nRef.current)}`}</Typography>
             {
                 (contentOption === "book") &&
-                <PanBookPicker
-                    bookCode={bookCode}
-                    setBookCode={setBookCode}
-                    bookAbbr={bookAbbr}
-                    setBookAbbr={setBookAbbr}
-                    bookCodes={bookCodes}
-                    bookTitle={bookTitle}
-                    setBookTitle={setBookTitle}
-                    showVersification={showVersification}
-                    setShowVersification={setShowVersification}
-                />
+                <>
+                    <Typography sx={{ padding: 1 }}>{doI18n("pages:core-contenthandler_text_translation:helper_book", i18nRef.current)}</Typography>
+                    <PanBookPicker
+                        bookCode={bookCode}
+                        setBookCode={setBookCode}
+                        bookAbbr={bookAbbr}
+                        setBookAbbr={setBookAbbr}
+                        bookCodes={bookCodes}
+                        bookTitle={bookTitle}
+                        setBookTitle={setBookTitle}
+                        showVersification={showVersification}
+                        setShowVersification={setShowVersification}
+                    />
+                </>
+
             }
             {
                 (contentOption === "plan") &&
-                <Grid2 container spacing={1} justifyItems="flex-end" alignItems="stretch">
-                    <Grid2 item size={12}>
-                        <FormControl sx={{ width: "100%" }}>
-                            <InputLabel id="select-plan-label" required htmlFor="plan" sx={sx.inputLabel}>
-                                {doI18n("pages:core-contenthandler_text_translation:select_plan", i18nRef.current)}
-                            </InputLabel>
-                            <Select
-                                variant="outlined"
-                                required
-                                labelId="plan-label"
-                                name="plan"
-                                inputProps={{
-                                    id: "bookCode",
-                                }}
-                                value={selectedPlan}
-                                label={doI18n("pages:core-contenthandler_text_translation:select_plan", i18nRef.current)}
-                                onChange={event => {
-                                    setSelectedPlan(event.target.value);
-                                }}
-                                sx={sx.select}
-                            >
-                                {
-                                    Object.entries(metadataSummaries)
-                                        .filter(r => r[1].flavor === "x-translationplan")
-                                        .map(r =>
-                                            <MenuItem key={r[0]} value={r[0]} dense>
-                                                <ListMenuItem
-                                                    listItem={r[1].name} />
-                                            </MenuItem>
-                                        )
-                                }
-                            </Select>
-                        </FormControl>
-                    </Grid2>
-                </Grid2>
+                <>
+                    <Typography sx={{ padding: 1 }}>{doI18n("pages:core-contenthandler_text_translation:helper_template", i18nRef.current)}</Typography>
+                    <FormControl sx={{ width: "100%" }}>
+                        <InputLabel id="select-plan-label" required htmlFor="plan" sx={sx.inputLabel}>
+                            {doI18n("pages:core-contenthandler_text_translation:select_plan", i18nRef.current)}
+                        </InputLabel>
+                        <Select
+                            variant="outlined"
+                            required
+                            labelId="plan-label"
+                            name="plan"
+                            inputProps={{
+                                id: "bookCode",
+                            }}
+                            value={selectedPlan}
+                            label={doI18n("pages:core-contenthandler_text_translation:select_plan", i18nRef.current)}
+                            onChange={event => {
+                                setSelectedPlan(event.target.value);
+                            }}
+                            sx={sx.select}
+                        >
+                            {
+                                Object.entries(metadataSummaries)
+                                    .filter(r => r[1].flavor === "x-translationplan")
+                                    .map(r =>
+                                        <MenuItem key={r[0]} value={r[0]} dense>
+                                            <ListMenuItem
+                                                listItem={r[1].name} />
+                                        </MenuItem>
+                                    )
+                            }
+                        </Select>
+                    </FormControl>
+                </>
             }
             {
                 (contentOption === "usfm_file") &&
-                <OptionUsfmImport/>
+                <OptionUsfmImport />
             }
         </>
     );
