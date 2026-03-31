@@ -17,6 +17,7 @@ import {
 
 import sx from "../pages/Selection.styles";
 import ListMenuItem from "../pages/ListMenuItem";
+import OptionUsfmImport from "../pages/Import/OptionUsfmImport"
 import { i18nContext, PanVersificationPicker, PanBookPicker } from 'pankosmia-rcl';
 export default function ContentDocument({ open, contentOption, setContentOption, versification, setVersification, bookCode, setBookCode, bookAbbr, setBookAbbr, bookCodes, bookTitle, setBookTitle, showVersification, setShowVersification, selectedPlan, setSelectedPlan }) {
     const { i18nRef } = useContext(i18nContext);
@@ -119,6 +120,10 @@ export default function ContentDocument({ open, contentOption, setContentOption,
                         </FormControl>
                     </Grid2>
                 </Grid2>
+            }
+            {
+                (contentOption === "usfm_file") &&
+                <OptionUsfmImport/>
             }
         </>
     );
