@@ -6,16 +6,9 @@ import {
     FormGroup,
     FormControlLabel,
     Select,
-    Menu,
     MenuItem,
     OutlinedInput,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
     Checkbox,
-    Switch,
     Box,
     useTheme,
     InputLabel,
@@ -25,12 +18,10 @@ import {
 import LooksOneOutlinedIcon from '@mui/icons-material/LooksOneOutlined';
 import LooksTwoOutlinedIcon from '@mui/icons-material/LooksTwoOutlined';
 import Looks3OutlinedIcon from '@mui/icons-material/Looks3Outlined';
-import ViewHeadlineOutlinedIcon from '@mui/icons-material/ViewHeadlineOutlined';
 import { Proskomma } from 'proskomma-core';
 import { SofriaRenderFromProskomma, render } from "proskomma-json-tools";
 import { getText, doI18n, getJson } from "pithekos-lib";
-import {debugContext, i18nContext, typographyContext, Header } from "pankosmia-rcl";
-
+import { debugContext, i18nContext, typographyContext, Header } from "pankosmia-rcl";
 import { enqueueSnackbar } from "notistack";
 import { getCVTexts, getBookName } from "../helpers/cv";
 import GraphiteTest from './GraphiteTest';
@@ -61,12 +52,14 @@ function PdfGenerate() {
     const [bookNames, setBookNames] = useState([]);
     const [repoPath, setRepoPath] = useState([]);
     const [open, setOpen] = useState(true);
-
+    const hash = window.location.hash;
+    const query = hash.includes('?') ? hash.split('?') : '';
+    const repoPathQuery = new URLSearchParams(query[1]);
+    const typePageQuery = new URLSearchParams(query[2]);
+    const path = repoPathQuery.get('repoPath');
+    const returnTypePage = typePageQuery.get('returnTypePage');
     const getProjectSummaries = async () => {
-        const hash = window.location.hash;
-        const query = hash.includes('?') ? hash.split('?')[1] : '';
-        const params = new URLSearchParams(query);
-        const path = params.get('repoPath');
+
         setRepoPath(path);
         const summariesResponse = await getJson(`/burrito/metadata/summary/${path}`, debugContext.current);
         if (summariesResponse.ok) {
@@ -83,11 +76,6 @@ function PdfGenerate() {
         },
         []
     );
-
-    const handleCloseCreate = async () => {
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        window.location.href = "/clients/content"
-    }
 
     const isGraphite = GraphiteTest()
     /** adjSelectedFontClass reshapes selectedFontClass if Graphite is absent. */
@@ -510,12 +498,25 @@ function PdfGenerate() {
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
-    const handleClose = () => {
+    const handleClose = async () => {
         setAnchorEl(null);
         setOpen(false);
-        setTimeout(() => {
-            window.location.href = '/clients/content';
-        }, 500);
+        if (returnTypePage === "dashboard") {
+            await new Promise(resolve =>
+                setTimeout(() => {
+                    window.location.href = '/clients/main';
+                    resolve();
+                }, 1500)
+            );
+        } else {
+            await new Promise(resolve =>
+                setTimeout(() => {
+                    window.location.href = '/clients/content';
+                    resolve();
+                }, 1500)
+            );
+        }
+
     };
 
     const handleCloseColumns = () => {
@@ -581,7 +582,7 @@ function PdfGenerate() {
                 size={"sm"}
             >
                 <DialogContent sx={{ mt: 1, pt: 0 }}>
-                    <DialogContentText sx={{py: 2}}>
+                    <DialogContentText sx={{ py: 2 }}>
                         <Typography variant="body2" >{`* ${doI18n("pages:core-contenthandler_text_translation:required_fields", i18nRef.current)}`}</Typography>
                     </DialogContentText>
                     <FormControl fullWidth>
@@ -596,7 +597,7 @@ function PdfGenerate() {
                             onChange={handleBooksChange}
                             label={`${doI18n("pages:core-contenthandler_text_translation:pick_book", i18nRef.current)} *`}
                             input={<OutlinedInput label={`${doI18n("pages:core-contenthandler_text_translation:pick_book", i18nRef.current)} *`} />}
-                            MenuProps={{    
+                            MenuProps={{
                                 PaperProps: {
                                     style: {
                                         maxHeight: 224,
@@ -622,9 +623,9 @@ function PdfGenerate() {
                             ))}
                         </Select>
                     </FormControl>
-                    <Typography variant="subtitle2" fontWeight="bold" sx={{ pt:2 }}>{doI18n("pages:core-contenthandler_text_translation:formatting_template", i18nRef.current)}</Typography>
+                    <Typography variant="subtitle2" fontWeight="bold" sx={{ pt: 2 }}>{doI18n("pages:core-contenthandler_text_translation:formatting_template", i18nRef.current)}</Typography>
                     <FormGroup>
-                        <FormControlLabel 
+                        <FormControlLabel
                             label={doI18n("pages:core-contenthandler_text_translation:show_by_verse", i18nRef.current)}
                             control={
                                 <Checkbox
@@ -635,7 +636,7 @@ function PdfGenerate() {
                                 />}
                         />
                     </FormGroup>
-                    <Typography variant="subtitle2" fontWeight="bold" sx={{ pt:2 }}>{doI18n("pages:core-contenthandler_text_translation:custom_formatting", i18nRef.current)}</Typography>
+                    <Typography variant="subtitle2" fontWeight="bold" sx={{ pt: 2 }}>{doI18n("pages:core-contenthandler_text_translation:custom_formatting", i18nRef.current)}</Typography>
                     <Grid2
                         container
                         direction="row"
@@ -643,13 +644,13 @@ function PdfGenerate() {
                         sx={{
                             justifyContent: "space-between",
                             alignItems: "flex-start",
-                            pl:2,
-                            pb:2
+                            pl: 2,
+                            pb: 2
                         }}
                     >
                         <Grid2 item size={6}>
                             <FormGroup>
-                                <FormControlLabel 
+                                <FormControlLabel
                                     label={`${doI18n("pages:core-contenthandler_text_translation:show_title", i18nRef.current)}`}
                                     control={
                                         <Checkbox
@@ -660,7 +661,7 @@ function PdfGenerate() {
                                             slotProps={{ 'aria-label': 'controlled' }}
                                         />}
                                 />
-                                <FormControlLabel 
+                                <FormControlLabel
                                     label={doI18n("pages:core-contenthandler_text_translation:show_headings", i18nRef.current)}
                                     control={
                                         <Checkbox
@@ -671,7 +672,7 @@ function PdfGenerate() {
                                             slotProps={{ 'aria-label': 'controlled' }}
                                         />}
                                 />
-                                <FormControlLabel 
+                                <FormControlLabel
                                     label={doI18n("pages:core-contenthandler_text_translation:show_introductions", i18nRef.current)}
                                     control={
                                         <Checkbox
@@ -679,10 +680,10 @@ function PdfGenerate() {
                                             checked={showIntroductions}
                                             onChange={() => setShowIntroductions(!showIntroductions)}
                                             disabled={showByVerse || !selectedBooks}
-                                            slotProps={{ 'aria-label': 'controlled' }}     
+                                            slotProps={{ 'aria-label': 'controlled' }}
                                         />}
                                 />
-                                <FormControlLabel 
+                                <FormControlLabel
                                     label={doI18n("pages:core-contenthandler_text_translation:show_footnotes", i18nRef.current)}
                                     control={
                                         <Checkbox
@@ -692,7 +693,7 @@ function PdfGenerate() {
                                             slotProps={{ 'aria-label': 'controlled' }}
                                         />}
                                 />
-                                <FormControlLabel 
+                                <FormControlLabel
                                     label={doI18n("pages:core-contenthandler_text_translation:show_xrefs", i18nRef.current)}
                                     control={
                                         <Checkbox
@@ -706,7 +707,7 @@ function PdfGenerate() {
                         </Grid2>
                         <Grid2 item size={6}>
                             <FormGroup>
-                                <FormControlLabel 
+                                <FormControlLabel
                                     label={doI18n("pages:core-contenthandler_text_translation:show_para_styles", i18nRef.current)}
                                     control={
                                         <Checkbox
@@ -715,10 +716,10 @@ function PdfGenerate() {
                                             onChange={() => setShowParaStyles(!showParaStyles)}
                                             disabled={showByVerse || !selectedBooks}
                                             slotProps={{ 'aria-label': 'controlled' }}
-                                            
+
                                         />}
                                 />
-                                <FormControlLabel 
+                                <FormControlLabel
                                     label={doI18n("pages:core-contenthandler_text_translation:show_character_markup", i18nRef.current)}
                                     control={
                                         <Checkbox
@@ -727,10 +728,10 @@ function PdfGenerate() {
                                             onChange={() => setShowCharacterMarkup(!showCharacterMarkup)}
                                             disabled={showByVerse || !selectedBooks}
                                             slotProps={{ 'aria-label': 'controlled' }}
-                                            
+
                                         />}
                                 />
-                                <FormControlLabel 
+                                <FormControlLabel
                                     label={doI18n("pages:core-contenthandler_text_translation:show_chapter_labels", i18nRef.current)}
                                     control={
                                         <Checkbox
@@ -741,7 +742,7 @@ function PdfGenerate() {
                                             slotProps={{ 'aria-label': 'controlled' }}
                                         />}
                                 />
-                                <FormControlLabel 
+                                <FormControlLabel
                                     label={doI18n("pages:core-contenthandler_text_translation:show_verses_labels", i18nRef.current)}
                                     control={
                                         <Checkbox
@@ -752,7 +753,7 @@ function PdfGenerate() {
                                             slotProps={{ 'aria-label': 'controlled' }}
                                         />}
                                 />
-                                <FormControlLabel 
+                                <FormControlLabel
                                     label={doI18n("pages:core-contenthandler_text_translation:show_first_verse_label", i18nRef.current)}
                                     control={
                                         <Checkbox
@@ -781,14 +782,14 @@ function PdfGenerate() {
                             input={<OutlinedInput label={`${doI18n("pages:core-contenthandler_text_translation:number_of_columns", i18nRef.current)} *`} />}
                             sx={{
                                 "& .MuiSelect-icon": {
-                                  right: "2px",
+                                    right: "2px",
                                 },
                                 '& .MuiSelect-select': {
                                     paddingTop: '8px',
                                     paddingBottom: '8px',
                                 },
-                              }}
-                            MenuProps={{    
+                            }}
+                            MenuProps={{
                                 PaperProps: {
                                     style: {
                                         maxHeight: 140,
@@ -824,7 +825,7 @@ function PdfGenerate() {
                         } else {
                             generatePdf(fileExport.current, showByVerse ? "bcv" : "para").then();
                         }
-                        handleCloseCreate();
+                        handleClose();
                     }}
                     actionLabel={doI18n("pages:core-contenthandler_text_translation:export_label", i18nRef.current)}
                     isDisabled={!selectedBooks}
