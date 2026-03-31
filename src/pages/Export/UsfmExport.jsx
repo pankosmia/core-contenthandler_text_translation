@@ -25,12 +25,15 @@ function UsfmExport() {
   const [bookNames, setBookNames] = useState([]);
   const [repoPath, setRepoPath] = useState([]);
   const [open, setOpen] = useState(true);
+  const hash = window.location.hash;
+  const query = hash.includes("?") ? hash.split("?") : "";
+  const repoPathQuery = new URLSearchParams(query[1]);
+  const path = repoPathQuery.get("repoPath");
+  const typePageQuery = new URLSearchParams(query[2]);
+  const returnTypePage = typePageQuery.get("returnTypePage");
 
   const getProjectSummaries = async () => {
-    const hash = window.location.hash;
-    const query = hash.includes("?") ? hash.split("?")[1] : "";
-    const params = new URLSearchParams(query);
-    const path = params.get("repoPath");
+
     setRepoPath(path);
     const summariesResponse = await getJson(
       `/burrito/metadata/summary/${path}`,
@@ -83,15 +86,26 @@ function UsfmExport() {
     );
   };
 
-  const handleClose = () => {
+  const handleClose = async () => {
     setOpen(false);
-    return (window.location.href = "/clients/content");
+    if (returnTypePage === "dashboard") {
+      await new Promise(resolve =>
+        setTimeout(() => {
+          window.location.href = "/clients/main";
+          resolve();
+        }, 1500)
+      );
+    } else {
+      await new Promise(resolve =>
+        setTimeout(() => {
+          window.location.href = '/clients/content';
+          resolve();
+        }, 1500)
+      );
+    }
+
   };
 
-  const handleCloseCreate = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    window.location.href = "/clients/content";
-  };
   useEffect(() => {
     const doFetch = async () => {
       const versificationResponse = await getJson(
@@ -208,7 +222,7 @@ function UsfmExport() {
                 await usfmExportOneBook(b);
               }
             }
-            handleCloseCreate();
+            handleClose();
           }}
           actionLabel={doI18n(
             "pages:core-contenthandler_text_translation:export_label",
