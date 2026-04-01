@@ -4,7 +4,7 @@ import {
     FormControlLabel,
     Select,
     MenuItem,
-    InputLabel, Grid2,
+    InputLabel,
     FormLabel,
     RadioGroup, Radio,
     Typography
@@ -19,7 +19,8 @@ import sx from "../pages/Selection.styles";
 import ListMenuItem from "../pages/ListMenuItem";
 import OptionUsfmImport from "../pages/Import/OptionUsfmImport"
 import { i18nContext, PanVersificationPicker, PanBookPicker } from 'pankosmia-rcl';
-export default function ContentDocument({ open, contentOption, setContentOption, versification, setVersification, bookCode, setBookCode, bookAbbr, setBookAbbr, bookCodes, bookTitle, setBookTitle, showVersification, setShowVersification, selectedPlan, setSelectedPlan }) {
+export default function ContentDocument({ open, contentOption, setContentOption, versification, setVersification, bookCode, setBookCode, bookAbbr, setBookAbbr, bookCodes, bookTitle, setBookTitle, showVersification, setShowVersification, selectedPlan, setSelectedPlan, localBookContent, setLocalBookContent, isUsfmValid,
+    setIsUsfmValid }) {
     const { i18nRef } = useContext(i18nContext);
 
     const [metadataSummaries, setMetadataSummaries] = useState({});
@@ -125,7 +126,8 @@ export default function ContentDocument({ open, contentOption, setContentOption,
             }
             {
                 (contentOption === "usfm_file") &&
-                <OptionUsfmImport />
+                <OptionUsfmImport localBookContent={localBookContent} setLocalBookContent={setLocalBookContent} isUsfmValid={isUsfmValid}
+                    setIsUsfmValid={setIsUsfmValid} />
             }
         </>
     );

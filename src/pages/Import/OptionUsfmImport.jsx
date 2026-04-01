@@ -1,33 +1,31 @@
 import { useContext, useState, useEffect } from 'react';
 import {
     Button,
-    DialogContent,
     Tooltip,
     Box,
-    Typography,
-    Stack
+    Grid2,
+    IconButton,
+    List,
+    ListItem,
+    ListItemText,
+    ListItemIcon
 } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
-import { doI18n, postJson } from "pithekos-lib";
-import { i18nContext, debugContext } from "pankosmia-rcl";
+import { doI18n } from "pithekos-lib";
+import { i18nContext } from "pankosmia-rcl";
 import { FilePicker } from 'react-file-picker';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { Proskomma } from "proskomma-core";
-import { PanDialog, PanDialogActions } from "pankosmia-rcl";
+import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
-function OptionUsfmImport() {
+function OptionUsfmImport({ localBookContent, setLocalBookContent, isUsfmValid, setIsUsfmValid }) {
     const { i18nRef } = useContext(i18nContext);
-    const { debugRef } = useContext(debugContext);
     const [loading, setLoading] = useState(false);
-    const [usfmImportAnchorEl, setUsfmImportAnchorEl] = useState(true);
-    const usfmImportOpen = Boolean(usfmImportAnchorEl);
     const [filePicked, setFilePicked] = useState({});
-    const [localBookContent, setLocalBookContent] = useState();
-    const [repoPath, setRepoPath] = useState([]);
-    const [isUsfmValid, setIsUsfmValid] = useState(false);
     const [validationResult, setValidationResult] = useState({});
-    const [bookIsDuplicate, setBookIsDuplicate] = useState(false);
-    const [nameProject, setNameProject] = useState("")
+
+    //const [bookIsDuplicate, setBookIsDuplicate] = useState(false);
 
     const pk = new Proskomma();
     const initialQuery = `{
@@ -39,9 +37,6 @@ function OptionUsfmImport() {
           }
         }
       }`;
-    const bookCode = Object.keys(validationResult).length > 0 ? validationResult.data.documents[0].headers?.find(header => header.key === 'bookCode') : {};
-    const title = Object.keys(validationResult).length > 0 ? validationResult.data.documents[0].headers?.find(header => header.key === 'h') : {};
-    const cvIndexes = Object.keys(validationResult).length > 0 ? validationResult.data.documents[0].cvIndexes : [];
 
     const handleFilePicked = (fileFromPicker) => {
         setValidationResult({});
@@ -61,32 +56,10 @@ function OptionUsfmImport() {
         reader.readAsText(fileFromPicker);
     };
 
-    const handleCloseCreate = async () => {
-        setUsfmImportAnchorEl(false);
-        setTimeout(() => {
-            window.location.href = '/clients/content';
-        }, 500);
-    };
-
-    const handleCreateLocalBook = async (localBookContent, repoPath) => {
-        const response = await postJson(
-            `/burrito/ingredient/raw/${repoPath}?ipath=${`${localBookContent.split("toc1")[0].split(" ")[1]}.usfm`}&update_ingredients`,
-            JSON.stringify({ "payload": localBookContent }),
-            debugRef.current
-        );
-        if (response.ok) {
-            enqueueSnackbar(doI18n("pages:core-contenthandler_text_translation:book_created", i18nRef.current), {
-                variant: "success",
-            });
-            handleCloseCreate();
-        } else {
-            enqueueSnackbar(`${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${response.status}`, { variant: "error" });
-        };
-    };
 
     const usfmValidation = (file) => {
         const regexForBookAbbr = /^\\id [A-Z0-9]{3}.*$/m;
-        setIsUsfmValid(regexForBookAbbr.test(file) && file.includes("\\mt") && file.includes("\\c") && file.includes("\\v"));
+        setIsUsfmValid(regexForBookAbbr.test(file) && ((file.includes("\\mt") && file.includes("\\c") && file.includes("\\v")) || file.includes("\\imt")));
     };
 
     useEffect(() => {
@@ -97,7 +70,6 @@ function OptionUsfmImport() {
 
     useEffect(() => {
         if (isUsfmValid) {
-
             try {
                 pk.importDocument({ lang: "eng", abbr: `${localBookContent.split("toc1")[0].split(" ")[1]}` }, `${filePicked.name.split(".")[1]}`, localBookContent);
                 try {
@@ -115,6 +87,12 @@ function OptionUsfmImport() {
 
     }, [localBookContent, isUsfmValid])
 
+    const handleDeleteUsfmFile = () => {
+        setLocalBookContent();
+        setFilePicked({});
+        setValidationResult({});
+        setIsUsfmValid(false)
+    }
     return (
         <Box>
 
@@ -124,37 +102,48 @@ function OptionUsfmImport() {
                 onError={error => { enqueueSnackbar(`${error}`, { variant: "error", }); setLoading(false); }}
             >
                 <Tooltip
-                    open={localBookContent ? (bookIsDuplicate || !isUsfmValid) : false}
-                    title={!isUsfmValid ? doI18n("pages:core-contenthandler_text_translation:usfm_invalid", i18nRef.current) : doI18n("pages:core-contenthandler_text_translation:book_already_exists", i18nRef.current)}
+                    //open={localBookContent ? !isUsfmValid : isUsfmValid}
+                    title={localBookContent ? (isUsfmValid && "Pour changer de livre supprimé le précédent") : (!isUsfmValid && doI18n("pages:core-contenthandler_text_translation:usfm_invalid", i18nRef.current))}
                     placement="bottom-end"
                 >
-                    <Button
-                        type="button"
-                        disabled={loading}
-                        variant="contained"
-                        color="primary"
-                        component="span"
-                        startIcon={<UploadFileIcon />}
-                    >
-                        {loading ? 'Reading File...' : (filePicked.name ? filePicked.name : doI18n("pages:core-contenthandler_text_translation:import_click", i18nRef.current))}
-                    </Button>
-
+                    <span>
+                        <Button
+                            type="button"
+                            disabled={loading || isUsfmValid}
+                            variant="contained"
+                            color="primary"
+                            component="span"
+                            startIcon={<UploadFileIcon />}
+                        >
+                            {doI18n("pages:core-contenthandler_text_translation:import_click", i18nRef.current)}
+                        </Button>
+                    </span>
                 </Tooltip>
             </FilePicker>
-            {(Object.keys(validationResult).length > 0 && !bookIsDuplicate) &&
-                <Stack spacing={2} sx={{ mt: 0.5 }}>
-                    <Typography variant="body1">
-                        {`Book Code: ${JSON.stringify(bookCode?.value, null, 2)}`}
-                    </Typography>
-                    <Typography variant="body1">
-                        {`Title: ${JSON.stringify(title?.value, null, 2)}`}
-                    </Typography>
-                    <Typography variant="body1">
-                        {`Chapters from ${JSON.stringify(cvIndexes[0]?.chapter, null, 2)} to ${JSON.stringify(cvIndexes[cvIndexes.length - 1]?.chapter, null, 2)}`}
-                    </Typography>
-                </Stack>
+
+            {Object.keys(validationResult).length > 0 &&
+                <Grid2 item xs={12} md={6}>
+                    <List>
+                        <ListItem
+                            secondaryAction={
+                                <IconButton edge="end" aria-label="delete" onClick={handleDeleteUsfmFile}>
+                                    <DeleteOutlinedIcon />
+                                </IconButton>
+                            }
+                        >
+                            <ListItemIcon>
+                                {loading ? "" : <CheckOutlinedIcon />}
+                            </ListItemIcon>
+
+                            <ListItemText
+                                primary={filePicked.name}
+                                secondary={loading ? 'loading' : 'complete'}
+                            />
+                        </ListItem>
+                    </List>
+                </Grid2>
             }
-        </Box>
+        </Box >
     );
 }
 export default OptionUsfmImport;

@@ -30,7 +30,7 @@ function UsfmImport() {
     const [bookIsDuplicate, setBookIsDuplicate] = useState(false);
     const [nameProject, setNameProject] = useState("")
     const hash = window.location.hash;
-    const query = hash.includes('?') ? hash.split('?')[1] : '';
+    const query = hash.includes('?') ? hash.split('?') : '';
     const repoPathQuery = new URLSearchParams(query[1]);
     const typePageQuery = new URLSearchParams(query[2]);
     const path = repoPathQuery.get('repoPath');
@@ -50,7 +50,6 @@ function UsfmImport() {
     const cvIndexes = Object.keys(validationResult).length > 0 ? validationResult.data.documents[0].cvIndexes : [];
 
     const getProjectSummaries = async () => {
-
         setRepoPath(path);
         const summariesResponse = await getJson(`/burrito/metadata/summary/${path}`, debugContext.current);
         if (summariesResponse.ok) {

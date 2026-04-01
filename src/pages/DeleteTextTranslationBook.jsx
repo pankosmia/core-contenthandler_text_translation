@@ -30,7 +30,7 @@ export default function DeleteTextTranslationBook() {
     const [errorMessage, setErrorMessage] = useState("");
     const [nameProject, setNameProject] = useState("");
     const hash = window.location.hash;
-    const query = hash.includes('?') ? hash.split('?')[1] : '';
+    const query = hash.includes('?') ? hash.split('?') : '';
     const repoPathQuery = new URLSearchParams(query[1]);
     const path = repoPathQuery.get('repoPath');
     const typePageQuery = new URLSearchParams(query[2]);
