@@ -103,7 +103,7 @@ function OptionUsfmImport({ localBookContent, setLocalBookContent, isUsfmValid, 
             >
                 <Tooltip
                     //open={localBookContent ? !isUsfmValid : isUsfmValid}
-                    title={localBookContent ? (isUsfmValid && "Pour changer de livre supprimé le précédent") : (!isUsfmValid && doI18n("pages:core-contenthandler_text_translation:usfm_invalid", i18nRef.current))}
+                    title={localBookContent ? (isUsfmValid && doI18n("pages:core-contenthandler_text_translation:change_usfm_file", i18nRef.current)) : (!isUsfmValid && doI18n("pages:core-contenthandler_text_translation:usfm_invalid", i18nRef.current))}
                     placement="bottom-end"
                 >
                     <span>

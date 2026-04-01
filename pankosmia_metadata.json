@@ -573,6 +573,10 @@
     },
     "create_usfm_file":{
       "en":"Import existing USFM translation"
+    },
+    "change_usfm_file":{
+      "en":"To import a new USFM folder, you must first delete the previously imported one",
+      "fr":"Pour importer un nouveau dossier USFM, vous devez d'abord supprimer le dossier précédemment importé"
     }
   }
 }
