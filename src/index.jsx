@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { getAndSetJson } from "pithekos-lib";
 import { createTheme, styled } from "@mui/material";
 import { SnackbarProvider,  MaterialDesignContent, } from "notistack";
-
+import InnerFramePopup from "./pages/Export/pdfExport/InnerFramePopup";
 const router = createHashRouter([
     {
         path: "/",
@@ -42,7 +42,7 @@ const router = createHashRouter([
     },
     {
         path: "/export/pdf",
-        element: <PdfGenerate />
+        element: <InnerFramePopup />
     }
 ]);
 function AppLayout() {
