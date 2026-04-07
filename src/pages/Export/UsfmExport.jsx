@@ -33,7 +33,6 @@ function UsfmExport() {
   const returnTypePage = typePageQuery.get("returnTypePage");
 
   const getProjectSummaries = async () => {
-
     setRepoPath(path);
     const summariesResponse = await getJson(
       `/burrito/metadata/summary/${path}`,
@@ -89,21 +88,20 @@ function UsfmExport() {
   const handleClose = async () => {
     setOpen(false);
     if (returnTypePage === "dashboard") {
-      await new Promise(resolve =>
+      await new Promise((resolve) =>
         setTimeout(() => {
           window.location.href = "/clients/main";
           resolve();
-        }, 1500)
+        }, 1500),
       );
     } else {
-      await new Promise(resolve =>
+      await new Promise((resolve) =>
         setTimeout(() => {
-          window.location.href = '/clients/content';
+          window.location.href = "/clients/content";
           resolve();
-        }, 1500)
+        }, 1500),
       );
     }
-
   };
 
   useEffect(() => {

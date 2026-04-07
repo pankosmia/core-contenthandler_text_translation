@@ -1,157 +1,170 @@
-import { useRef, useContext, useState, useEffect } from 'react';
+import { useRef, useContext, useState, useEffect } from "react";
 import {
-    DialogContent,
-    DialogContentText,
-    FormControl,
-    FormGroup,
-    FormControlLabel,
-    Select,
-    MenuItem,
-    OutlinedInput,
-    Checkbox,
-    Box,
-    useTheme,
-    InputLabel,
-    Typography,
-    Grid2
+  DialogContent,
+  DialogContentText,
+  FormControl,
+  FormGroup,
+  FormControlLabel,
+  Select,
+  MenuItem,
+  OutlinedInput,
+  Checkbox,
+  Box,
+  useTheme,
+  InputLabel,
+  Typography,
+  Grid2,
 } from "@mui/material";
-import LooksOneOutlinedIcon from '@mui/icons-material/LooksOneOutlined';
-import LooksTwoOutlinedIcon from '@mui/icons-material/LooksTwoOutlined';
-import Looks3OutlinedIcon from '@mui/icons-material/Looks3Outlined';
-import { Proskomma } from 'proskomma-core';
+import LooksOneOutlinedIcon from "@mui/icons-material/LooksOneOutlined";
+import LooksTwoOutlinedIcon from "@mui/icons-material/LooksTwoOutlined";
+import Looks3OutlinedIcon from "@mui/icons-material/Looks3Outlined";
+import { Proskomma } from "proskomma-core";
 import { SofriaRenderFromProskomma, render } from "proskomma-json-tools";
 import { getText, doI18n, getJson } from "pithekos-lib";
-import { debugContext, i18nContext, typographyContext, Header } from "pankosmia-rcl";
+import {
+  debugContext,
+  i18nContext,
+  typographyContext,
+  Header,
+} from "pankosmia-rcl";
 import { enqueueSnackbar } from "notistack";
 import { getCVTexts, getBookName } from "../helpers/cv";
-import GraphiteTest from './GraphiteTest';
-import TextDir from '../helpers/TextDir';
+import GraphiteTest from "./GraphiteTest";
+import TextDir from "../helpers/TextDir";
 import { PanDialog, PanDialogActions } from "pankosmia-rcl";
 
 function PdfGenerate() {
+  const { typographyRef } = useContext(typographyContext);
+  const { i18nRef } = useContext(i18nContext);
+  const { debugRef } = useContext(debugContext);
+  const fileExport = useRef();
+  const [selectedBooks, setSelectedBooks] = useState(null);
+  const [bookCodes, setBookCodes] = useState([]);
+  const [showByVerse, setShowByVerse] = useState(false);
 
-    const { typographyRef } = useContext(typographyContext);
-    const { i18nRef } = useContext(i18nContext);
-    const { debugRef } = useContext(debugContext);
-    const fileExport = useRef();
-    const [selectedBooks, setSelectedBooks] = useState(null);
-    const [bookCodes, setBookCodes] = useState([]);
-    const [showByVerse, setShowByVerse] = useState(false);
-
-    const [showTitles, setShowTitles] = useState(true);
-    const [showHeadings, setShowHeadings] = useState(true);
-    const [showIntroductions, setShowIntroductions] = useState(true);
-    const [showFootnotes, setShowFootnotes] = useState(false);
-    const [showXrefs, setShowXrefs] = useState(false);
-    const [showParaStyles, setShowParaStyles] = useState(true);
-    const [showCharacterMarkup, setShowCharacterMarkup] = useState(true);
-    const [showChapterLabels, setShowChapterLabels] = useState(true);
-    const [showVersesLabels, setShowVersesLabels] = useState(true);
-    const [showFirstVerseLabel, setShowFirstVerseLabel] = useState(true);
-    const [selectedColumns, setSelectedColumns] = useState(2);
-    const [bookNames, setBookNames] = useState([]);
-    const [repoPath, setRepoPath] = useState([]);
-    const [open, setOpen] = useState(true);
-    const hash = window.location.hash;
-    const query = hash.includes('?') ? hash.split('?') : '';
-    const repoPathQuery = new URLSearchParams(query[1]);
-    const typePageQuery = new URLSearchParams(query[2]);
-    const path = repoPathQuery.get('repoPath');
-    const returnTypePage = typePageQuery.get('returnTypePage');
-    const getProjectSummaries = async () => {
-
-        setRepoPath(path);
-        const summariesResponse = await getJson(`/burrito/metadata/summary/${path}`, debugContext.current);
-        if (summariesResponse.ok) {
-            const data = summariesResponse.json;
-            const bookCode = data.book_codes;
-            setBookNames(bookCode);
-        } else {
-            console.error(" Erreur lors de la récupération des données.");
-        }
-    };
-    useEffect(
-        () => {
-            getProjectSummaries();
-        },
-        []
+  const [showTitles, setShowTitles] = useState(true);
+  const [showHeadings, setShowHeadings] = useState(true);
+  const [showIntroductions, setShowIntroductions] = useState(true);
+  const [showFootnotes, setShowFootnotes] = useState(false);
+  const [showXrefs, setShowXrefs] = useState(false);
+  const [showParaStyles, setShowParaStyles] = useState(true);
+  const [showCharacterMarkup, setShowCharacterMarkup] = useState(true);
+  const [showChapterLabels, setShowChapterLabels] = useState(true);
+  const [showVersesLabels, setShowVersesLabels] = useState(true);
+  const [showFirstVerseLabel, setShowFirstVerseLabel] = useState(true);
+  const [selectedColumns, setSelectedColumns] = useState(2);
+  const [bookNames, setBookNames] = useState([]);
+  const [repoPath, setRepoPath] = useState([]);
+  const [open, setOpen] = useState(true);
+  const hash = window.location.hash;
+  const query = hash.includes("?") ? hash.split("?") : "";
+  const repoPathQuery = new URLSearchParams(query[1]);
+  const typePageQuery = new URLSearchParams(query[2]);
+  const path = repoPathQuery.get("repoPath");
+  const returnTypePage = typePageQuery.get("returnTypePage");
+  const getProjectSummaries = async () => {
+    setRepoPath(path);
+    const summariesResponse = await getJson(
+      `/burrito/metadata/summary/${path}`,
+      debugContext.current,
     );
+    if (summariesResponse.ok) {
+      const data = summariesResponse.json;
+      const bookCode = data.book_codes;
+      setBookNames(bookCode);
+    } else {
+      console.error(" Erreur lors de la récupération des données.");
+    }
+  };
+  useEffect(() => {
+    getProjectSummaries();
+  }, []);
 
-    const isGraphite = GraphiteTest()
-    /** adjSelectedFontClass reshapes selectedFontClass if Graphite is absent. */
-    const adjSelectedFontClass = isGraphite ? typographyRef.current.font_set : typographyRef.current.font_set.replace(/Pankosmia-AwamiNastaliq(.*)Pankosmia-NotoNastaliqUrdu/ig, 'Pankosmia-NotoNastaliqUrdu');
+  const isGraphite = GraphiteTest();
+  /** adjSelectedFontClass reshapes selectedFontClass if Graphite is absent. */
+  const adjSelectedFontClass = isGraphite
+    ? typographyRef.current.font_set
+    : typographyRef.current.font_set.replace(
+        /Pankosmia-AwamiNastaliq(.*)Pankosmia-NotoNastaliqUrdu/gi,
+        "Pankosmia-NotoNastaliqUrdu",
+      );
 
-    // Eliminating _webfonts.css pdf load by getting computed font styles.
-    // If/when we use adjSelectedFontClass on an element, then reduce to `const computedStyles = window.getComputedStyle(elementRef.current);`
-    const [adjSelectedFontFamilies, setAdjSelectedFontFamilies] = useState(null);
-    useEffect(() => {
-        const tempElement = document.createElement('div'); // Temporary element with adjSelectedFontClass className
-        tempElement.className = adjSelectedFontClass;
-        document.body.appendChild(tempElement);
+  // Eliminating _webfonts.css pdf load by getting computed font styles.
+  // If/when we use adjSelectedFontClass on an element, then reduce to `const computedStyles = window.getComputedStyle(elementRef.current);`
+  const [adjSelectedFontFamilies, setAdjSelectedFontFamilies] = useState(null);
+  useEffect(() => {
+    const tempElement = document.createElement("div"); // Temporary element with adjSelectedFontClass className
+    tempElement.className = adjSelectedFontClass;
+    document.body.appendChild(tempElement);
 
-        const computedStyles = window.getComputedStyle(tempElement); // Get font-family from adjSelectedFontClass
-        setAdjSelectedFontFamilies(computedStyles.fontFamily);
+    const computedStyles = window.getComputedStyle(tempElement); // Get font-family from adjSelectedFontClass
+    setAdjSelectedFontFamilies(computedStyles.fontFamily);
 
-        document.body.removeChild(tempElement); // Remove temporary element
-    }, [adjSelectedFontClass]);
+    document.body.removeChild(tempElement); // Remove temporary element
+  }, [adjSelectedFontClass]);
 
-    const theme = useTheme(); // used for DOM preview print button style
+  const theme = useTheme(); // used for DOM preview print button style
 
-    const generatePdf = async (bookCode, pdfType = "para") => {
-        let pdfHtml;
-        if (pdfType === "para") {
-            const pdfTemplate = `
+  const generatePdf = async (bookCode, pdfType = "para") => {
+    let pdfHtml;
+    if (pdfType === "para") {
+      const pdfTemplate = `
 
 <section style="page-break-inside: avoid">
 %%BODY%%
 </section>
 `;
-            const bookUrl = `/burrito/ingredient/raw/${repoPath}?ipath=${bookCode}.usfm`;
-            const bookUsfmResponse = await getText(bookUrl, debugRef.current);
-            if (!bookUsfmResponse.ok) {
-                enqueueSnackbar(
-                    `${doI18n("pages:core-contenthandler_text_translation:could_not_fetch", i18nRef.current)} ${bookCode}`,
-                    { variant: "error" }
-                );
-                return false;
-            }
-            const sectionConfig = {
-                "showWordAtts": false,
-                "showTitles": showTitles,
-                "showHeadings": showHeadings,
-                "showIntroductions": showIntroductions,
-                "showFootnotes": showFootnotes,
-                "showXrefs": showXrefs,
-                "showParaStyles": showParaStyles,
-                "showCharacterMarkup": showCharacterMarkup,
-                "showChapterLabels": showChapterLabels,
-                "showVersesLabels": showVersesLabels,
-                "showFirstVerseLabel": showFirstVerseLabel,
-                "nColumns": selectedColumns,
-                "showGlossaryStar": false
-            }
-            const pk = new Proskomma();
-            pk.importDocument({
-                lang: "xxx",
-                abbr: "yyy"
-            },
-                "usfm",
-                bookUsfmResponse.text
-            );
-            const docId = pk.gqlQuerySync('{documents { id } }').data.documents[0].id;
-            const actions = render.sofria2web.renderActions.sofria2WebActions;
-            const renderers = render.sofria2web.sofria2html.renderers;
-            const cl = new SofriaRenderFromProskomma({ proskomma: pk, actions, debugLevel: 0 })
-            const output = {};
-            sectionConfig.selectedBcvNotes = ["foo"];
-            sectionConfig.renderers = renderers;
-            sectionConfig.renderers.verses_label = vn => {
-                return `<span class="marks_verses_label">${vn}</span>`;
-            };
-            cl.renderDocument({ docId, config: sectionConfig, output });
-            pdfHtml = pdfTemplate.replace("%%BODY%%", output.paras);
-        } else if (pdfType === "bcv") {
-            const bcvBibleVerseTemplate = `<section class="verseRecord">
+      const bookUrl = `/burrito/ingredient/raw/${repoPath}?ipath=${bookCode}.usfm`;
+      const bookUsfmResponse = await getText(bookUrl, debugRef.current);
+      if (!bookUsfmResponse.ok) {
+        enqueueSnackbar(
+          `${doI18n("pages:core-contenthandler_text_translation:could_not_fetch", i18nRef.current)} ${bookCode}`,
+          { variant: "error" },
+        );
+        return false;
+      }
+      const sectionConfig = {
+        showWordAtts: false,
+        showTitles: showTitles,
+        showHeadings: showHeadings,
+        showIntroductions: showIntroductions,
+        showFootnotes: showFootnotes,
+        showXrefs: showXrefs,
+        showParaStyles: showParaStyles,
+        showCharacterMarkup: showCharacterMarkup,
+        showChapterLabels: showChapterLabels,
+        showVersesLabels: showVersesLabels,
+        showFirstVerseLabel: showFirstVerseLabel,
+        nColumns: selectedColumns,
+        showGlossaryStar: false,
+      };
+      const pk = new Proskomma();
+      pk.importDocument(
+        {
+          lang: "xxx",
+          abbr: "yyy",
+        },
+        "usfm",
+        bookUsfmResponse.text,
+      );
+      const docId = pk.gqlQuerySync("{documents { id } }").data.documents[0].id;
+      const actions = render.sofria2web.renderActions.sofria2WebActions;
+      const renderers = render.sofria2web.sofria2html.renderers;
+      const cl = new SofriaRenderFromProskomma({
+        proskomma: pk,
+        actions,
+        debugLevel: 0,
+      });
+      const output = {};
+      sectionConfig.selectedBcvNotes = ["foo"];
+      sectionConfig.renderers = renderers;
+      sectionConfig.renderers.verses_label = (vn) => {
+        return `<span class="marks_verses_label">${vn}</span>`;
+      };
+      cl.renderDocument({ docId, config: sectionConfig, output });
+      pdfHtml = pdfTemplate.replace("%%BODY%%", output.paras);
+    } else if (pdfType === "bcv") {
+      const bcvBibleVerseTemplate = `<section class="verseRecord">
     <span class="cvCol">
         %%CV%%
     </span>
@@ -159,96 +172,99 @@ function PdfGenerate() {
         %%VERSECONTENT%%
     </span>
 </section>`;
-            const bcvBibleTemplate = `%%BODY%%`;
-            const bookUrl = `/burrito/ingredient/raw/${repoPath}?ipath=${bookCode}.usfm`;
-            const bookUsfmResponse = await getText(bookUrl, debugRef.current);
-            if (!bookUsfmResponse.ok) {
-                enqueueSnackbar(
-                    `${doI18n("pages:core-contenthandler_text_translation:could_not_fetch", i18nRef.current)} ${bookCode}`,
-                    { variant: "error" }
-                );
-                return false;
-            }
-            const pk = new Proskomma();
-            pk.importDocument({
-                lang: "xxx",
-                abbr: "yyy"
-            },
-                "usfm",
-                bookUsfmResponse.text
-            );
-            const bookName = getBookName(pk, "xxx_yyy", bookCode);
-            const cvTexts = getCVTexts(bookCode, pk);
-            const verses = [`<h1>${bookName}</h1>`];
-            const seenCvs = new Set([]);
-            for (const cvRecord of cvTexts) {
-                if (seenCvs.has(cvRecord.cv)) {
-                    continue;
-                } else {
-                    seenCvs.add(cvRecord.cv);
-                }
-                const chapterVerseSeparator = ":";
-                const verseRangeSeparator = "-";
-                const verseHtml = bcvBibleVerseTemplate
-                    .replace(
-                        "%%CV%%",
-                        cvRecord.cv
-                            .replace(/(\d):/, (match, p1) => `${p1}${chapterVerseSeparator}`)
-                            .replace(/(\d)-/, (match, p1) => `${p1}${verseRangeSeparator}`))
-                    .replace(
-                        '%%VERSECONTENT%%',
-                        cvRecord.texts["xxx_yyy"] || "-"
-                    );
-                verses.push(verseHtml);
-            }
-            pdfHtml = bcvBibleTemplate
-                .replace(
-                    "%%TITLE%%",
-                    `PDF`
-                )
-                .replace(
-                    "%%BODY%%",
-                    verses.join('\n')
-                )
-                .replace(
-                    "%%BOOKNAME%%",
-                    bookName
-                )
+      const bcvBibleTemplate = `%%BODY%%`;
+      const bookUrl = `/burrito/ingredient/raw/${repoPath}?ipath=${bookCode}.usfm`;
+      const bookUsfmResponse = await getText(bookUrl, debugRef.current);
+      if (!bookUsfmResponse.ok) {
+        enqueueSnackbar(
+          `${doI18n("pages:core-contenthandler_text_translation:could_not_fetch", i18nRef.current)} ${bookCode}`,
+          { variant: "error" },
+        );
+        return false;
+      }
+      const pk = new Proskomma();
+      pk.importDocument(
+        {
+          lang: "xxx",
+          abbr: "yyy",
+        },
+        "usfm",
+        bookUsfmResponse.text,
+      );
+      const bookName = getBookName(pk, "xxx_yyy", bookCode);
+      const cvTexts = getCVTexts(bookCode, pk);
+      const verses = [`<h1>${bookName}</h1>`];
+      const seenCvs = new Set([]);
+      for (const cvRecord of cvTexts) {
+        if (seenCvs.has(cvRecord.cv)) {
+          continue;
         } else {
-            throw new Error(`Unexpected pdfType '${pdfType}'`);
+          seenCvs.add(cvRecord.cv);
         }
+        const chapterVerseSeparator = ":";
+        const verseRangeSeparator = "-";
+        const verseHtml = bcvBibleVerseTemplate
+          .replace(
+            "%%CV%%",
+            cvRecord.cv
+              .replace(/(\d):/, (match, p1) => `${p1}${chapterVerseSeparator}`)
+              .replace(/(\d)-/, (match, p1) => `${p1}${verseRangeSeparator}`),
+          )
+          .replace("%%VERSECONTENT%%", cvRecord.texts["xxx_yyy"] || "-");
+        verses.push(verseHtml);
+      }
+      pdfHtml = bcvBibleTemplate
+        .replace("%%TITLE%%", `PDF`)
+        .replace("%%BODY%%", verses.join("\n"))
+        .replace("%%BOOKNAME%%", bookName);
+    } else {
+      throw new Error(`Unexpected pdfType '${pdfType}'`);
+    }
 
-        const textDir = await TextDir(pdfHtml, 'html');
+    const textDir = await TextDir(pdfHtml, "html");
 
-        const cssFile = () => {
-            if (pdfType === "para") {
-                return (textDir === "ltr" ? "/app-resources/pdf/para_bible_page_styles.css" : "/app-resources/pdf/para_bible_page_styles_rtl.css");
-            } else {
-                return (textDir === "ltr" ? "/app-resources/pdf/bcv_bible_page_styles.css" : "/app-resources/pdf/bcv_bible_page_styles_rtl.css");
-            }
-        }
+    const cssFile = () => {
+      if (pdfType === "para") {
+        return textDir === "ltr"
+          ? "/app-resources/pdf/para_bible_page_styles.css"
+          : "/app-resources/pdf/para_bible_page_styles_rtl.css";
+      } else {
+        return textDir === "ltr"
+          ? "/app-resources/pdf/bcv_bible_page_styles.css"
+          : "/app-resources/pdf/bcv_bible_page_styles_rtl.css";
+      }
+    };
 
-        // Extract names of font css files called by the font class
-        const parts = adjSelectedFontClass.replace("fonts-", "").split("Pankosmia-");
-        const formatPart = (part) => {
-            return part.replace(/([a-z])(?=[A-Z])/g, '$1_').replace(/SILSR/g, 'SIL_SR'); // Insert underscores between lowercase and uppercase letters and handle SILSR
-        };
-        const fontUrlFilenames = parts.map((part) => {
-            const formattedPart = formatPart(part);
-            return formattedPart ? `/webfonts/pankosmia-${formattedPart}.css` : '';
-        }).filter(Boolean); // Remove empty values
+    // Extract names of font css files called by the font class
+    const parts = adjSelectedFontClass
+      .replace("fonts-", "")
+      .split("Pankosmia-");
+    const formatPart = (part) => {
+      return part
+        .replace(/([a-z])(?=[A-Z])/g, "$1_")
+        .replace(/SILSR/g, "SIL_SR"); // Insert underscores between lowercase and uppercase letters and handle SILSR
+    };
+    const fontUrlFilenames = parts
+      .map((part) => {
+        const formattedPart = formatPart(part);
+        return formattedPart ? `/webfonts/pankosmia-${formattedPart}.css` : "";
+      })
+      .filter(Boolean); // Remove empty values
 
-        const adjSelectedFontFamiliesStr = adjSelectedFontFamilies.replace(/"/g, "'");
+    const adjSelectedFontFamiliesStr = adjSelectedFontFamilies.replace(
+      /"/g,
+      "'",
+    );
 
-        const openPagedPreviewForPdf = async () => {
-            const server = window.location.origin;
-            const dirAttr = textDir === 'rtl' ? ' dir="rtl"' : '';
-            const contentHtml = `
+    const openPagedPreviewForPdf = async () => {
+      const server = window.location.origin;
+      const dirAttr = textDir === "rtl" ? ' dir="rtl"' : "";
+      const contentHtml = `
               <div id="content"${dirAttr} style="font-family: ${adjSelectedFontFamiliesStr};">
                   ${pdfHtml}
               </div>
               <div id="preview-print-host">
-                  <button id="preview-print" type="button">${doI18n("pages:core-contenthandler_text_translation:print", i18nRef.current) || 'Print'}</button>
+                  <button id="preview-print" type="button">${doI18n("pages:core-contenthandler_text_translation:print", i18nRef.current) || "Print"}</button>
               </div>
               <script>
                   (function(){
@@ -406,433 +422,521 @@ function PdfGenerate() {
                 </script>
           `;
 
-            const openFn = (url => window.open(url, '_blank'));
-            const previewWin = openFn('about:blank');
-            if (!previewWin) return; // window.open failed or was blocked
+      const openFn = (url) => window.open(url, "_blank");
+      const previewWin = openFn("about:blank");
+      if (!previewWin) return; // window.open failed or was blocked
+      try {
+        void previewWin.document; // attempt to read document property
+      } catch (e) {
+        return; // window currently inaccessible (e.g., not yet initialized or cross‑origin)
+      }
+      // Pass values to previewWin
+      previewWin.__printButtonText = doI18n(
+        "pages:core-contenthandler_text_translation:print",
+        i18nRef.current,
+      );
+      previewWin.__printButtonBackgroundColor = theme.palette.primary.main;
+      previewWin.__printButtonColor = theme.palette.primary.contrastText;
+
+      // Initial Content
+      previewWin.document.open();
+      previewWin.document.write(contentHtml);
+      previewWin.document.close();
+
+      // Ensure head exists
+      if (!previewWin.document.head) {
+        const head = previewWin.document.createElement("head");
+        previewWin.document.documentElement.insertBefore(
+          head,
+          previewWin.document.documentElement.firstChild,
+        );
+      }
+
+      // Set the page title.
+      previewWin.document.title = doI18n(
+        "pages:core-contenthandler_text_translation:pdf_preview",
+        i18nRef.current,
+      );
+
+      // Wait until document.body is present, retrying until body exists or timeout.
+      const waitForBody = (win, timeout = 3000) => {
+        return new Promise((resolve, reject) => {
+          const start = Date.now();
+          const check = () => {
             try {
-                void previewWin.document; // attempt to read document property
+              if (win.document && win.document.body) return resolve();
             } catch (e) {
-                return; // window currently inaccessible (e.g., not yet initialized or cross‑origin)
+              // Access may throw while the new window is not ready or is cross-origin; Retry until timeout.
             }
-            // Pass values to previewWin
-            previewWin.__printButtonText = doI18n("pages:core-contenthandler_text_translation:print", i18nRef.current);
-            previewWin.__printButtonBackgroundColor = theme.palette.primary.main;
-            previewWin.__printButtonColor = theme.palette.primary.contrastText;
+            if (Date.now() - start > timeout)
+              return reject(new Error("preview body timeout"));
+            setTimeout(check, 25);
+          };
+          check();
+        });
+      };
+      await waitForBody(previewWin);
 
-            // Initial Content
-            previewWin.document.open();
-            previewWin.document.write(contentHtml);
-            previewWin.document.close();
+      // Append PagedJS
+      const script = previewWin.document.createElement("script");
+      script.src = `${server}/app-resources/pdf/paged.polyfill.js`;
+      previewWin.document.head.appendChild(script);
 
-            // Ensure head exists
-            if (!previewWin.document.head) {
-                const head = previewWin.document.createElement('head');
-                previewWin.document.documentElement.insertBefore(head, previewWin.document.documentElement.firstChild);
-            }
+      const loadStyles = (href) => {
+        const link = previewWin.document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = href;
+        previewWin.document.head.appendChild(link);
+      };
 
-            // Set the page title.
-            previewWin.document.title = doI18n("pages:core-contenthandler_text_translation:pdf_preview", i18nRef.current);
+      // Load styles
+      loadStyles(`${server}${cssFile()}`);
+      fontUrlFilenames.forEach(loadStyles);
+    };
 
-            // Wait until document.body is present, retrying until body exists or timeout.
-            const waitForBody = (win, timeout = 3000) => {
-                return new Promise((resolve, reject) => {
-                    const start = Date.now();
-                    const check = () => {
-                        try {
-                            if (win.document && win.document.body) return resolve();
-                        } catch (e) {
-                            // Access may throw while the new window is not ready or is cross-origin; Retry until timeout.
-                        }
-                        if (Date.now() - start > timeout) return reject(new Error('preview body timeout'));
-                        setTimeout(check, 25);
-                    };
-                    check();
-                });
-            };
-            await waitForBody(previewWin);
+    openPagedPreviewForPdf();
 
-            // Append PagedJS
-            const script = previewWin.document.createElement('script');
-            script.src = `${server}/app-resources/pdf/paged.polyfill.js`;
-            previewWin.document.head.appendChild(script);
+    return true;
+  };
 
-            const loadStyles = (href) => {
-                const link = previewWin.document.createElement('link');
-                link.rel = "stylesheet";
-                link.href = href;
-                previewWin.document.head.appendChild(link);
-            };
+  const handleBooksChange = (event) => {
+    setSelectedBooks(event.target.value);
+  };
 
-            // Load styles
-            loadStyles(`${server}${cssFile()}`);
-            fontUrlFilenames.forEach(loadStyles);
+  useEffect(() => {
+    const doFetch = async () => {
+      const versificationResponse = await getJson(
+        "/content-utils/versification/eng",
+        debugRef.current,
+      );
+      if (versificationResponse.ok) {
+        setBookCodes(Object.keys(versificationResponse.json.maxVerses));
+      }
+    };
+    if (bookCodes.length === 0) {
+      doFetch().then();
+    }
+  }, []);
 
-        };
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openAnchor = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = async () => {
+    setAnchorEl(null);
+    setOpen(false);
+    if (returnTypePage === "dashboard") {
+      await new Promise((resolve) =>
+        setTimeout(() => {
+          window.location.href = "/clients/main";
+          resolve();
+        }, 1500),
+      );
+    } else {
+      await new Promise((resolve) =>
+        setTimeout(() => {
+          window.location.href = "/clients/content";
+          resolve();
+        }, 1500),
+      );
+    }
+  };
 
-        openPagedPreviewForPdf();
+  const handleCloseColumns = () => {
+    setAnchorEl(null);
+  };
 
-        return true;
+  function columnIcon(selectedColumns) {
+    let content;
+
+    switch (selectedColumns) {
+      case 1:
+        content = <LooksOneOutlinedIcon color="primary" />;
+        break;
+      case 2:
+        content = <LooksTwoOutlinedIcon color="primary" />;
+        break;
+      case 3:
+        content = <Looks3OutlinedIcon color="primary" />;
+        break;
+      default:
+        content = <LooksTwoOutlinedIcon color="primary" />;
     }
 
-    const handleBooksChange = (event) => {
-        setSelectedBooks(event.target.value);
-    };
+    return content;
+  }
 
-    useEffect(
-        () => {
-            const doFetch = async () => {
-                const versificationResponse = await getJson("/content-utils/versification/eng", debugRef.current);
-                if (versificationResponse.ok) {
-                    setBookCodes(Object.keys(versificationResponse.json.maxVerses));
-                }
-            };
-            if (bookCodes.length === 0) {
-                doFetch().then();
-            }
-        },
-        []
-    );
+  // Use the number of books in select to calculate minimum dialog height
+  const calculateDialogHeight = (numBooks) => {
+    const itemHeight = 48; // Approximate height of each MenuItem
+    const maxDropdownHeight = 224; // Maximum height of the dropdown as set in its MenuProps
+    const dropdownHeight = Math.min(numBooks * itemHeight, maxDropdownHeight);
+    return dropdownHeight + 211; // Space for title, actions, and padding
+  };
 
-    const [anchorEl, setAnchorEl] = useState(null);
-    const openAnchor = Boolean(anchorEl);
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleClose = async () => {
-        setAnchorEl(null);
-        setOpen(false);
-        if (returnTypePage === "dashboard") {
-            await new Promise(resolve =>
-                setTimeout(() => {
-                    window.location.href = '/clients/main';
-                    resolve();
-                }, 1500)
-            );
-        } else {
-            await new Promise(resolve =>
-                setTimeout(() => {
-                    window.location.href = '/clients/content';
-                    resolve();
-                }, 1500)
-            );
-        }
-
-    };
-
-    const handleCloseColumns = () => {
-        setAnchorEl(null);
-    };
-
-
-    function columnIcon(selectedColumns) {
-        let content;
-
-        switch (selectedColumns) {
-            case 1:
-                content = <LooksOneOutlinedIcon color='primary' />;
-                break;
-            case 2:
-                content = <LooksTwoOutlinedIcon color='primary' />;
-                break;
-            case 3:
-                content = <Looks3OutlinedIcon color='primary' />;
-                break;
-            default:
-                content = <LooksTwoOutlinedIcon color='primary' />;
-        }
-
-        return content;
-    }
-
-    // Use the number of books in select to calculate minimum dialog height
-    const calculateDialogHeight = (numBooks) => {
-        const itemHeight = 48; // Approximate height of each MenuItem
-        const maxDropdownHeight = 224; // Maximum height of the dropdown as set in its MenuProps
-        const dropdownHeight = Math.min(numBooks * itemHeight, maxDropdownHeight);
-        return dropdownHeight + 211; // Space for title, actions, and padding
-    };
-
-    return (
-        <Box>
-            <Box
-                sx={{
-                    position: "absolute",
-                    width: "100%",
-                    height: "100%",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    zIndex: -1,
-                    backgroundImage:
-                        'url("/app-resources/pages/content/background_blur.png")',
-                    backgroundRepeat: "no-repeat",
-                    backdropFilter: "blur(3px)",
-                }}
-            />
-            <Header
-                titleKey="pages:content:title"
-                currentId="content"
-                requireNet={false}
-            />
-            <PanDialog
-                titleLabel={doI18n("pages:core-contenthandler_text_translation:generate_as_pdf", i18nRef.current)}
-                isOpen={open}
-                closeFn={() => handleClose()}
-                theme={theme}
-                fullWidth
-                size={"sm"}
-            >
-                <DialogContent sx={{ mt: 1, pt: 0 }}>
-                    <DialogContentText sx={{ py: 2 }}>
-                        <Typography variant="body2" >{`* ${doI18n("pages:core-contenthandler_text_translation:required_fields", i18nRef.current)}`}</Typography>
-                    </DialogContentText>
-                    <FormControl fullWidth>
-                        <InputLabel id="book-select-label">{`${doI18n("pages:core-contenthandler_text_translation:pick_book", i18nRef.current)} *`}</InputLabel>
-                        <Select
-                            labelId="book-select-label"
-                            id="book-select"
-                            variant="standard"
-                            displayEmpty
-                            defaultOpen={false}
-                            value={selectedBooks}
-                            onChange={handleBooksChange}
-                            label={`${doI18n("pages:core-contenthandler_text_translation:pick_book", i18nRef.current)} *`}
-                            input={<OutlinedInput label={`${doI18n("pages:core-contenthandler_text_translation:pick_book", i18nRef.current)} *`} />}
-                            MenuProps={{
-                                PaperProps: {
-                                    style: {
-                                        maxHeight: 224,
-                                        minWidth: 200,
-                                    },
-                                },
-                            }}
-                            renderValue={selected => {
-                                if (selected) {
-                                    fileExport.current = selected;
-                                    return doI18n(`scripture:books:${selected}`, i18nRef.current);
-                                }
-                            }}
-                            inputProps={{ 'aria-label': 'Without label' }}
-                        >
-                            {bookCodes.filter(item => bookNames.includes(item)).map((bookName) => (
-                                <MenuItem
-                                    key={bookName}
-                                    value={bookName}
-                                >
-                                    {`${bookName} - ` + doI18n(`scripture:books:${bookName}`, i18nRef.current)}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    <Typography variant="subtitle2" fontWeight="bold" sx={{ pt: 2 }}>{doI18n("pages:core-contenthandler_text_translation:formatting_template", i18nRef.current)}</Typography>
-                    <FormGroup>
-                        <FormControlLabel
-                            label={doI18n("pages:core-contenthandler_text_translation:show_by_verse", i18nRef.current)}
-                            control={
-                                <Checkbox
-                                    defaultChecked
-                                    checked={showByVerse}
-                                    onChange={() => setShowByVerse(!showByVerse)}
-                                    slotProps={{ 'aria-label': 'controlled' }}
-                                />}
-                        />
-                    </FormGroup>
-                    <Typography variant="subtitle2" fontWeight="bold" sx={{ pt: 2 }}>{doI18n("pages:core-contenthandler_text_translation:custom_formatting", i18nRef.current)}</Typography>
-                    <Grid2
-                        container
-                        direction="row"
-                        spacing={3}
-                        sx={{
-                            justifyContent: "space-between",
-                            alignItems: "flex-start",
-                            pl: 2,
-                            pb: 2
-                        }}
-                    >
-                        <Grid2 item size={6}>
-                            <FormGroup>
-                                <FormControlLabel
-                                    label={`${doI18n("pages:core-contenthandler_text_translation:show_title", i18nRef.current)}`}
-                                    control={
-                                        <Checkbox
-                                            defaultChecked
-                                            checked={showTitles}
-                                            onChange={() => setShowTitles(!showTitles)}
-                                            disabled={showByVerse || !selectedBooks}
-                                            slotProps={{ 'aria-label': 'controlled' }}
-                                        />}
-                                />
-                                <FormControlLabel
-                                    label={doI18n("pages:core-contenthandler_text_translation:show_headings", i18nRef.current)}
-                                    control={
-                                        <Checkbox
-                                            defaultChecked
-                                            checked={showHeadings}
-                                            onChange={() => setShowHeadings(!showHeadings)}
-                                            disabled={showByVerse || !selectedBooks}
-                                            slotProps={{ 'aria-label': 'controlled' }}
-                                        />}
-                                />
-                                <FormControlLabel
-                                    label={doI18n("pages:core-contenthandler_text_translation:show_introductions", i18nRef.current)}
-                                    control={
-                                        <Checkbox
-                                            defaultChecked
-                                            checked={showIntroductions}
-                                            onChange={() => setShowIntroductions(!showIntroductions)}
-                                            disabled={showByVerse || !selectedBooks}
-                                            slotProps={{ 'aria-label': 'controlled' }}
-                                        />}
-                                />
-                                <FormControlLabel
-                                    label={doI18n("pages:core-contenthandler_text_translation:show_footnotes", i18nRef.current)}
-                                    control={
-                                        <Checkbox
-                                            checked={showFootnotes}
-                                            onChange={() => setShowFootnotes(!showFootnotes)}
-                                            disabled={showByVerse || !selectedBooks}
-                                            slotProps={{ 'aria-label': 'controlled' }}
-                                        />}
-                                />
-                                <FormControlLabel
-                                    label={doI18n("pages:core-contenthandler_text_translation:show_xrefs", i18nRef.current)}
-                                    control={
-                                        <Checkbox
-                                            checked={showXrefs}
-                                            onChange={() => setShowXrefs(!showXrefs)}
-                                            disabled={showByVerse || !selectedBooks}
-                                            slotProps={{ 'aria-label': 'controlled' }}
-                                        />}
-                                />
-                            </FormGroup>
-                        </Grid2>
-                        <Grid2 item size={6}>
-                            <FormGroup>
-                                <FormControlLabel
-                                    label={doI18n("pages:core-contenthandler_text_translation:show_para_styles", i18nRef.current)}
-                                    control={
-                                        <Checkbox
-                                            defaultChecked
-                                            checked={showParaStyles}
-                                            onChange={() => setShowParaStyles(!showParaStyles)}
-                                            disabled={showByVerse || !selectedBooks}
-                                            slotProps={{ 'aria-label': 'controlled' }}
-
-                                        />}
-                                />
-                                <FormControlLabel
-                                    label={doI18n("pages:core-contenthandler_text_translation:show_character_markup", i18nRef.current)}
-                                    control={
-                                        <Checkbox
-                                            defaultChecked
-                                            checked={showCharacterMarkup}
-                                            onChange={() => setShowCharacterMarkup(!showCharacterMarkup)}
-                                            disabled={showByVerse || !selectedBooks}
-                                            slotProps={{ 'aria-label': 'controlled' }}
-
-                                        />}
-                                />
-                                <FormControlLabel
-                                    label={doI18n("pages:core-contenthandler_text_translation:show_chapter_labels", i18nRef.current)}
-                                    control={
-                                        <Checkbox
-                                            defaultChecked
-                                            checked={showChapterLabels}
-                                            onChange={() => setShowChapterLabels(!showChapterLabels)}
-                                            disabled={showByVerse || !selectedBooks}
-                                            slotProps={{ 'aria-label': 'controlled' }}
-                                        />}
-                                />
-                                <FormControlLabel
-                                    label={doI18n("pages:core-contenthandler_text_translation:show_verses_labels", i18nRef.current)}
-                                    control={
-                                        <Checkbox
-                                            defaultChecked
-                                            checked={showVersesLabels}
-                                            onChange={() => setShowVersesLabels(!showVersesLabels)}
-                                            disabled={showByVerse || !selectedBooks}
-                                            slotProps={{ 'aria-label': 'controlled' }}
-                                        />}
-                                />
-                                <FormControlLabel
-                                    label={doI18n("pages:core-contenthandler_text_translation:show_first_verse_label", i18nRef.current)}
-                                    control={
-                                        <Checkbox
-                                            defaultChecked
-                                            checked={showFirstVerseLabel}
-                                            onChange={() => setShowFirstVerseLabel(!showFirstVerseLabel)}
-                                            disabled={showByVerse || !selectedBooks}
-                                            slotProps={{ 'aria-label': 'controlled' }}
-                                        />}
-                                />
-                            </FormGroup>
-                        </Grid2>
-                    </Grid2>
-                    <FormControl variant="outlined" sx={{ minWidth: 230 }}>
-                        <InputLabel id="column-number-select-label">{`${doI18n("pages:core-contenthandler_text_translation:number_of_columns", i18nRef.current)} *`}</InputLabel>
-                        <Select
-                            labelId="column-number-select-label"
-                            id="column-number-select"
-                            variant="standard"
-                            displayEmpty
-                            defaultOpen={false}
-                            value={selectedColumns}
-                            onChange={(event) => { setSelectedColumns(event.target.value) }}
-                            disabled={showByVerse || !selectedBooks}
-                            label={`${doI18n("pages:core-contenthandler_text_translation:number_of_columns", i18nRef.current)} *`}
-                            input={<OutlinedInput label={`${doI18n("pages:core-contenthandler_text_translation:number_of_columns", i18nRef.current)} *`} />}
-                            sx={{
-                                "& .MuiSelect-icon": {
-                                    right: "2px",
-                                },
-                                '& .MuiSelect-select': {
-                                    paddingTop: '8px',
-                                    paddingBottom: '8px',
-                                },
-                            }}
-                            MenuProps={{
-                                PaperProps: {
-                                    style: {
-                                        maxHeight: 140,
-                                        minWidth: 230,
-                                    },
-                                },
-                            }}
-                            renderValue={selected => {
-                                if (selected) {
-                                    return selected
-                                }
-                            }}
-                            inputProps={{ 'aria-label': 'Without label' }}
-                        >
-                            <MenuItem key={1} value={1}>1</MenuItem>
-                            <MenuItem key={2} value={2}>2</MenuItem>
-                            <MenuItem key={3} value={3}>3</MenuItem>
-                        </Select>
-                    </FormControl>
-                </DialogContent>
-                <PanDialogActions
-                    closeFn={() => {
-                        handleClose()
-                        setSelectedBooks(null);
-                    }}
-                    closeLabel={doI18n("pages:content:cancel", i18nRef.current)}
-                    actionFn={() => {
-                        if (!fileExport.current) {
-                            enqueueSnackbar(
-                                doI18n("pages:core-contenthandler_text_translation:no_books_selected", i18nRef.current),
-                                { variant: "warning" }
-                            );
-                        } else {
-                            generatePdf(fileExport.current, showByVerse ? "bcv" : "para").then();
-                        }
-                        handleClose();
-                    }}
-                    actionLabel={doI18n("pages:core-contenthandler_text_translation:export_label", i18nRef.current)}
-                    isDisabled={!selectedBooks}
+  return (
+    <Box>
+      <Box
+        sx={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          zIndex: -1,
+          backgroundImage:
+            'url("/app-resources/pages/content/background_blur.png")',
+          backgroundRepeat: "no-repeat",
+          backdropFilter: "blur(3px)",
+        }}
+      />
+      <Header
+        titleKey="pages:content:title"
+        currentId="content"
+        requireNet={false}
+      />
+      <PanDialog
+        titleLabel={doI18n(
+          "pages:core-contenthandler_text_translation:generate_as_pdf",
+          i18nRef.current,
+        )}
+        isOpen={open}
+        closeFn={() => handleClose()}
+        theme={theme}
+        fullWidth
+        size={"sm"}
+      >
+        <DialogContent sx={{ mt: 1, pt: 0 }}>
+          <DialogContentText sx={{ py: 2 }}>
+            <Typography variant="body2">{`* ${doI18n("pages:core-contenthandler_text_translation:required_fields", i18nRef.current)}`}</Typography>
+          </DialogContentText>
+          <FormControl fullWidth>
+            <InputLabel id="book-select-label">{`${doI18n("pages:core-contenthandler_text_translation:pick_book", i18nRef.current)} *`}</InputLabel>
+            <Select
+              labelId="book-select-label"
+              id="book-select"
+              variant="standard"
+              displayEmpty
+              defaultOpen={false}
+              value={selectedBooks}
+              onChange={handleBooksChange}
+              label={`${doI18n("pages:core-contenthandler_text_translation:pick_book", i18nRef.current)} *`}
+              input={
+                <OutlinedInput
+                  label={`${doI18n("pages:core-contenthandler_text_translation:pick_book", i18nRef.current)} *`}
                 />
-            </PanDialog>
-        </Box>
-    );
+              }
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 224,
+                    minWidth: 200,
+                  },
+                },
+              }}
+              renderValue={(selected) => {
+                if (selected) {
+                  fileExport.current = selected;
+                  return doI18n(`scripture:books:${selected}`, i18nRef.current);
+                }
+              }}
+              inputProps={{ "aria-label": "Without label" }}
+            >
+              {bookCodes
+                .filter((item) => bookNames.includes(item))
+                .map((bookName) => (
+                  <MenuItem key={bookName} value={bookName}>
+                    {`${bookName} - ` +
+                      doI18n(`scripture:books:${bookName}`, i18nRef.current)}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+          <Typography variant="subtitle2" fontWeight="bold" sx={{ pt: 2 }}>
+            {doI18n(
+              "pages:core-contenthandler_text_translation:formatting_template",
+              i18nRef.current,
+            )}
+          </Typography>
+          <FormGroup>
+            <FormControlLabel
+              label={doI18n(
+                "pages:core-contenthandler_text_translation:show_by_verse",
+                i18nRef.current,
+              )}
+              control={
+                <Checkbox
+                  defaultChecked
+                  checked={showByVerse}
+                  onChange={() => setShowByVerse(!showByVerse)}
+                  slotProps={{ "aria-label": "controlled" }}
+                />
+              }
+            />
+          </FormGroup>
+          <Typography variant="subtitle2" fontWeight="bold" sx={{ pt: 2 }}>
+            {doI18n(
+              "pages:core-contenthandler_text_translation:custom_formatting",
+              i18nRef.current,
+            )}
+          </Typography>
+          <Grid2
+            container
+            direction="row"
+            spacing={3}
+            sx={{
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              pl: 2,
+              pb: 2,
+            }}
+          >
+            <Grid2 item size={6}>
+              <FormGroup>
+                <FormControlLabel
+                  label={`${doI18n("pages:core-contenthandler_text_translation:show_title", i18nRef.current)}`}
+                  control={
+                    <Checkbox
+                      defaultChecked
+                      checked={showTitles}
+                      onChange={() => setShowTitles(!showTitles)}
+                      disabled={showByVerse || !selectedBooks}
+                      slotProps={{ "aria-label": "controlled" }}
+                    />
+                  }
+                />
+                <FormControlLabel
+                  label={doI18n(
+                    "pages:core-contenthandler_text_translation:show_headings",
+                    i18nRef.current,
+                  )}
+                  control={
+                    <Checkbox
+                      defaultChecked
+                      checked={showHeadings}
+                      onChange={() => setShowHeadings(!showHeadings)}
+                      disabled={showByVerse || !selectedBooks}
+                      slotProps={{ "aria-label": "controlled" }}
+                    />
+                  }
+                />
+                <FormControlLabel
+                  label={doI18n(
+                    "pages:core-contenthandler_text_translation:show_introductions",
+                    i18nRef.current,
+                  )}
+                  control={
+                    <Checkbox
+                      defaultChecked
+                      checked={showIntroductions}
+                      onChange={() => setShowIntroductions(!showIntroductions)}
+                      disabled={showByVerse || !selectedBooks}
+                      slotProps={{ "aria-label": "controlled" }}
+                    />
+                  }
+                />
+                <FormControlLabel
+                  label={doI18n(
+                    "pages:core-contenthandler_text_translation:show_footnotes",
+                    i18nRef.current,
+                  )}
+                  control={
+                    <Checkbox
+                      checked={showFootnotes}
+                      onChange={() => setShowFootnotes(!showFootnotes)}
+                      disabled={showByVerse || !selectedBooks}
+                      slotProps={{ "aria-label": "controlled" }}
+                    />
+                  }
+                />
+                <FormControlLabel
+                  label={doI18n(
+                    "pages:core-contenthandler_text_translation:show_xrefs",
+                    i18nRef.current,
+                  )}
+                  control={
+                    <Checkbox
+                      checked={showXrefs}
+                      onChange={() => setShowXrefs(!showXrefs)}
+                      disabled={showByVerse || !selectedBooks}
+                      slotProps={{ "aria-label": "controlled" }}
+                    />
+                  }
+                />
+              </FormGroup>
+            </Grid2>
+            <Grid2 item size={6}>
+              <FormGroup>
+                <FormControlLabel
+                  label={doI18n(
+                    "pages:core-contenthandler_text_translation:show_para_styles",
+                    i18nRef.current,
+                  )}
+                  control={
+                    <Checkbox
+                      defaultChecked
+                      checked={showParaStyles}
+                      onChange={() => setShowParaStyles(!showParaStyles)}
+                      disabled={showByVerse || !selectedBooks}
+                      slotProps={{ "aria-label": "controlled" }}
+                    />
+                  }
+                />
+                <FormControlLabel
+                  label={doI18n(
+                    "pages:core-contenthandler_text_translation:show_character_markup",
+                    i18nRef.current,
+                  )}
+                  control={
+                    <Checkbox
+                      defaultChecked
+                      checked={showCharacterMarkup}
+                      onChange={() =>
+                        setShowCharacterMarkup(!showCharacterMarkup)
+                      }
+                      disabled={showByVerse || !selectedBooks}
+                      slotProps={{ "aria-label": "controlled" }}
+                    />
+                  }
+                />
+                <FormControlLabel
+                  label={doI18n(
+                    "pages:core-contenthandler_text_translation:show_chapter_labels",
+                    i18nRef.current,
+                  )}
+                  control={
+                    <Checkbox
+                      defaultChecked
+                      checked={showChapterLabels}
+                      onChange={() => setShowChapterLabels(!showChapterLabels)}
+                      disabled={showByVerse || !selectedBooks}
+                      slotProps={{ "aria-label": "controlled" }}
+                    />
+                  }
+                />
+                <FormControlLabel
+                  label={doI18n(
+                    "pages:core-contenthandler_text_translation:show_verses_labels",
+                    i18nRef.current,
+                  )}
+                  control={
+                    <Checkbox
+                      defaultChecked
+                      checked={showVersesLabels}
+                      onChange={() => setShowVersesLabels(!showVersesLabels)}
+                      disabled={showByVerse || !selectedBooks}
+                      slotProps={{ "aria-label": "controlled" }}
+                    />
+                  }
+                />
+                <FormControlLabel
+                  label={doI18n(
+                    "pages:core-contenthandler_text_translation:show_first_verse_label",
+                    i18nRef.current,
+                  )}
+                  control={
+                    <Checkbox
+                      defaultChecked
+                      checked={showFirstVerseLabel}
+                      onChange={() =>
+                        setShowFirstVerseLabel(!showFirstVerseLabel)
+                      }
+                      disabled={showByVerse || !selectedBooks}
+                      slotProps={{ "aria-label": "controlled" }}
+                    />
+                  }
+                />
+              </FormGroup>
+            </Grid2>
+          </Grid2>
+          <FormControl variant="outlined" sx={{ minWidth: 230 }}>
+            <InputLabel id="column-number-select-label">{`${doI18n("pages:core-contenthandler_text_translation:number_of_columns", i18nRef.current)} *`}</InputLabel>
+            <Select
+              labelId="column-number-select-label"
+              id="column-number-select"
+              variant="standard"
+              displayEmpty
+              defaultOpen={false}
+              value={selectedColumns}
+              onChange={(event) => {
+                setSelectedColumns(event.target.value);
+              }}
+              disabled={showByVerse || !selectedBooks}
+              label={`${doI18n("pages:core-contenthandler_text_translation:number_of_columns", i18nRef.current)} *`}
+              input={
+                <OutlinedInput
+                  label={`${doI18n("pages:core-contenthandler_text_translation:number_of_columns", i18nRef.current)} *`}
+                />
+              }
+              sx={{
+                "& .MuiSelect-icon": {
+                  right: "2px",
+                },
+                "& .MuiSelect-select": {
+                  paddingTop: "8px",
+                  paddingBottom: "8px",
+                },
+              }}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 140,
+                    minWidth: 230,
+                  },
+                },
+              }}
+              renderValue={(selected) => {
+                if (selected) {
+                  return selected;
+                }
+              }}
+              inputProps={{ "aria-label": "Without label" }}
+            >
+              <MenuItem key={1} value={1}>
+                1
+              </MenuItem>
+              <MenuItem key={2} value={2}>
+                2
+              </MenuItem>
+              <MenuItem key={3} value={3}>
+                3
+              </MenuItem>
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <PanDialogActions
+          closeFn={() => {
+            handleClose();
+            setSelectedBooks(null);
+          }}
+          closeLabel={doI18n("pages:content:cancel", i18nRef.current)}
+          actionFn={() => {
+            if (!fileExport.current) {
+              enqueueSnackbar(
+                doI18n(
+                  "pages:core-contenthandler_text_translation:no_books_selected",
+                  i18nRef.current,
+                ),
+                { variant: "warning" },
+              );
+            } else {
+              generatePdf(
+                fileExport.current,
+                showByVerse ? "bcv" : "para",
+              ).then();
+            }
+            handleClose();
+          }}
+          actionLabel={doI18n(
+            "pages:core-contenthandler_text_translation:export_label",
+            i18nRef.current,
+          )}
+          isDisabled={!selectedBooks}
+        />
+      </PanDialog>
+    </Box>
+  );
 }
 
 export default PdfGenerate;
