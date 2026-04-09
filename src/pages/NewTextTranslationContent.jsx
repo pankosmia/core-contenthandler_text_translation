@@ -74,7 +74,6 @@ export default function NewBibleContent() {
     }
   };
 
-
   useEffect(() => {
     const doFetch = async () => {
       const versificationResponse = await getJson(
@@ -207,7 +206,7 @@ export default function NewBibleContent() {
           return versification.trim().length === 3 && Boolean(selectedPlan);
         }
         if (contentOption === "usfm_file") {
-          return isUsfmValid === true
+          return isUsfmValid === true;
         }
         return true;
       default:
@@ -261,13 +260,15 @@ export default function NewBibleContent() {
       setPostCount(postCount + 1);
     } else {
       setErrorMessage(
-        `${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${response.status
+        `${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${
+          response.status
         }`,
       );
       setErrorDialogOpen(true);
       return;
     }
-    const repoPath = response.json?.repo_path ?? `_local_/_local_/${contentAbbr}`;
+    const repoPath =
+      response.json?.repo_path ?? `_local_/_local_/${contentAbbr}`;
     // Add books for plan
     if (planJson) {
       // Get bookCode list
@@ -345,7 +346,8 @@ export default function NewBibleContent() {
         );
         if (!newBookResponse.ok) {
           setErrorMessage(
-            `${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${response.status
+            `${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${
+              response.status
             }`,
           );
           setErrorDialogOpen(true);
@@ -365,17 +367,25 @@ export default function NewBibleContent() {
     } else if (contentOption === "usfm_file" && localBookContent) {
       const response = await postJson(
         `/burrito/ingredient/raw/${repoPath}?ipath=${`${localBookContent.split("toc1")[0].split(" ")[1]}.usfm`}&update_ingredients`,
-        JSON.stringify({ "payload": localBookContent }),
-        debugRef.current
+        JSON.stringify({ payload: localBookContent }),
+        debugRef.current,
       );
       if (response.ok) {
-        enqueueSnackbar(doI18n("pages:core-contenthandler_text_translation:book_created", i18nRef.current), {
-          variant: "success",
-        });
-
+        enqueueSnackbar(
+          doI18n(
+            "pages:core-contenthandler_text_translation:book_created",
+            i18nRef.current,
+          ),
+          {
+            variant: "success",
+          },
+        );
       } else {
-        enqueueSnackbar(`${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${response.status}`, { variant: "error" });
-      };
+        enqueueSnackbar(
+          `${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${response.status}`,
+          { variant: "error" },
+        );
+      }
     }
     await handleClose();
   };
