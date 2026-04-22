@@ -29,18 +29,6 @@
           "url": "/newBook?repoPath=%%REPO_PATH%%"
         }
       ],
-      "about_repo": [
-        {
-          "doc": "About repo textTranslation document",
-          "placeHolders": {
-            "REPO_PATH": {
-              "doc": "The path to the repo in <X>/<Y>/<Z> format"
-            }
-          },
-          "label": "pages:content:about_repo",
-          "url": "/aboutRepo?repoPath=%%REPO_PATH%%"
-        }
-      ],
       "delete_book": [
         {
           "doc": "Delete a book to a textTranslation document",
