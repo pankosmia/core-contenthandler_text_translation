@@ -81,8 +81,14 @@ export default function ContentDocument({
           value={contentOption}
           onChange={(event) => setContentOption(event.target.value)}
         >
-          {/*<FormControlLabel value="none" control={<Radio />}
-                                label={doI18n("pages:core-contenthandler_text_translation:no_content_radio", i18nRef.current)} />*/}
+          <FormControlLabel
+            value="none"
+            control={<Radio />}
+            label={doI18n(
+              "pages:core-contenthandler_text_translation:no_content_radio",
+              i18nRef.current,
+            )}
+          />
           <FormControlLabel
             value="book"
             control={<Radio />}
