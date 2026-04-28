@@ -114,8 +114,8 @@ export default function AddBookModal({
     })
     .filter(
       (r) =>
-        projectSummaries[r.path].flavor === wrapperType 
-      
+        projectSummaries[r.path].flavor === wrapperType
+
     )
 
     .map((rep, n) => {

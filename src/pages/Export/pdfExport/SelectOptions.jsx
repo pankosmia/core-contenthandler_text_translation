@@ -20,37 +20,14 @@ export function SelectOption({ title, type, option, handleChange }) {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-        px: 2.75,
-        mb: 1.5,
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}
-    >
-      <Typography
-        sx={{
-          fontFamily: "Lato",
-          fontWeight: 400,
-          color: "black",
-          pr: 4,
-          fontSize: 22,
-        }}
-      >
-        {title}
-      </Typography>
-
+    <Box>
       <FormControl size="small" sx={{ minWidth: 180 }}>
-        <InputLabel id={`${type}-label`}>Please Choose...</InputLabel>
-
+        <InputLabel id={`${type}-label`}>{title}</InputLabel>
         <Select
           labelId={`${type}-label`}
           value={selectedValue}
-          label="Please Choose..."
           onChange={handleSelectChange}
-          sx={{ borderRadius: 1 }}
+          label={title}
         >
           {option.map((o) => (
             <MenuItem key={o} value={o}>

@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext } from "react";
 // import {PdfGen} from "jxl-pdf"
-import { getJson } from "pithekos-lib";
+import { getJson, doI18n } from "pithekos-lib";
 import { debugContext } from "pankosmia-rcl";
 import "react-pdf/dist/Page/TextLayer.css";
-import { Modal, Button, Input } from "@mui/material";
+import { Modal, Button, Input, DialogContent, Box, Grid2, AppBar, Toolbar, Typography, Card, CardContent, CardActionArea, IconButton } from "@mui/material";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import { v4 as uuidv4 } from "uuid";
 import { useLocation } from "react-router-dom";
@@ -14,7 +14,11 @@ import {
 import { WrapperTemplate } from "./WrapperTemplate";
 import { SelectOption } from "./SelectOptions";
 
-import { ExpandMore } from "@mui/icons-material";
+import { Add, ExpandMore } from "@mui/icons-material";
+import { PanDialog, PanDialogActions, i18nContext } from "pankosmia-rcl";
+import Bcv from "../pdfExport/icons/sectionIcons/bcv";
+import fontsJson from './fonts.json';
+
 // import localForage from 'localforage';
 // import readLocalResources from '@/components/Resources/useReadLocalResources';
 // import packageInfo from '../../../../package.json';
@@ -276,7 +280,8 @@ export default function InnerFramePopup() {
     "OBS-TN": {},
   });
   const { debugRef } = useContext(debugContext);
-
+  const { i18nRef } = useContext(i18nContext);
+  const navItems = ["OPEN PRESET", "SAVE AS PRESET"]
   // fake selected project
 
   const location = useLocation();
@@ -286,7 +291,7 @@ export default function InnerFramePopup() {
 
   const [projectSummaries, setProjectSummaries] = useState(null);
 
-  console.log(projectSummaries);
+  // console.log(projectSummaries);
 
   const getProjectSummaries = async () => {
     const summariesResponse = await getJson(
@@ -305,6 +310,7 @@ export default function InnerFramePopup() {
   const initNames = { bcvWrapper: "Book/Chapter/Verse", obsWrapper: "OBS" };
 
   // const jsonWithHeaderChoice = PdfGen.pageInfo();
+
   const jsonWithHeaderChoice = {
     pages: ["Letter", "Legal", "A4", "Executive"], // paper sizes
     fonts: ["Gentium", "Times New Roman", "Arial", "All Gentium"], // font options
@@ -369,7 +375,7 @@ export default function InnerFramePopup() {
   // This useEffect Allow the user to drag end drop element in a list (here the wrapper themSelf)
   useEffect(() => {
     const sortableList = document.querySelector(`.${sortableListClassName}`);
-    const items = sortableList.querySelectorAll(`.${itemClassName}`);
+    const items = sortableList.querySelectorAll(`.${itemClassName}`) ?? "";
     items.forEach((item) => {
       item.addEventListener("dragstart", () => {
         setTimeout(() => item.classList.add("dragging"), 0);
@@ -594,163 +600,282 @@ export default function InnerFramePopup() {
       setNameFile(value); // Update state only if the input matches the regex
     }
   };
+  console.log("champ font",jsonWithHeaderChoice)
 
   return (
-    <div
-      style={{
-        display: "flex",
-        height: "100%",
-        backgroundColor: "#FFFFFF",
-        width: "100%",
-        borderBottomWidth: 2,
-        borderStyle: "solid",
-        borderColor: "#EEEEEE",
-      }}
-    >
-      <div
-        style={{
-          width: "60%",
-          borderLeft: "2px solid gray",
-          overflowY: "scroll",
-          padding: 20,
-        }}
-      >
-        <div
-          style={{
-            padding: 20,
-            borderBottomWidth: 1,
-            borderStyle: "solid",
-            borderColor: "#575757",
-          }}
-        >
-          <SelectOption
-            title="Paper size"
-            type="pages"
-            option={jsonWithHeaderChoice.pages}
-            handleChange={handleChangeHeaderInfo}
-          />
-
-          <SelectOption
-            title="Font"
-            type="fonts"
-            option={jsonWithHeaderChoice.fonts}
-            handleChange={handleChangeHeaderInfo}
-          />
-
-          <SelectOption
-            title="Font size"
-            type="sizes"
-            option={jsonWithHeaderChoice.sizes}
-            handleChange={handleChangeHeaderInfo}
-          />
-        </div>
-        <div style={{ padding: 5 }}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 8,
-              }}
-            >
-              <div
-                style={{
-                  fontWeight: "regular",
+    <Box>
+      <PanDialog titleLabel="PDF publisher" isOpen={true}>
+        <AppBar position="static" sx={{ backgroundColor: "#f5f5f5" }}>
+          <Toolbar>
+            <Grid2 container alignItems="center" sx={{ width: "100%" }} justifyContent="space-between">
+              <Grid2 container gap={1}>
+                <Button size="large" color="secondary" variant="outlined">
+                  OPEN PRESET
+                </Button>
+                <Button size="large" color="secondary" variant="outlined">
+                  SAVE AS PRESET
+                </Button>
+              </Grid2>
+              <Typography color="#000">preset_name</Typography>
+            </Grid2>
+          </Toolbar>
+        </AppBar>
+        <DialogContent>
+          <Grid2 container spacing={1} >
+            <Grid2 item size={12}>
+              <SelectOption
+                title="Paper size"
+                type="pages"
+                option={jsonWithHeaderChoice.pages}
+                handleChange={handleChangeHeaderInfo}
+              />
+            </Grid2>
+            <Grid2 item size={12}>
+              <SelectOption
+                title="Font family"
+                type="fonts"
+                option={jsonWithHeaderChoice.fonts}
+                handleChange={handleChangeHeaderInfo}
+              />
+            </Grid2>
+            <Grid2 item size={12}>
+              <SelectOption
+                title="Font size"
+                type="sizes"
+                option={jsonWithHeaderChoice.sizes}
+                handleChange={handleChangeHeaderInfo}
+              />
+            </Grid2>
+            <Grid2 item>
+              <Box
+                sx={{
                   display: "flex",
-                  fontSize: 18,
-                  color: "Black",
-                  justifyContent: "left",
-                }}
-              >
-                Content
-              </div>
-              <div
-                style={{
-                  backgroundColor: "#F50",
-                  borderRadius: 25,
-                  justifyContent: "center",
-                  color: "white",
-                  alignContent: "center",
-                  justifyItems: "center",
-                  textAlign: "center",
                   alignItems: "center",
-                  paddingTop: 5,
-                  paddingBottom: 5,
-                  paddingLeft: 11,
-                  paddingRight: 11,
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  setDoReset(!doReset);
-                }}
-              >
-                {"label-reset"}
-              </div>
-            </div>
-            <TextOnlyTooltip
-              placement="top-end"
-              title={
-                <div>
-                  <div
-                    style={{
-                      fontSize: 14,
-                      fontStyle: "normal",
-                      fontWeight: 600,
-                    }}
-                  >
-                    Advanced mode
+                  justifyContent: "space-between",
+                  flexDirection: "row",
+                }}>
+                <Typography variant="subtitle2"> Content</Typography>
+                <Card sx={{ flexDirection: "row" }}>
+                  <CardContent>
+                    <IconButton sx={{ fontSize: 72 }}>
+                      <Bcv  />
+                    </IconButton>
+                  </CardContent>
+                  <CardContent>
+                    <ul className="sortable-TESTWRAPPER-list">
+                      {selected && infoProject && Object.keys(selected).map((k, i, arraySel) => (
+                        <li
+                          id={k}
+                          className="sortable-test1-item"
+                          draggable="true"
+                          key={k}
+                          style={{ margin: 10 }}
+                        >
+                          <WrapperTemplate
+                            doReset={doReset}
+                            setFinalPrint={setSelected}
+                            projectInfo={infoProject}
+                            wrapperType={selected[k].type}
+                            keyWrapper={k}
+                            setUpdate={setUpdate}
+                            advanceMode={advanceMode}
+                            changePrintData={setSelected}
+                            changePrintOrder={setOrderSelection}
+                            showTrashButton={arraySel.length > 1}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                    {advanceMode ? (
+                      <div
+                        style={{
+                          borderRadius: 6,
+                          borderWidth: 1,
+                          borderStyle: "solid",
+                          borderCollor: "#EEEEEE",
+                          display: "flex",
+                          padding: 1,
+                          flexDirection: "column",
+                          alignItems: "flexStart",
+                          alignSelf: "stretch",
+                          backgroundColor: "#FCFAFA",
+                          margin: 12,
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            width: 80,
+                            height: 28,
+                            paddingLeft: 12,
+                            borderRadius: 4,
+                            paddingRight: 6,
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            backgroundColor: "#F50",
+                            color: "white",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => handleOpenModalAddWrapper(true)}
+                        >
+                          Add
+                          <ExpandMore />
+                        </div>
+                      </div>
+                    ) : (
+                      <div />
+                    )}
+
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        padding: 15,
+                        gap: 12,
+                      }}
+                    >
+                      <Button
+                        style={{
+                          borderRadius: 4,
+                          backgroundColor: "#F50",
+                          borderStyle: "solid",
+                          borderColor: "#F50",
+                          color: "white",
+                          margin: "auto",
+                          padding: 15,
+                        }}
+                        onClick={() => {
+                          // openFileDialogSettingData();
+                        }}
+                      >
+                        Choose an export folder
+                      </Button>
+                      <div>
+                        {folder
+                          ? `Folder selected : ${folder}`
+                          : "Please choose an export folder"}
+                      </div>
+                      <Input
+                        onChange={(e) => {
+                          handleInputChange(e);
+                        }}
+                        value={nameFile}
+                        placeholder="your file name here (no special characters allowed)"
+                      />
+                      <Button
+                        style={
+                          isJsonValidate
+                            ? {
+                              borderRadius: 4,
+                              backgroundColor: "#F50",
+                              borderStyle: "solid",
+                              margin: "auto",
+                              borderColor: "#F50",
+                              color: "white",
+                              padding: 15,
+                            }
+                            : {
+                              borderRadius: 4,
+                              backgroundColor: "grey",
+                              borderStyle: "solid",
+                              borderColor: "#F50",
+                              margin: "auto",
+                              color: "white",
+                              padding: 15,
+                            }
+                        }
+                        onClick={async () => {
+                          // const executablePath =
+                          //   await window.electronAPI.getBrowserPath();
+
+                          // let browser;
+                          // try {
+                          //   browser = await window.electronAPI.launchPuppeteer({
+                          //     headless: "new",
+                          //     args: ["--disable-web-security"],
+                          //     executablePath,
+                          //   });
+                          // } catch (err) {
+                          //   browser = await window.electronAPI.launchPuppeteer({
+                          //     headless: "new",
+                          //     args: [
+                          //       "--disable-web-security",
+                          //       "--no-sandbox",
+                          //       "--disable-setuid-sandbox",
+                          //     ],
+                          //     executablePath,
+                          //   });
+                          // }
+
+                          // setMessagePrint("Generating Pdf ...");
+
+                          try {
+                            setMessagePrint((prev) => `${prev}\nInstanciating pdfGen`);
+                            console.log(kitchenFaucet);
+                            // Import PdfGenStatic directly
+
+                            // const pdfGen = new PdfGen(
+                            //   { ...JSON.parse(kitchenFaucet), browser },
+                            //   pdfCallBacks,
+                            // );
+                            // await pdfGen.doPdf();
+                          } catch (pdfError) {
+                            setMessagePrint(
+                              (prev) =>
+                                `${prev}\nPDF generation failed: ${pdfError.message}`,
+                            );
+                            return;
+                          }
+
+                          setMessagePrint(
+                            (prev) => `${prev}\nSuccessful pdf generation.`,
+                          );
+                        }}
+                      >
+                        print
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Box>
+
+
+              {/* <TextOnlyTooltip
+                placement="top-end"
+                title={
+                  <div>
+                    <div
+                      style={{
+                        fontSize: 14,
+                        fontStyle: "normal",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Advanced mode
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 14,
+                        fontStyle: "normal",
+                        fontWeight: 400,
+                      }}
+                    >
+                      Merge projects into a single export, access more print
+                      types, and use loop mode.
+                    </div>
                   </div>
-                  <div
-                    style={{
-                      fontSize: 14,
-                      fontStyle: "normal",
-                      fontWeight: 400,
-                    }}
-                  >
-                    Merge projects into a single export, access more print
-                    types, and use loop mode.
-                  </div>
-                </div>
-              }
-              arrow
-            >
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 8,
-                }}
+                }
+                arrow
               >
                 <div
                   style={{
                     display: "flex",
-                    alignItems: "center",
-                    color: "black",
-                    fontFamily: "Lato",
-                    fontWeight: 400,
-                    fontSize: 20,
+                    flexDirection: "column",
+                    gap: 8,
                   }}
                 >
-                  Advanced mode
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                  }}
-                >
-                  <StyledSwitch
-                    onChange={() => setAdvanceMode((prev) => !prev)}
-                  />
                   <div
                     style={{
-                      alignSelf: "center",
                       display: "flex",
                       alignItems: "center",
                       color: "black",
@@ -759,237 +884,113 @@ export default function InnerFramePopup() {
                       fontSize: 20,
                     }}
                   >
-                    {advanceMode ? "On" : "Off"}
+                    Advanced mode
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                    }}
+                  >
+                    <StyledSwitch
+                      onChange={() => setAdvanceMode((prev) => !prev)}
+                    />
+                    <div
+                      style={{
+                        alignSelf: "center",
+                        display: "flex",
+                        alignItems: "center",
+                        color: "black",
+                        fontFamily: "Lato",
+                        fontWeight: 400,
+                        fontSize: 20,
+                      }}
+                    >
+                      {advanceMode ? "On" : "Off"}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </TextOnlyTooltip>
-          </div>
-          <ul className="sortable-TESTWRAPPER-list">
-            {selected && infoProject && Object.keys(selected).map((k, i, arraySel) => (
-              <li
-                id={k}
-                className="sortable-test1-item"
-                draggable="true"
-                key={k}
-                style={{ margin: 10 }}
-              >
-                <WrapperTemplate
-                  doReset={doReset}
-                  setFinalPrint={setSelected}
-                  projectInfo={infoProject}
-                  wrapperType={selected[k].type}
-                  keyWrapper={k}
-                  setUpdate={setUpdate}
-                  advanceMode={advanceMode}
-                  changePrintData={setSelected}
-                  changePrintOrder={setOrderSelection}
-                  showTrashButton={arraySel.length > 1}
-                />
-              </li>
-            ))}
-          </ul>
-          {advanceMode ? (
-            <div
+              </TextOnlyTooltip> */}
+              <Button variant="contained" startIcon={<Add />}> Add section</Button>
+            </Grid2>
+            <Modal
+              open={openModalAddWrapper}
+              onClose={() => handleOpenModalAddWrapper(false)}
               style={{
-                borderRadius: 6,
-                borderWidth: 1,
-                borderStyle: "solid",
-                borderCollor: "#EEEEEE",
                 display: "flex",
-                padding: 1,
-                flexDirection: "column",
-                alignItems: "flexStart",
-                alignSelf: "stretch",
-                backgroundColor: "#FCFAFA",
-                margin: 12,
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "row",
               }}
             >
               <div
                 style={{
-                  display: "flex",
-                  width: 80,
-                  height: 28,
-                  paddingLeft: 12,
-                  borderRadius: 4,
-                  paddingRight: 6,
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  backgroundColor: "#F50",
-                  color: "white",
-                  cursor: "pointer",
+                  backgroundColor: "white",
+                  width: "50%",
+                  borderRadius: 10,
                 }}
-                onClick={() => handleOpenModalAddWrapper(true)}
               >
-                Add
-                <ExpandMore />
-              </div>
-            </div>
-          ) : (
-            <div />
-          )}
-
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              padding: 15,
-              gap: 12,
-            }}
-          >
-            <Button
-              style={{
-                borderRadius: 4,
-                backgroundColor: "#F50",
-                borderStyle: "solid",
-                borderColor: "#F50",
-                color: "white",
-                margin: "auto",
-                padding: 15,
-              }}
-              onClick={() => {
-                // openFileDialogSettingData();
-              }}
-            >
-              Choose an export folder
-            </Button>
-            <div>
-              {folder
-                ? `Folder selected : ${folder}`
-                : "Please choose an export folder"}
-            </div>
-            <Input
-              onChange={(e) => {
-                handleInputChange(e);
-              }}
-              value={nameFile}
-              placeholder="your file name here (no special characters allowed)"
-            />
-            <Button
-              style={
-                isJsonValidate
-                  ? {
-                      borderRadius: 4,
-                      backgroundColor: "#F50",
-                      borderStyle: "solid",
-                      margin: "auto",
-                      borderColor: "#F50",
-                      color: "white",
-                      padding: 15,
-                    }
-                  : {
-                      borderRadius: 4,
-                      backgroundColor: "grey",
-                      borderStyle: "solid",
-                      borderColor: "#F50",
-                      margin: "auto",
-                      color: "white",
-                      padding: 15,
-                    }
-              }
-              onClick={async () => {
-                // const executablePath =
-                //   await window.electronAPI.getBrowserPath();
-
-                // let browser;
-                // try {
-                //   browser = await window.electronAPI.launchPuppeteer({
-                //     headless: "new",
-                //     args: ["--disable-web-security"],
-                //     executablePath,
-                //   });
-                // } catch (err) {
-                //   browser = await window.electronAPI.launchPuppeteer({
-                //     headless: "new",
-                //     args: [
-                //       "--disable-web-security",
-                //       "--no-sandbox",
-                //       "--disable-setuid-sandbox",
-                //     ],
-                //     executablePath,
-                //   });
-                // }
-
-                // setMessagePrint("Generating Pdf ...");
-
-                try {
-                  setMessagePrint((prev) => `${prev}\nInstanciating pdfGen`);
-                  console.log(kitchenFaucet);
-                  // Import PdfGenStatic directly
-
-                  // const pdfGen = new PdfGen(
-                  //   { ...JSON.parse(kitchenFaucet), browser },
-                  //   pdfCallBacks,
-                  // );
-                  // await pdfGen.doPdf();
-                } catch (pdfError) {
-                  setMessagePrint(
-                    (prev) =>
-                      `${prev}\nPDF generation failed: ${pdfError.message}`,
-                  );
-                  return;
-                }
-
-                setMessagePrint(
-                  (prev) => `${prev}\nSuccessful pdf generation.`,
-                );
-              }}
-            >
-              print
-            </Button>
-          </div>
-        </div>
-        <Modal
-          open={openModalAddWrapper}
-          onClose={() => handleOpenModalAddWrapper(false)}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexDirection: "row",
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "white",
-              width: "50%",
-              borderRadius: 10,
-            }}
-          >
-            <div>
-              {Object.keys(init).map((c) => (
-                // eslint-disable-next-line
-                <div
-                  className="pdfChoice"
-                  onClick={() => {
-                    const i = Math.max(orderSelection) + 1;
-                    setSelected((prev) => {
-                      const data = { ...prev };
-                      data[i] = { type: c, content: {} };
-                      return data;
-                    });
-                    setOrderSelection((prev) => [...prev, i]);
-                    handleOpenModalAddWrapper(false);
-                  }}
-                >
-                  {initNames[c]}
+                <div>
+                  {Object.keys(init).map((c) => (
+                    // eslint-disable-next-line
+                    <div
+                      className="pdfChoice"
+                      onClick={() => {
+                        const i = Math.max(orderSelection) + 1;
+                        setSelected((prev) => {
+                          const data = { ...prev };
+                          data[i] = { type: c, content: {} };
+                          return data;
+                        });
+                        setOrderSelection((prev) => [...prev, i]);
+                        handleOpenModalAddWrapper(false);
+                      }}
+                    >
+                      {initNames[c]}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        </Modal>
-      </div>
-      <div
-        style={{
-          width: "40%",
-          height: "100%",
-          whiteSpace: "pre-wrap",
-          overflow: "scroll",
-          padding: 12,
-        }}
-      >
-        {messagePrint}
-      </div>
-    </div>
+              </div>
+            </Modal>
+            {messagePrint}
+          </Grid2>
+        </DialogContent>
+
+        <PanDialogActions
+          //closeFn={() => handleClose()}
+          closeLabel={doI18n("pages:core-contenthandler_text_translation:close", i18nRef.current)}
+          //actionFn={handleCreate}
+          closeOnAction={false}
+          actionLabel={doI18n("pages:core-contenthandler_text_translation:create", i18nRef.current)}
+        />
+      </PanDialog>
+
+      <ul className="sortable-TESTWRAPPER-list">
+        {selected && infoProject && Object.keys(selected).map((k, i, arraySel) => (
+          <li
+            id={k}
+            className="sortable-test1-item"
+            draggable="true"
+            key={k}
+            style={{ margin: 10 }}
+          >
+            <WrapperTemplate
+              doReset={doReset}
+              setFinalPrint={setSelected}
+              projectInfo={infoProject}
+              wrapperType={selected[k].type}
+              keyWrapper={k}
+              setUpdate={setUpdate}
+              advanceMode={advanceMode}
+              changePrintData={setSelected}
+              changePrintOrder={setOrderSelection}
+              showTrashButton={arraySel.length > 1}
+            />
+          </li>
+        ))}
+      </ul>
+
+    </Box>
+
   );
 }
