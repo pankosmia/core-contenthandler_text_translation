@@ -15,6 +15,12 @@
           "placeHolders": {},
           "label": "pages:core-contenthandler_text_translation:new_translation_text",
           "url": "/createDocument/textTranslation"
+        },
+        {
+          "doc": "Create document for textTranslation Project",
+          "placeHolders": {},
+          "label": "pages:core-contenthandler_text_translation:new_translation_text",
+          "url": "/pptrTest"
         }
       ],
       "new_book": [
