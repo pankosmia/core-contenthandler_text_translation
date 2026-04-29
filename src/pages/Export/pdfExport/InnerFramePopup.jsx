@@ -17,7 +17,7 @@ import { SelectOption } from "./SelectOptions";
 import { Add, ExpandMore } from "@mui/icons-material";
 import { PanDialog, PanDialogActions, i18nContext } from "pankosmia-rcl";
 import Bcv from "../pdfExport/icons/sectionIcons/bcv";
-import fontsJson from './fonts.json';
+import fontsJson from '../pdfExport/fieldPicker/fonts.json';
 
 // import localForage from 'localforage';
 // import readLocalResources from '@/components/Resources/useReadLocalResources';
@@ -281,7 +281,6 @@ export default function InnerFramePopup() {
   });
   const { debugRef } = useContext(debugContext);
   const { i18nRef } = useContext(i18nContext);
-  const navItems = ["OPEN PRESET", "SAVE AS PRESET"]
   // fake selected project
 
   const location = useLocation();
@@ -311,11 +310,19 @@ export default function InnerFramePopup() {
 
   // const jsonWithHeaderChoice = PdfGen.pageInfo();
 
+  // const jsonWithHeaderChoice = {
+  //   pages: ["Letter", "Legal", "A4", "Executive"], // paper sizes
+  //   fonts: ["Gentium", "Times New Roman", "Arial", "All Gentium"], // font options
+  //   sizes: ["8pt", "9pt", "10pt", "12pt", "14pt"], // font sizes
+  //   verbose: ["true", "false"], // optional
+  // };
+
+
   const jsonWithHeaderChoice = {
-    pages: ["Letter", "Legal", "A4", "Executive"], // paper sizes
-    fonts: ["Gentium", "Times New Roman", "Arial", "All Gentium"], // font options
-    sizes: ["8pt", "9pt", "10pt", "12pt", "14pt"], // font sizes
-    verbose: ["true", "false"], // optional
+    pages: ["Letter", "Legal", "A4", "Executive"],
+    fonts: Object.entries(fontsJson).map(([key, value]) => value.label.en),
+    sizes: ["8pt", "9pt", "10pt", "12pt", "14pt"],
+    verbose: ["true", "false"],
   };
   // use to know if we can drag or not
   const [update, setUpdate] = useState(true);
@@ -353,11 +360,13 @@ export default function InnerFramePopup() {
   const [headerInfo, setHeaderInfo] = useState(
     '{"sizes":"9on11","fonts":"allGentium","pages":"EXECUTIVE", "verbose":"false"}',
   );
+  console.log("headerInfo",headerInfo)
   // const [headerInfo, setHeaderInfo] = useState('{}');
   const [nameFile, setNameFile] = useState("");
   const [folder, setFolder] = useState(null);
   // zoom of the preview
   const [kitchenFaucet, setKitchenFaucet] = useState("{}");
+  console.log("kichenFaucet",kitchenFaucet)
   const [openModalAddWrapper, setOpenModalAddWrapper] = useState(false);
 
   const handleOpenModalAddWrapper = (isOpen) => {
@@ -600,7 +609,6 @@ export default function InnerFramePopup() {
       setNameFile(value); // Update state only if the input matches the regex
     }
   };
-  console.log("champ font",jsonWithHeaderChoice)
 
   return (
     <Box>
@@ -622,31 +630,47 @@ export default function InnerFramePopup() {
         </AppBar>
         <DialogContent>
           <Grid2 container spacing={1} >
-            <Grid2 item size={12}>
+            <Grid2 item size={5}>
               <SelectOption
                 title="Paper size"
                 type="pages"
                 option={jsonWithHeaderChoice.pages}
                 handleChange={handleChangeHeaderInfo}
+                // setSelectedValue={setSelectedValue}
+                // selectedValue={selectedValue.pages}
               />
             </Grid2>
-            <Grid2 item size={12}>
+            <Grid2 item size={5}>
               <SelectOption
                 title="Font family"
                 type="fonts"
                 option={jsonWithHeaderChoice.fonts}
                 handleChange={handleChangeHeaderInfo}
+                // setSelectedValue={setSelectedValue}
+                // selectedValue={selectedValue.fonts}
               />
             </Grid2>
-            <Grid2 item size={12}>
+            <Grid2 item size={5}>
               <SelectOption
                 title="Font size"
                 type="sizes"
                 option={jsonWithHeaderChoice.sizes}
                 handleChange={handleChangeHeaderInfo}
+                // setSelectedValue={setSelectedValue}
+                // selectedValue={selectedValue.sizes}
               />
             </Grid2>
-            <Grid2 item>
+            <Grid2 item size="auto">
+              {console.log(headerInfo.fonts && Object.entries(fontsJson[headerInfo.fonts])
+                .filter(([key]) => ["heading", "body", "body2", "greek", "footnote"].includes(key))
+                .map(([key, value]) => (
+                  <div key={key} style={{ fontFamily: value }}>
+                    <span>{key} : </span>
+                    <span>{value}</span>
+                  </div>
+                )))}
+            </Grid2>
+            <Grid2 item size={12}>
               <Box
                 sx={{
                   display: "flex",
@@ -658,7 +682,7 @@ export default function InnerFramePopup() {
                 <Card sx={{ flexDirection: "row" }}>
                   <CardContent>
                     <IconButton sx={{ fontSize: 72 }}>
-                      <Bcv  />
+                      <Bcv />
                     </IconButton>
                   </CardContent>
                   <CardContent>
