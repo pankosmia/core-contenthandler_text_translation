@@ -15,9 +15,9 @@ import { WrapperTemplate } from "./WrapperTemplate";
 import { SelectOption } from "./SelectOptions";
 
 import { Add, ExpandMore } from "@mui/icons-material";
-import { PanDialog, PanDialogActions, i18nContext } from "pankosmia-rcl";
+import { PanDialog, PanDialogActions, i18nContext, Header } from "pankosmia-rcl";
 import Bcv from "../pdfExport/icons/sectionIcons/bcv";
-import fontsJson from './fonts.json';
+import fontsJson from '../pdfExport/fieldPicker/fonts.json';
 
 // import localForage from 'localforage';
 // import readLocalResources from '@/components/Resources/useReadLocalResources';
@@ -281,18 +281,21 @@ export default function InnerFramePopup() {
   });
   const { debugRef } = useContext(debugContext);
   const { i18nRef } = useContext(i18nContext);
-  const navItems = ["OPEN PRESET", "SAVE AS PRESET"]
   // fake selected project
 
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-
   const selectedProject = params.get("repoPath")
-
   const [projectSummaries, setProjectSummaries] = useState(null);
+  const [open, setOpen] = useState(true);
 
   // console.log(projectSummaries);
-
+  const handleClose = async () => {
+    setOpen(false);
+    setTimeout(() => {
+      window.location.href = '/clients/content';
+    }, 500);
+  };
   const getProjectSummaries = async () => {
     const summariesResponse = await getJson(
       "/burrito/metadata/summaries",
@@ -312,10 +315,11 @@ export default function InnerFramePopup() {
   // const jsonWithHeaderChoice = PdfGen.pageInfo();
 
   const jsonWithHeaderChoice = {
-    pages: ["Letter", "Legal", "A4", "Executive"], // paper sizes
-    fonts: ["Gentium", "Times New Roman", "Arial", "All Gentium"], // font options
-    sizes: ["8pt", "9pt", "10pt", "12pt", "14pt"], // font sizes
-    verbose: ["true", "false"], // optional
+    pages: ["Letter", "Legal", "A4", "Executive"],
+    fonts: Object.entries(fontsJson).map(([key, value]) => value.label.en),
+    label_fonts: Object.entries(fontsJson).map(([key, value]) => key),
+    sizes: ["8pt", "9pt", "10pt", "12pt", "14pt"],
+    verbose: ["true", "false"],
   };
   // use to know if we can drag or not
   const [update, setUpdate] = useState(true);
@@ -348,16 +352,19 @@ export default function InnerFramePopup() {
     }
   }, [selectedProject, projectSummaries]);
 
-
+  
   // the selected headerInfo
   const [headerInfo, setHeaderInfo] = useState(
     '{"sizes":"9on11","fonts":"allGentium","pages":"EXECUTIVE", "verbose":"false"}',
   );
+  let parseHeaderInfo = JSON.parse(headerInfo)
+
   // const [headerInfo, setHeaderInfo] = useState('{}');
   const [nameFile, setNameFile] = useState("");
   const [folder, setFolder] = useState(null);
   // zoom of the preview
   const [kitchenFaucet, setKitchenFaucet] = useState("{}");
+
   const [openModalAddWrapper, setOpenModalAddWrapper] = useState(false);
 
   const handleOpenModalAddWrapper = (isOpen) => {
@@ -373,50 +380,50 @@ export default function InnerFramePopup() {
   const itemClassName = "sortable-test1-item";
 
   // This useEffect Allow the user to drag end drop element in a list (here the wrapper themSelf)
-  useEffect(() => {
-    const sortableList = document.querySelector(`.${sortableListClassName}`);
-    const items = sortableList.querySelectorAll(`.${itemClassName}`) ?? "";
-    items.forEach((item) => {
-      item.addEventListener("dragstart", () => {
-        setTimeout(() => item.classList.add("dragging"), 0);
-      });
-      item.addEventListener("dragend", () => {
-        item.classList.remove("dragging");
-      });
-    });
-    const initSortableList = (e) => {
-      if (update) {
-        e.preventDefault();
-        e.stopPropagation();
-        const draggingItem = document.querySelector(
-          `.${itemClassName}.dragging`,
-        );
-        if (!draggingItem) {
-          return;
-        }
-        const siblings = [
-          ...sortableList.querySelectorAll(`.${itemClassName}:not(.dragging)`),
-        ];
+  // useEffect(() => {
+  //   const sortableList = document.querySelector(`.${sortableListClassName}`);
+  //   const items = sortableList.querySelectorAll(`.${itemClassName}`) ?? "";
+  //   items.forEach((item) => {
+  //     item.addEventListener("dragstart", () => {
+  //       setTimeout(() => item.classList.add("dragging"), 0);
+  //     });
+  //     item.addEventListener("dragend", () => {
+  //       item.classList.remove("dragging");
+  //     });
+  //   });
+  //   const initSortableList = (e) => {
+  //     if (update) {
+  //       e.preventDefault();
+  //       e.stopPropagation();
+  //       const draggingItem = document.querySelector(
+  //         `.${itemClassName}.dragging`,
+  //       );
+  //       if (!draggingItem) {
+  //         return;
+  //       }
+  //       const siblings = [
+  //         ...sortableList.querySelectorAll(`.${itemClassName}:not(.dragging)`),
+  //       ];
 
-        const nextSibling = siblings.find(
-          (sibling) => e.clientY <= sibling.offsetTop + sibling.offsetHeight,
-        );
+  //       const nextSibling = siblings.find(
+  //         (sibling) => e.clientY <= sibling.offsetTop + sibling.offsetHeight,
+  //       );
 
-        sortableList.insertBefore(draggingItem, nextSibling);
-      }
-    };
+  //       sortableList.insertBefore(draggingItem, nextSibling);
+  //     }
+  //   };
 
-    sortableList.addEventListener("dragover", initSortableList);
-    sortableList.addEventListener("dragenter", (e) => e.preventDefault());
-    return () => {
-      sortableList.removeEventListener("dragover", initSortableList);
-      items.forEach((item) => {
-        item.removeEventListener("dragstart", () => {
-          setTimeout(() => item.classList.add("dragging"), 0);
-        });
-      });
-    };
-  }, [update]);
+  //   sortableList.addEventListener("dragover", initSortableList);
+  //   sortableList.addEventListener("dragenter", (e) => e.preventDefault());
+  //   return () => {
+  //     sortableList.removeEventListener("dragover", initSortableList);
+  //     items.forEach((item) => {
+  //       item.removeEventListener("dragstart", () => {
+  //         setTimeout(() => item.classList.add("dragging"), 0);
+  //       });
+  //     });
+  //   };
+  // }, [update]);
   // useEffect(() => {
   //   const pickerJson = Object.keys(listResourcesForPdf).reduce(
   //     (a, v) => ({ ...a, [v]: {} }),
@@ -600,10 +607,28 @@ export default function InnerFramePopup() {
       setNameFile(value); // Update state only if the input matches the regex
     }
   };
-  console.log("champ font",jsonWithHeaderChoice)
 
   return (
     <Box>
+      <Box
+        sx={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          zIndex: -1,
+          backgroundImage:
+            'url("/app-resources/pages/content/background_blur.png")',
+          backgroundRepeat: "no-repeat",
+          backdropFilter: "blur(3px)",
+        }}
+      />
+      <Header
+        titleKey={`${doI18n("pages:content:title", i18nRef.current)}`}
+        currentId="core-contenthandler_text_translation"
+        requireNet={false}
+      />
       <PanDialog titleLabel="PDF publisher" isOpen={true}>
         <AppBar position="static" sx={{ backgroundColor: "#f5f5f5" }}>
           <Toolbar>
@@ -622,31 +647,40 @@ export default function InnerFramePopup() {
         </AppBar>
         <DialogContent>
           <Grid2 container spacing={1} >
-            <Grid2 item size={12}>
-              <SelectOption
-                title="Paper size"
-                type="pages"
-                option={jsonWithHeaderChoice.pages}
-                handleChange={handleChangeHeaderInfo}
-              />
+            <Grid2 size={8} container direction="column" spacing={1}>
+              <Grid2 item >
+                <SelectOption
+                  title="Paper size"
+                  type="pages"
+                  option={jsonWithHeaderChoice.pages}
+                  handleChange={handleChangeHeaderInfo}
+                />
+              </Grid2>
+              <Grid2>
+                <SelectOption
+                  title="Font family"
+                  type="fonts"
+                  option={jsonWithHeaderChoice.label_fonts}
+                  handleChange={handleChangeHeaderInfo}
+                />
+              </Grid2>
+              <Grid2>
+                <SelectOption
+                  title="Font size"
+                  type="sizes"
+                  option={jsonWithHeaderChoice.sizes}
+                  handleChange={handleChangeHeaderInfo}
+                />
+              </Grid2>
+            </Grid2>
+            <Grid2 size="auto">
+              {Object.entries(fontsJson[parseHeaderInfo.fonts])
+                .filter(([key]) => ["heading", "body", "body2", "greek", "footnote"].includes(key))
+                .map(([key, value]) => (
+                  <Typography sx={{ fontFamily:value }}>{key} : preview </Typography>
+                ))}
             </Grid2>
             <Grid2 item size={12}>
-              <SelectOption
-                title="Font family"
-                type="fonts"
-                option={jsonWithHeaderChoice.fonts}
-                handleChange={handleChangeHeaderInfo}
-              />
-            </Grid2>
-            <Grid2 item size={12}>
-              <SelectOption
-                title="Font size"
-                type="sizes"
-                option={jsonWithHeaderChoice.sizes}
-                handleChange={handleChangeHeaderInfo}
-              />
-            </Grid2>
-            <Grid2 item>
               <Box
                 sx={{
                   display: "flex",
@@ -658,11 +692,10 @@ export default function InnerFramePopup() {
                 <Card sx={{ flexDirection: "row" }}>
                   <CardContent>
                     <IconButton sx={{ fontSize: 72 }}>
-                      <Bcv  />
+                      <Bcv />
                     </IconButton>
-                  </CardContent>
-                  <CardContent>
-                    <ul className="sortable-TESTWRAPPER-list">
+
+                    {/* <ul className="sortable-TESTWRAPPER-list">
                       {selected && infoProject && Object.keys(selected).map((k, i, arraySel) => (
                         <li
                           id={k}
@@ -735,15 +768,6 @@ export default function InnerFramePopup() {
                       }}
                     >
                       <Button
-                        style={{
-                          borderRadius: 4,
-                          backgroundColor: "#F50",
-                          borderStyle: "solid",
-                          borderColor: "#F50",
-                          color: "white",
-                          margin: "auto",
-                          padding: 15,
-                        }}
                         onClick={() => {
                           // openFileDialogSettingData();
                         }}
@@ -834,11 +858,10 @@ export default function InnerFramePopup() {
                       >
                         print
                       </Button>
-                    </div>
+                    </div> */}
                   </CardContent>
                 </Card>
               </Box>
-
 
               {/* <TextOnlyTooltip
                 placement="top-end"
@@ -911,11 +934,11 @@ export default function InnerFramePopup() {
                   </div>
                 </div>
               </TextOnlyTooltip> */}
-              <Button variant="contained" startIcon={<Add />}> Add section</Button>
             </Grid2>
-            <Modal
-              open={openModalAddWrapper}
-              onClose={() => handleOpenModalAddWrapper(false)}
+            <Button variant="contained" startIcon={<Add />}> Add section</Button>
+            {/* <Modal
+              //open={openModalAddWrapper}
+              //onClose={() => handleOpenModalAddWrapper(false)}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -952,12 +975,12 @@ export default function InnerFramePopup() {
                 </div>
               </div>
             </Modal>
-            {messagePrint}
+            {messagePrint} */}
           </Grid2>
         </DialogContent>
 
         <PanDialogActions
-          //closeFn={() => handleClose()}
+          closeFn={() => handleClose()}
           closeLabel={doI18n("pages:core-contenthandler_text_translation:close", i18nRef.current)}
           //actionFn={handleCreate}
           closeOnAction={false}
@@ -965,32 +988,24 @@ export default function InnerFramePopup() {
         />
       </PanDialog>
 
-      <ul className="sortable-TESTWRAPPER-list">
+      {/* A supprimer */}
+      {/* <ul className="sortable-TESTWRAPPER-list">
         {selected && infoProject && Object.keys(selected).map((k, i, arraySel) => (
-          <li
-            id={k}
-            className="sortable-test1-item"
-            draggable="true"
-            key={k}
-            style={{ margin: 10 }}
-          >
-            <WrapperTemplate
-              doReset={doReset}
-              setFinalPrint={setSelected}
-              projectInfo={infoProject}
-              wrapperType={selected[k].type}
-              keyWrapper={k}
-              setUpdate={setUpdate}
-              advanceMode={advanceMode}
-              changePrintData={setSelected}
-              changePrintOrder={setOrderSelection}
-              showTrashButton={arraySel.length > 1}
-            />
-          </li>
+          <WrapperTemplate
+            doReset={doReset}
+            setFinalPrint={setSelected}
+            projectInfo={infoProject}
+            wrapperType={selected[k].type}
+            keyWrapper={k}
+            setUpdate={setUpdate}
+            advanceMode={advanceMode}
+            changePrintData={setSelected}
+            changePrintOrder={setOrderSelection}
+            showTrashButton={arraySel.length > 1}
+          />
         ))}
-      </ul>
-
-    </Box>
+      </ul> */}
+    </Box >
 
   );
 }
