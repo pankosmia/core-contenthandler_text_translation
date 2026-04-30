@@ -1,24 +1,26 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import svgrPlugin from 'vite-plugin-svgr'; 
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import svgrPlugin from "vite-plugin-svgr";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), svgrPlugin({ 
-      svgrOptions: { icon: true } 
-    })],
+  plugins: [
+    react(),
+    svgrPlugin({
+      svgrOptions: { icon: true },
+    }),
+  ],
   server: {
     port: 5174, // Unique port for new_project
     strictPort: true,
     host: true,
     cors: true,
-    origin: 'http://localhost:8000',
+    origin: "http://localhost:8000",
   },
   build: {
-    outDir: 'build',
+    outDir: "build",
     emptyOutDir: true,
-    sourcemap:true
-    
+    sourcemap: true,
   },
-  base: '/clients/core-contenthandler_text_translation'
-})
+  base: "/clients/core-contenthandler_text_translation",
+});

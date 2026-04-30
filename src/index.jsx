@@ -1,79 +1,176 @@
 import { createRoot } from "react-dom/client";
-import { SpaContainer } from "pankosmia-rcl";
-import { createHashRouter, RouterProvider } from "react-router-dom";
-import './index.css';
+import { SpaContainer, typographyContext } from "pankosmia-rcl";
+import { createHashRouter, Outlet, RouterProvider } from "react-router-dom";
+
+import "./index.css";
+
 import NewBibleContent from "./pages/NewTextTranslationContent";
 import NewTextTranslationBook from "./pages/NewTextTranslationBook";
 import UsfmExport from "./pages/Export/UsfmExport";
 import PdfGenerate from "./pages/Export/PdfGenerate";
 import UsfmImport from "./pages/Import/UsfmImport";
-import App from "./App";
 import DeleteTextTranslationBook from "./pages/DeleteTextTranslationBook";
-import { ThemeProvider } from "@emotion/react";
-import { useEffect, useState } from "react";
+import { TestPptrFirefox } from "./pages/Export/testPptr/TestPptrFirefox";
+
+import { createTheme, ThemeProvider } from "@mui/material";
+import CssBaseline from "@mui/material/CssBaseline";
+
+import { useContext, useEffect, useMemo, useState } from "react";
 import { getAndSetJson } from "pithekos-lib";
-import { createTheme, styled } from "@mui/material";
-import { SnackbarProvider,  MaterialDesignContent, } from "notistack";
-import InnerFramePopup from "./pages/Export/pdfExport/InnerFramePopup";
+
+import { SnackbarProvider, MaterialDesignContent } from "notistack";
+import { styled } from "@mui/material/styles";
+
+/* ---------------- ROUTER ---------------- */
+
 const router = createHashRouter([
-    {
-        path: "/",
-        element: <App />
-    },
-    {
-        path: "/createDocument/textTranslation",
-        element: <NewBibleContent />
-    },
-    {
-        path: "newBook",
-        element: <NewTextTranslationBook />
-    },
-    {
-        path: "deleteBook",
-        element: <DeleteTextTranslationBook />
-    },
-    {
-        path: "importBook",
-        element: <UsfmImport />
-    },
-    {
-        path: "/export/usfm",
-        element: <UsfmExport />
-    },
-    {
-        path: "/export/pdf",
-        element: <InnerFramePopup />
-    }
+  {
+    path: "/",
+    element: <AppLayout />,
+    children: [
+      { path: "createDocument/textTranslation", element: <NewBibleContent /> },
+      { path: "newBook", element: <NewTextTranslationBook /> },
+      { path: "deleteBook", element: <DeleteTextTranslationBook /> },
+      { path: "importBook", element: <UsfmImport /> },
+      { path: "export/usfm", element: <UsfmExport /> },
+      { path: "export/pdf", element: <PdfGenerate /> },
+      { path: "pptrTest", element: <TestPptrFirefox /> },
+    ],
+  },
 ]);
+
+/* ---------------- APP LAYOUT ---------------- */
+
 function AppLayout() {
+  const { typographyRef } = useContext(typographyContext);
 
-    const [themeSpec, setThemeSpec] = useState({
-        palette: {
-            primary: {
-                main: "#666",
-            },
-            secondary: {
-                main: "#888",
-            },
-        },
-    });
+  const [themeSpec, setThemeSpec] = useState({
+    palette: {
+      primary: { main: "#666" },
+      secondary: { main: "#888" },
+    },
+  });
 
-    useEffect(() => {
-        if (
-            themeSpec.palette &&
-            themeSpec.palette.primary &&
-            themeSpec.palette.primary.main &&
-            themeSpec.palette.primary.main === "#666"
-        ) {
-            getAndSetJson({
-                url: "/app-resources/themes/default.json",
-                setter: setThemeSpec,
-            }).then();
+  const [fontFamily, setFontFamily] = useState([]);
+  const [fontFamilyCorrespondance, setFontFamilyCorrespondance] =
+    useState(null);
+  const [fontsReady, setFontsReady] = useState(false);
+
+  /* ---------------- LOAD THEME JSON ---------------- */
+
+  useEffect(() => {
+    if (themeSpec?.palette?.primary?.main !== "#666") return;
+
+    getAndSetJson({
+      url: "/app-resources/themes/default.json",
+      setter: setThemeSpec,
+    }).then();
+  }, []);
+
+  /* ---------------- WAIT FOR FONTS ---------------- */
+
+  useEffect(() => {
+    document.fonts.ready.then(() => setFontsReady(true));
+  }, []);
+
+  /* ---------------- MAP TYPOGRAPHY FONTS ---------------- */
+  useEffect(() => {
+    if (fontFamilyCorrespondance) {
+      let stringFront = [];
+      let newFont = {};
+      let table = typographyRef.current.font_set.split("Pankosmia");
+      table.shift();
+      table = table.map((e) => "Pankosmia" + e);
+      Object.entries(fontFamilyCorrespondance).forEach(([k, v]) => {
+        console.log([k, v]);
+        let index = table.indexOf(k);
+        console.log(index);
+        if (index >= 0) {
+          newFont[index] = v;
         }
-    }, []);
+      });
+      for (let e = 0; e < Object.keys(table).length; e++) {
+        console.log(newFont);
+        if (newFont[e]) {
+          console.log(stringFront);
+          stringFront.push(newFont[e]);
+        }
+      }
+      setFontFamily(stringFront);
+    }
+  }, [typographyRef.current?.font_set, fontFamilyCorrespondance]);
 
-    const theme = createTheme(themeSpec);
-    const CustomSnackbarContent = styled(MaterialDesignContent)(() => ({
+  useEffect(() => {
+    let cores = {};
+
+    document.fonts.ready.then(() => {
+      document.fonts.forEach((f) => {
+        const cleanFamily = f.family
+          .replace(/['"]/g, "") // remove quotes " or '
+          .trim() // remove leading/trailing spaces
+          .replace(/\s+/g, " "); // normalize multiple spaces
+
+        console.log(cleanFamily);
+
+        cores[cleanFamily.replaceAll(" ", "")] = cleanFamily;
+      });
+
+      setFontFamilyCorrespondance(cores);
+    });
+  }, []);
+  /* ---------------- BUILD THEME (NO STATE) ---------------- */
+
+  const theme = useMemo(() => {
+    const fontStack =
+      fontFamily?.length > 0
+        ? fontFamily.join(",")
+        : "Roboto, Arial, sans-serif";
+
+    return createTheme({
+      ...themeSpec,
+
+      typography: {
+        fontFamily: fontStack,
+      },
+
+      components: {
+        MuiCssBaseline: {
+          styleOverrides: {
+            body: {
+              fontFamily: fontStack,
+            },
+          },
+        },
+
+        MuiTypography: {
+          styleOverrides: {
+            root: {
+              fontFamily: fontStack,
+            },
+          },
+        },
+
+        MuiButton: {
+          styleOverrides: {
+            root: {
+              fontFamily: fontStack,
+            },
+          },
+        },
+
+        MuiListItemText: {
+          styleOverrides: {
+            primary: { fontFamily: fontStack },
+            secondary: { fontFamily: fontStack },
+          },
+        },
+      },
+    });
+  }, [themeSpec, fontFamily]);
+
+  /* ---------------- SNACKBAR STYLE ---------------- */
+  console.log(fontFamily);
+  const CustomSnackbarContent = styled(MaterialDesignContent)(() => ({
     "&.notistack-MuiContent-error": {
       backgroundColor: "#FDEDED",
       color: "#D32F2F",
@@ -91,24 +188,38 @@ function AppLayout() {
       color: "#2E7D32",
     },
   }));
-    return <ThemeProvider theme={theme}>
-        <SnackbarProvider
-            Components={{
-                error: CustomSnackbarContent,
-                info: CustomSnackbarContent,
-                warning: CustomSnackbarContent,
-                success: CustomSnackbarContent,
-            }}
-            maxSnack={6}
-        >
-            <SpaContainer>
-                <RouterProvider router={router} />
-            </SpaContainer>
-        </SnackbarProvider>
 
+  /* ---------------- LOADING GATE ---------------- */
+
+  if (!fontsReady) {
+    return <div>loading...</div>;
+  }
+
+  /* ---------------- RENDER ---------------- */
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+
+      <SnackbarProvider
+        Components={{
+          error: CustomSnackbarContent,
+          info: CustomSnackbarContent,
+          warning: CustomSnackbarContent,
+          success: CustomSnackbarContent,
+        }}
+        maxSnack={6}
+      >
+        <Outlet />
+      </SnackbarProvider>
     </ThemeProvider>
+  );
 }
-createRoot(document.getElementById("root"))
-    .render(
-        <AppLayout />
-    );
+
+/* ---------------- BOOTSTRAP ---------------- */
+
+createRoot(document.getElementById("root")).render(
+  <SpaContainer>
+    <RouterProvider router={router} />
+  </SpaContainer>,
+);

@@ -16,6 +16,7 @@ import ContentZip from "../TextTranslationContent/ContentZip";
 import { useSearchParams } from "react-router-dom";
 import yaml from "js-yaml";
 import JSZip from "jszip";
+import { enqueueSnackbar } from "notistack";
 
 export default function NewBibleContent() {
   const [open, setOpen] = useState(true);
@@ -39,7 +40,6 @@ export default function NewBibleContent() {
   const [repoExists, setRepoExists] = useState(false);
   const [zipContent, setZipContent] = useState([]);
   const [selectedBookList, setSelectedBookList] = useState([]);
-
   const [searchParams] = useSearchParams();
   const uuid = searchParams.get("uuid");
   const hash = window.location.hash;
@@ -52,6 +52,8 @@ export default function NewBibleContent() {
   });
   const [languageIsValid, setLanguageIsValid] = useState(true);
   const [errorAbbreviation, setErrorAbbreviation] = useState(false);
+  const [localBookContent, setLocalBookContent] = useState();
+  const [isUsfmValid, setIsUsfmValid] = useState(false);
 
   const steps = [
     `${doI18n("pages:core-contenthandler_text_translation:name_section", i18nRef.current)}`,
@@ -70,13 +72,6 @@ export default function NewBibleContent() {
         window.location.href = "/clients/content";
       });
     }
-  };
-
-  const handleCloseCreate = async () => {
-    setOpen(false);
-    setTimeout(() => {
-      window.location.href = "/clients/content";
-    });
   };
 
   useEffect(() => {
@@ -170,6 +165,10 @@ export default function NewBibleContent() {
             setShowVersification={setShowVersification}
             selectedPlan={selectedPlan}
             setSelectedPlan={setSelectedPlan}
+            localBookContent={localBookContent}
+            setLocalBookContent={setLocalBookContent}
+            isUsfmValid={isUsfmValid}
+            setIsUsfmValid={setIsUsfmValid}
           />
         );
       default:
@@ -206,15 +205,20 @@ export default function NewBibleContent() {
         if (contentOption === "plan") {
           return versification.trim().length === 3 && Boolean(selectedPlan);
         }
+        if (contentOption === "usfm_file") {
+          return isUsfmValid === true;
+        }
         return true;
       default:
         return true;
     }
   };
+
   const handleCreate = async () => {
     // versification for plan comes from plan
     let planJson = null;
     let submittedVersification = versification;
+
     if (contentOption === "plan" && selectedPlan) {
       const planResponse = await getJson(
         `/burrito/ingredient/raw/${selectedPlan}?ipath=plan.json`,
@@ -231,6 +235,7 @@ export default function NewBibleContent() {
         return;
       }
     }
+
     // Make repo (empty for plans)
     const payload = {
       content_name: contentName,
@@ -255,13 +260,15 @@ export default function NewBibleContent() {
       setPostCount(postCount + 1);
     } else {
       setErrorMessage(
-        `${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${response.status
+        `${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${
+          response.status
         }`,
       );
       setErrorDialogOpen(true);
       return;
     }
-
+    const repoPath =
+      response.json?.repo_path ?? `_local_/_local_/${contentAbbr}`;
     // Add books for plan
     if (planJson) {
       // Get bookCode list
@@ -339,7 +346,8 @@ export default function NewBibleContent() {
         );
         if (!newBookResponse.ok) {
           setErrorMessage(
-            `${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${response.status
+            `${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${
+              response.status
             }`,
           );
           setErrorDialogOpen(true);
@@ -354,6 +362,28 @@ export default function NewBibleContent() {
             payload: zipContent.find((e) => e.name === l).data,
           }),
           debugRef.current,
+        );
+      }
+    } else if (contentOption === "usfm_file" && localBookContent) {
+      const response = await postJson(
+        `/burrito/ingredient/raw/${repoPath}?ipath=${`${localBookContent.split("toc1")[0].split(" ")[1]}.usfm`}&update_ingredients`,
+        JSON.stringify({ payload: localBookContent }),
+        debugRef.current,
+      );
+      if (response.ok) {
+        enqueueSnackbar(
+          doI18n(
+            "pages:core-contenthandler_text_translation:book_created",
+            i18nRef.current,
+          ),
+          {
+            variant: "success",
+          },
+        );
+      } else {
+        enqueueSnackbar(
+          `${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${response.status}`,
+          { variant: "error" },
         );
       }
     }
@@ -386,7 +416,6 @@ export default function NewBibleContent() {
     });
 
     await Promise.all(tasks);
-
     return results;
   }
   useEffect(() => {
@@ -464,6 +493,7 @@ export default function NewBibleContent() {
             renderStepContent={renderStepContent}
             isStepValid={isStepValid}
             handleCreate={handleCreate}
+            handleClose={handleClose}
           />
         </DialogContent>
       </PanDialog>

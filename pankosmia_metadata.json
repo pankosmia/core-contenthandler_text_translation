@@ -15,6 +15,12 @@
           "placeHolders": {},
           "label": "pages:core-contenthandler_text_translation:new_translation_text",
           "url": "/createDocument/textTranslation"
+        },
+        {
+          "doc": "Create document for textTranslation Project",
+          "placeHolders": {},
+          "label": "pages:core-contenthandler_text_translation:new_translation_text",
+          "url": "/pptrTest"
         }
       ],
       "new_book": [
@@ -116,8 +122,8 @@
       "es": "Importar libro local"
     },
     "add_content": {
-      "en": "Choose inital structure",
-      "fr": "Choisir structure de départ"
+      "en": "Initial document structure",
+      "fr": "@Choisir structure de départ"
     },
     "no_content_radio": {
       "en": "None",
@@ -417,8 +423,8 @@
       "fr": "Code Langue",
       "id": "Kode Bahasa"
     },
-    "lang_name":{
-      "en":"Language name"
+    "lang_name": {
+      "en": "Language name"
     },
     "book_creation_error": {
       "en": "The book could not be created",
@@ -430,106 +436,114 @@
       "fr": "Texte biblique",
       "id": "Teks alkitabiah"
     },
-    "lang_code_bcp47_list":{
-      "en":" From BCP47 List"
+    "lang_code_bcp47_list": {
+      "en": " From BCP47 List"
     },
-    "lang_code_burrito":{
-      "en":" From another document"
+    "lang_code_burrito": {
+      "en": " From another document"
     },
-     "lang_code_custom_language":{
-      "en":" Create custom language"
+    "lang_code_custom_language": {
+      "en": " Create custom language"
     },
-    "description_bcp47_list":{
-      "en":"Choose a standard (BCP 47) language code from the list.",
-      "fr":"Choisissez un code standard (BCP 47) à partir de la liste."
+    "description_bcp47_list": {
+      "en": "Choose a standard (BCP 47) language code from the list.",
+      "fr": "Choisissez un code standard (BCP 47) à partir de la liste."
     },
-    "description_lang_code_burrito":{
-      "en":"Copy language details from an existing document.",
-      "fr":"Copiez les informations linguistiques d'un autre document."
+    "description_lang_code_burrito": {
+      "en": "Copy language details from an existing document.",
+      "fr": "Copiez les informations linguistiques d'un autre document."
     },
-     "description_custom_language":{
-      "en":"Supply your own custom language name and code.",
-      "fr":"Fournissez votre propre nom et code de langue. "
+    "description_custom_language": {
+      "en": "Supply your own custom language name and code.",
+      "fr": "Fournissez votre propre nom et code de langue. "
     },
-    "local_project":{
-      "en": "Local projects",
-      "fr":"Les projets locaux"
+    "local_resource": {
+      "en": "Local resource",
+      "fr": "Ressource locale",
+      "es": "Recurso local",
+      "id": "Sumber daya lokal"
     },
-    "burrito_resources":{
+    "local_project": {
+      "en": "Local project",
+      "fr": "Projet local",
+      "es": "Proyecto local",
+      "id": "Proyek lokal"
+    },
+    "burrito_resources": {
       "en": "Resources",
-      "fr":"Ressources"
+      "fr": "Ressources"
     },
-    "choose_language":{
-      "en":"Choose language",
-      "fr":"Choisir langue"
+    "choose_language": {
+      "en": "Choose language",
+      "fr": "Choisir langue"
     },
-    "helper_language_code":{
-      "en":"\"x-\" followed by 3 lowercase letters",
-      "fr":"\"x-\" suivi de 3 lettres minuscules (a-z)"
+    "helper_language_code": {
+      "en": "\"x-\" followed by 3 lowercase letters",
+      "fr": "\"x-\" suivi de 3 lettres minuscules (a-z)"
     },
-     "helper_abbreviation":{
-      "en":"Unique short label to identify your document (2-8 letters or numbers, no \" \", no \"_\" at beginning or end)",
-      "fr":"Combinaison unique de caractères pour identifier un document (2-8 lettres ou nombres, pas de \" \", pas de \"_\" au début ou à la fin)"
+    "helper_abbreviation": {
+      "en": "Unique short label to identify your document (2-8 letters or numbers, no \" \", no \"_\" at beginning or end)",
+      "fr": "Combinaison unique de caractères pour identifier un document (2-8 lettres ou nombres, pas de \" \", pas de \"_\" au début ou à la fin)"
     },
-      "helper_versification":{
-      "en":"Defines the system of chapters and verses",
-      "fr":"Définit le système des chapitres et des versets"
+    "helper_versification": {
+      "en": "Defines the system of chapters and verses",
+      "fr": "Définit le système des chapitres et des versets"
     },
-    "helper_book":{
-      "en":"Start with title, chapter and verse numbers",
-      "fr":"Démarrer avec le titre et les numéros des chapitres et des versets"
+    "helper_book": {
+      "en": "Start with title, chapter and verse numbers",
+      "fr": "Démarrer avec le titre et les numéros des chapitres et des versets"
     },
-    "helper_template":{
-      "en":"Start with a template",
-      "fr":"Démarrer avec un modèle"
+    "helper_template": {
+      "en": "Start with a template",
+      "fr": "Démarrer avec un modèle"
     },
-    "document":{
-      "en":"Document",
-      "fr":"Document"
+    "document": {
+      "en": "Document",
+      "fr": "Document"
     },
-    "title_section_burrito":{
-      "en":"Copy from",
-      "fr":"Copier depuis"
+    "title_section_burrito": {
+      "en": "Copy from",
+      "fr": "Copier depuis"
     },
-    "name_section":{
-      "en":"Name",
-      "fr":"Nom"
+    "name_section": {
+      "en": "Name",
+      "fr": "Nom"
     },
-    "content_section":{
-      "en":"Content",
-      "fr":"Contenu"
+    "content_section": {
+      "en": "Content",
+      "fr": "Contenu"
     },
-    "language":{
-      "en":"Language",
-      "fr":"Langue"
+    "language": {
+      "en": "Language",
+      "fr": "Langue"
     },
-    "back_button":{
-      "en":"Back",
-      "fr":"Retour"
+    "back_button": {
+      "en": "Back",
+      "fr": "Retour"
     },
-    "next_button":{
-      "en":"Next",
-      "fr":"Suivant"
+    "next_button": {
+      "en": "Next",
+      "fr": "Suivant"
     },
-    "delete_book":{
-      "en":"Delete Book",
-      "fr":"Supprimer un livre"
+    "delete_book": {
+      "en": "Delete Book",
+      "fr": "Supprimer un livre"
     },
-    "book_deleted":{
-      "en":"Book deleted",
-      "fr":"Livre supprimé"
+    "book_deleted": {
+      "en": "Book deleted",
+      "fr": "Livre supprimé"
     },
-    "book_delete_error":{
-      "en":"The book could not be deleted ",
-      "fr":"Le livre ne peut pas être supprimé"
+    "book_delete_error": {
+      "en": "The book could not be deleted ",
+      "fr": "Le livre ne peut pas être supprimé"
     },
-    "delete_button":{
-      "en":"Delete",
-      "fr":"Supprimer"
+    "delete_button": {
+      "en": "Delete",
+      "fr": "Supprimer"
     },
-    "no_book":{
-      "en":"No book",
-      "fr":"Pas de livre"
+    "no_book": {
+      "en": "No book",
+      "fr": "Pas de livre"
     },
     "pick_book": {
       "en": "Select a book",
@@ -550,6 +564,13 @@
     "custom_formatting": {
       "en": "Custom formatting",
       "es": "Formato personalizado"
+    },
+    "create_usfm_file": {
+      "en": "Import existing USFM translation"
+    },
+    "change_usfm_file": {
+      "en": "To import a new USFM folder, you must first delete the previously imported one",
+      "fr": "Pour importer un nouveau dossier USFM, vous devez d'abord supprimer le dossier précédemment importé"
     }
   }
 }
