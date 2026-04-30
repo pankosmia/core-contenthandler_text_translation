@@ -1,0 +1,4 @@
+export const jxlRow = `<tr>
+    <td class="%%SOURCECLASS%%">%%SOURCE%%</td>
+    <td class="jxlGloss">%%GLOSS%%%%NOTECALLERS%%</td>
+</tr>`;

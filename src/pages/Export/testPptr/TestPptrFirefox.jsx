@@ -1,11 +1,18 @@
 import { Button, Typography, Box } from "@mui/material";
-import { MarkdownSection } from "../pdfExport/pdf-gen/markdownSection";
-import { markdown_page } from "../pdfExport/pdf-gen/markdown_page";
-import { markdown_mono_page } from "../pdfExport/pdf-gen/markdown_mono_page";
-import { setupCSS } from "../pdfExport/pdf-gen/doCss";
+import { MarkdownSection } from "../pdfExport/pdf-gen/Section/markdownSection";
+import { jxlSimpleSection } from "../pdfExport/pdf-gen/Section/jxlSimpleSection";
+import { markdown_page } from "../pdfExport/pdf-gen/HTML/markdown_page";
+import { markdown_mono_page } from "../pdfExport/pdf-gen/HTML/markdown_mono_page";
+import { simple_juxta_sentence } from "../pdfExport/pdf-gen/HTML/simple_juxta_sentence";
+import { jxl } from "../pdfExport/pdf-gen/HTML/jxl";
+import { jxlRow } from "../pdfExport/pdf-gen/HTML/jxlRow";
+import { jxlRow3Col } from "../pdfExport/pdf-gen/HTML/jxlRow3Col";
+import { setupCSS } from "../pdfExport/pdf-gen/Css/doCss";
 import pagesJson from "../pdfExport/pdf-gen/Css/Ressources/pages.json";
 import fontsJson from "../pdfExport/pdf-gen/Css/Ressources/fonts.json";
 import sizesJson from "../pdfExport/pdf-gen/Css/Ressources/sizes.json";
+import { getJson, getText } from "pithekos-lib";
+import { simple_juxta_page } from "../pdfExport/pdf-gen/HTML/simple_juxta_page";
 let mdrSections = {
   id: "markdown",
   type: "markdown",
@@ -16,25 +23,51 @@ let mdrSections = {
     md: "this is the path of md",
   },
 };
+let jxlSections = {
+  id: "juxtaSimple",
+  type: "jxlSimple",
+  bcvRange: "TIT",
+  content: {
+    startOn: "recto",
+    showPageNumber: true,
+    jxl: "git.door43.org/BurritoTruck/fr_juxta",
+    bcvNotes: "git.door43.org/unfoldingWord/en_tn",
+  },
+};
 let templates = {
   markdown_page: markdown_page,
   markdown_mono_page: markdown_mono_page,
+  jxl: jxl,
+  jxlRow: jxlRow,
+  jxlRow3Col: jxlRow3Col,
+  simple_juxta_sentence: simple_juxta_sentence,
+  simple_juxta_page: simple_juxta_page,
 };
 export function TestPptrFirefox() {
   let manifest = [];
+
   async function saveHtml() {
     let css = await setupCSS({
       pageFormat: pagesJson["A4P"],
       fonts: fontsJson["allGentium"],
       fontSizes: sizesJson["9on10"],
     });
-    let mkdrS = new MarkdownSection();
-    mkdrS.doSection({
-      section: mdrSections,
+    // let mkdrS = new MarkdownSection();
+    // mkdrS.doSection({
+    //   section: mdrSections,
+    //   templates: templates,
+    //   manifest: manifest,
+    //   bookCode: "TIT",
+    //   options: null,
+    //   cssLookUp: css,
+    // });
+    let jxlS = new jxlSimpleSection();
+    jxlS.doSection({
+      section: jxlSections,
       templates: templates,
       manifest: manifest,
       bookCode: "TIT",
-      options: null,
+      options: {},
       cssLookUp: css,
     });
   }

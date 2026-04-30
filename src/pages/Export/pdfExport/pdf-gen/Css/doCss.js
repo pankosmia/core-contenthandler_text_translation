@@ -1,10 +1,13 @@
-import { P } from "./Css/Fragment/P";
-import { BODY } from "./Css/Fragment/BODY";
-import { FOOTNOTE } from "./Css/Fragment/FOOTNOTE";
-import { markdown_mono_page_styles } from "./Css/stylePages/markdown_mono_page_styles";
-import { markdown_page_styles } from "./Css/stylePages/markdown_page_styles";
-import { ATPAGE } from "./Css/Fragment/ATPAGE";
-import { BODY2 } from "./Css/Fragment/BODY2";
+import { P } from "./Fragment/P";
+import { H1 } from "./Fragment/H1";
+import { BODY } from "./Fragment/BODY";
+import { FOOTNOTE } from "./Fragment/FOOTNOTE";
+import { markdown_mono_page_styles } from "./stylePages/markdown_mono_page_styles";
+import { markdown_page_styles } from "./stylePages/markdown_page_styles";
+import { simple_juxta_page_styles } from "./stylePages/simple_juxta_page_styles.css";
+import { ATPAGE } from "./Fragment/ATPAGE";
+import { BODY2 } from "./Fragment/BODY2";
+import { JUXTA } from "./Fragment/JUXTA";
 const setupOneCSS = (fileContent, placeholder, markup, value) => {
   const substRe = new RegExp(`${markup}${placeholder}${markup}`, "g");
   return fileContent.replace(substRe, value);
@@ -23,18 +26,21 @@ const checkCssSubstitution = (filename, css, markup) => {
 export async function setupCSS(options) {
   const uuidKeyValues = {};
   const cssFragments = {};
-  const cssFragmentFilenames = ["P", "BODY", "FOOTNOTE", "ATPAGE", "BODY2"];
+  const cssFragmentFilenames = ["P", "BODY", "FOOTNOTE", "ATPAGE", "BODY2","H1","JUXTA"];
   const cssFragmentContent = {
     P: P,
     BODY: BODY,
     BODY2: BODY2,
     FOOTNOTE: FOOTNOTE,
     ATPAGE: ATPAGE,
+    H1:H1,
+    JUXTA:JUXTA
   };
-  const cssFileNames = ["markdown_mono_page_styles", "markdown_page_styles"];
+  const cssFileNames = ["markdown_mono_page_styles", "markdown_page_styles","simple_juxta_page_styles"];
   const cssCotent = {
     markdown_page_styles: markdown_page_styles,
     markdown_mono_page_styles: markdown_mono_page_styles,
+    simple_juxta_page_styles:simple_juxta_page_styles
   };
 
   for (const filename of cssFragmentFilenames) {
