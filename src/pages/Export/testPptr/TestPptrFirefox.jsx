@@ -13,6 +13,7 @@ import fontsJson from "../pdfExport/pdf-gen/Css/Ressources/fonts.json";
 import sizesJson from "../pdfExport/pdf-gen/Css/Ressources/sizes.json";
 import { getJson, getText } from "pithekos-lib";
 import { simple_juxta_page } from "../pdfExport/pdf-gen/HTML/simple_juxta_page";
+import FirefoxInstaller from "./FirefoxInstaller";
 let mdrSections = {
   id: "markdown",
   type: "markdown",
@@ -73,6 +74,7 @@ export function TestPptrFirefox() {
   }
   return (
     <Box sx={{ p: 2 }}>
+      <FirefoxInstaller />
       <Button
         variant="contained"
         onClick={async () => {
