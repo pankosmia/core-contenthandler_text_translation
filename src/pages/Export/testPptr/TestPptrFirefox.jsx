@@ -30,7 +30,7 @@ let jxlSections = {
   content: {
     startOn: "recto",
     showPageNumber: true,
-    jxl: "git.door43.org/BurritoTruck/fr_juxta",
+    jxl: "git.door43.org/BurritoTruck/en_juxta",
     bcvNotes: "git.door43.org/unfoldingWord/en_tn",
   },
 };
