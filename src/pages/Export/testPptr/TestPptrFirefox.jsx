@@ -32,7 +32,7 @@ let jxlSections = {
     startOn: "recto",
     showPageNumber: true,
     jxl: "git.door43.org/BurritoTruck/fr_juxta",
-    bcvNotes: "git.door43.org/shower/eng_tn",
+    bcvNotes: "git.door43.org/unfoldingWord/en_tn",
   },
 };
 let templates = {
