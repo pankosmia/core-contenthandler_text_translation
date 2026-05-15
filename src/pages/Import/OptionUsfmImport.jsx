@@ -65,7 +65,6 @@ function OptionUsfmImport({
       setLoading(true);
     };
     reader.onload = (event) => {
-      console.log(event.target);
       const fileContent = event.target.result;
       setLocalBookContent(fileContent);
       setLoading(false);
