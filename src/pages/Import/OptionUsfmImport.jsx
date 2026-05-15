@@ -13,11 +13,11 @@ import {
 import { enqueueSnackbar } from "notistack";
 import { doI18n } from "pithekos-lib";
 import { i18nContext } from "pankosmia-rcl";
-import { FilePicker } from "react-file-picker";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { Proskomma } from "proskomma-core";
 import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import { useFilePicker } from "use-file-picker";
 
 function OptionUsfmImport({
   localBookContent,
@@ -30,8 +30,20 @@ function OptionUsfmImport({
   const [filePicked, setFilePicked] = useState({});
   const [validationResult, setValidationResult] = useState({});
 
-  //const [bookIsDuplicate, setBookIsDuplicate] = useState(false);
+  const { openFilePicker: openUsfmPicker, filesContent: usfmFiles } =
+    useFilePicker({
+      accept: [".sfm", ".usfm"],
+    });
+  useEffect(() => {
+    if (usfmFiles.length > 0) {
+      const file = usfmFiles[0];
 
+      setFilePicked(file.name);
+      handleFilePicked(file);
+    }
+  }, [usfmFiles]);
+
+  //const [bookIsDuplicate, setBookIsDuplicate] = useState(false);
   const pk = new Proskomma();
   const initialQuery = `{
         documents {
@@ -44,6 +56,9 @@ function OptionUsfmImport({
       }`;
 
   const handleFilePicked = (fileFromPicker) => {
+    const blob = new Blob([fileFromPicker.content], {
+      type: "application/octet-stream",
+    });
     setValidationResult({});
     const reader = new FileReader();
     reader.onloadstart = () => {
@@ -58,7 +73,7 @@ function OptionUsfmImport({
       console.error("Error reading file:", error);
       setLoading(false);
     };
-    reader.readAsText(fileFromPicker);
+    reader.readAsText(blob);
   };
 
   const usfmValidation = (file) => {
@@ -79,14 +94,14 @@ function OptionUsfmImport({
   }, [localBookContent]);
 
   useEffect(() => {
-    if (isUsfmValid) {
+    if (isUsfmValid && localBookContent && filePicked) {
       try {
         pk.importDocument(
           {
             lang: "eng",
             abbr: `${localBookContent.split("toc1")[0].split(" ")[1]}`,
           },
-          `${filePicked.name.split(".")[1]}`,
+          `${filePicked.split(".")[1]}`,
           localBookContent,
         );
         try {
@@ -106,7 +121,7 @@ function OptionUsfmImport({
         );
       }
     }
-  }, [localBookContent, isUsfmValid]);
+  }, [localBookContent, isUsfmValid, filePicked]);
 
   const handleDeleteUsfmFile = () => {
     setLocalBookContent();
@@ -116,51 +131,40 @@ function OptionUsfmImport({
   };
   return (
     <Box>
-      <FilePicker
-        extensions={["usfm", "sfm", "txt"]}
-        onChange={(file) => {
-          handleFilePicked(file);
-          setFilePicked(file);
-        }}
-        onError={(error) => {
-          enqueueSnackbar(`${error}`, { variant: "error" });
-          setLoading(false);
-        }}
-      >
-        <Tooltip
-          //open={localBookContent ? !isUsfmValid : isUsfmValid}
-          title={
-            localBookContent
-              ? isUsfmValid &&
-                doI18n(
-                  "pages:core-contenthandler_text_translation:change_usfm_file",
-                  i18nRef.current,
-                )
-              : !isUsfmValid &&
-                doI18n(
-                  "pages:core-contenthandler_text_translation:usfm_invalid",
-                  i18nRef.current,
-                )
-          }
-          placement="bottom-end"
-        >
-          <span>
-            <Button
-              type="button"
-              disabled={loading || isUsfmValid}
-              variant="contained"
-              color="primary"
-              component="span"
-              startIcon={<UploadFileIcon />}
-            >
-              {doI18n(
-                "pages:core-contenthandler_text_translation:import_click",
+      <Tooltip
+        //open={localBookContent ? !isUsfmValid : isUsfmValid}
+        title={
+          localBookContent
+            ? isUsfmValid &&
+              doI18n(
+                "pages:core-contenthandler_text_translation:change_usfm_file",
                 i18nRef.current,
-              )}
-            </Button>
-          </span>
-        </Tooltip>
-      </FilePicker>
+              )
+            : !isUsfmValid &&
+              doI18n(
+                "pages:core-contenthandler_text_translation:usfm_invalid",
+                i18nRef.current,
+              )
+        }
+        placement="bottom-end"
+      >
+        <span>
+          <Button
+            onClick={() => openUsfmPicker()}
+            type="button"
+            disabled={loading || isUsfmValid}
+            variant="contained"
+            color="primary"
+            component="span"
+            startIcon={<UploadFileIcon />}
+          >
+            {doI18n(
+              "pages:core-contenthandler_text_translation:import_click",
+              i18nRef.current,
+            )}
+          </Button>
+        </span>
+      </Tooltip>
 
       {Object.keys(validationResult).length > 0 && (
         <Grid2 item xs={12} md={6}>
