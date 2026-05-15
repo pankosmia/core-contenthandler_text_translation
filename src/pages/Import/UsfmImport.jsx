@@ -44,7 +44,6 @@ function UsfmImport() {
   useEffect(() => {
     if (usfmFiles.length > 0) {
       const file = usfmFiles[0];
-      console.log(file);
       setFilePicked(file.name);
       handleFilePicked(file);
     }
@@ -103,7 +102,6 @@ function UsfmImport() {
       setLoading(true);
     };
     reader.onload = (event) => {
-      console.log(event.target);
       const fileContent = event.target.result;
       setLocalBookContent(fileContent);
       setLoading(false);
