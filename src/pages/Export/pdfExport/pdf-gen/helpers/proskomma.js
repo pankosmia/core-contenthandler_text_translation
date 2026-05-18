@@ -15,9 +15,9 @@ export const getBookName = (pk, docSetId, bookCode) => {
 
 export const pkWithDocs = async (bookCode, docSpecs, verbose = false) => {
   const pk = new Proskomma();
-  verbose && console.log("     Loading USFM into Proskomma");
+  verbose && console.log("Loading USFM into Proskomma");
   for (const docSpec of docSpecs) {
-    verbose && console.log(`       ${docSpec.id}`);
+    verbose && console.log(`${docSpec.id}`);
     const summary = await getJson(
       `http://127.0.0.1:19119/burrito/metadata/summary/${docSpec.path}`,
     );

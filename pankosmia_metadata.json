@@ -19,7 +19,7 @@
         {
           "doc": "Create document for textTranslation Project",
           "placeHolders": {},
-          "label": "pages:core-contenthandler_text_translation:new_translation_text",
+          "label": "pages:core-contenthandler_text_translation:Test_Pdf",
           "url": "/pptrTest"
         }
       ],
@@ -571,6 +571,10 @@
     "change_usfm_file": {
       "en": "To import a new USFM folder, you must first delete the previously imported one",
       "fr": "Pour importer un nouveau dossier USFM, vous devez d'abord supprimer le dossier précédemment importé"
+    },
+    "Test_Pdf": {
+      "en": "test pdf",
+      "fr": "test pdf"
     }
   }
 }

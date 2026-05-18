@@ -1,9 +1,12 @@
-import { pkWithDocs } from "../helpers/proskomma";
-import { cvForSentence } from "../helpers/jxl";
-import { quoteForCv } from "../helpers/cv";
-import { tidyLhsText } from "../helpers/jxl";
-import { cleanNoteLine, unpackCellRange } from "../helpers/notes";
-import { bcvNotes } from "../helpers/notes";
+import {
+  bcvNotes,
+  cleanNoteLine,
+  unpackCellRange,
+  tidyLhsText,
+  quoteForCv,
+  cvForSentence,
+  pkWithDocs,
+} from "../helpers";
 import { getJson, getText } from "pithekos-lib";
 import books from "../Css/Ressources/books.json";
 import { Section } from "./section";
@@ -426,7 +429,6 @@ export class jxlSimpleSection extends Section {
         cvs = [];
       }
     }
-    console.log(sentences);
     const server = window.location.origin;
     let srcPolyfill = `${server}/app-resources/pdf/paged.polyfill.js`;
 

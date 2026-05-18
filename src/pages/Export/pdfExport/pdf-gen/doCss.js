@@ -1,13 +1,35 @@
-import { P } from "./Fragment/P";
-import { H1 } from "./Fragment/H1";
-import { BODY } from "./Fragment/BODY";
-import { FOOTNOTE } from "./Fragment/FOOTNOTE";
-import { markdown_mono_page_styles } from "./stylePages/markdown_mono_page_styles";
-import { markdown_page_styles } from "./stylePages/markdown_page_styles";
-import { simple_juxta_page_styles } from "./stylePages/simple_juxta_page_styles.css";
-import { ATPAGE } from "./Fragment/ATPAGE";
-import { BODY2 } from "./Fragment/BODY2";
-import { JUXTA } from "./Fragment/JUXTA";
+import {
+  simple_juxta_page_styles,
+  markdown_page_styles,
+  markdown_mono_page_styles,
+  bcv_bible_page_styles,
+  bible_plus_notes_in_columns_page_styles,
+  bible_plus_notes_in_rows_page_styles,
+  four_col_header_page_styles,
+  four_col_page_styles,
+  juxta_page_styles,
+  non_juxta_page_styles,
+  obs_page_styles,
+  obs_plus_notes_page_styles,
+  page_number_master_styles,
+  para_bible_page_styles,
+  two_col_header_page_styles,
+  two_col_page_styles,
+} from "./Css/stylePages";
+import {
+  JUXTA,
+  BODY2,
+  ATPAGE,
+  FOOTNOTE,
+  BODY,
+  H1,
+  P,
+  ATDOUBLEPAGE,
+  ATDOUBLEPAGEHEADER,
+  ATPAGEHEADER,
+  FOURCOL,
+  TWOCOL,
+} from "./Css/Fragment";
 const setupOneCSS = (fileContent, placeholder, markup, value) => {
   const substRe = new RegExp(`${markup}${placeholder}${markup}`, "g");
   return fileContent.replace(substRe, value);
@@ -26,21 +48,69 @@ const checkCssSubstitution = (filename, css, markup) => {
 export async function setupCSS(options) {
   const uuidKeyValues = {};
   const cssFragments = {};
-  const cssFragmentFilenames = ["P", "BODY", "FOOTNOTE", "ATPAGE", "BODY2","H1","JUXTA"];
+  const cssFragmentFilenames = [
+    "P",
+    "BODY",
+    "FOOTNOTE",
+    "ATPAGE",
+    "BODY2",
+    "H1",
+    "JUXTA",
+    "ATDOUBLEPAGE",
+    "ATDOUBLEPAGEHEADER",
+    "ATPAGEHEADER",
+    "FOURCOL",
+    "TWOCOL",
+  ];
   const cssFragmentContent = {
     P: P,
     BODY: BODY,
     BODY2: BODY2,
     FOOTNOTE: FOOTNOTE,
     ATPAGE: ATPAGE,
-    H1:H1,
-    JUXTA:JUXTA
+    H1: H1,
+    JUXTA: JUXTA,
+    ATDOUBLEPAGE: ATDOUBLEPAGE,
+    ATDOUBLEPAGEHEADER: ATDOUBLEPAGEHEADER,
+    ATPAGEHEADER: ATPAGEHEADER,
+    FOURCOL: FOURCOL,
+    TWOCOL: TWOCOL,
   };
-  const cssFileNames = ["markdown_mono_page_styles", "markdown_page_styles","simple_juxta_page_styles"];
+  const cssFileNames = [
+  "simple_juxta_page_styles",
+  "markdown_page_styles",
+  "markdown_mono_page_styles",
+  "bcv_bible_page_styles",
+  "bible_plus_notes_in_columns_page_styles",
+  "bible_plus_notes_in_rows_page_styles",
+  "four_col_header_page_styles",
+  "four_col_page_styles",
+  "juxta_page_styles",
+  "non_juxta_page_styles",
+  "obs_page_styles",
+  "obs_plus_notes_page_styles",
+  "page_number_master_styles",
+  "para_bible_page_styles",
+  "two_col_header_page_styles",
+  "two_col_page_styles",
+  ];
   const cssCotent = {
+    simple_juxta_page_styles: simple_juxta_page_styles,
     markdown_page_styles: markdown_page_styles,
     markdown_mono_page_styles: markdown_mono_page_styles,
-    simple_juxta_page_styles:simple_juxta_page_styles
+    bcv_bible_page_styles: bcv_bible_page_styles,
+    bible_plus_notes_in_columns_page_styles:bible_plus_notes_in_columns_page_styles,
+    bible_plus_notes_in_rows_page_styles: bible_plus_notes_in_rows_page_styles,
+    four_col_header_page_styles: four_col_header_page_styles,
+    four_col_page_styles: four_col_page_styles,
+    juxta_page_styles: juxta_page_styles,
+    non_juxta_page_styles: non_juxta_page_styles,
+    obs_page_styles: obs_page_styles,
+    obs_plus_notes_page_styles: obs_plus_notes_page_styles,
+    page_number_master_styles: page_number_master_styles,
+    para_bible_page_styles: para_bible_page_styles,
+    two_col_header_page_styles: two_col_header_page_styles,
+    two_col_page_styles: two_col_page_styles,
   };
 
   for (const filename of cssFragmentFilenames) {

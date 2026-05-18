@@ -1,7 +1,7 @@
 import DOMPurify from "isomorphic-dompurify";
 import { marked } from "marked";
 import { Section } from "./section";
-export class MarkdownSection extends Section {
+export class markdownSection extends Section {
   requiresWrapper() {
     return [];
   }
@@ -156,5 +156,3 @@ export class MarkdownSection extends Section {
     });
   }
 }
-
-module.exports = MarkdownSection;
