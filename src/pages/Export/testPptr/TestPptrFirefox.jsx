@@ -1,6 +1,7 @@
 import { Button, Typography, Box } from "@mui/material";
 import { originatePdfs } from "../pdfExport/pdf-gen/originatePdfs";
 import { assemblePdfs } from "../pdfExport/pdf-gen/assemblePdf";
+import FirefoxInstaller from "./FirefoxInstaller";
 
 let testThing = {
   global: {
@@ -55,6 +56,7 @@ export function TestPptrFirefox() {
   }
   return (
     <Box sx={{ p: 2 }}>
+      <FirefoxInstaller />
       <Button
         variant="contained"
         onClick={async () => {
