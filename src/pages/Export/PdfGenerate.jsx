@@ -531,14 +531,14 @@ function PdfGenerate() {
         setTimeout(() => {
           window.location.href = "/clients/main";
           resolve();
-        }, 1500),
+        }, 500),
       );
     } else {
       await new Promise((resolve) =>
         setTimeout(() => {
           window.location.href = "/clients/content";
           resolve();
-        }, 1500),
+        }, 500),
       );
     }
   };
@@ -603,9 +603,8 @@ function PdfGenerate() {
         )}
         isOpen={open}
         closeFn={() => handleClose()}
-        theme={theme}
         fullWidth
-        size={"sm"}
+        size={"md"}
       >
         <DialogContent sx={{ mt: 1, pt: 0 }}>
           <DialogContentText sx={{ py: 2 }}>

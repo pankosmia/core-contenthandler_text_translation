@@ -233,13 +233,15 @@ function UsfmImport() {
         requireNet={false}
       />
       <PanDialog
+        titleLabel={`${doI18n("pages:core-contenthandler_text_translation:import_content", i18nRef.current)} - ${nameProject}`}
         isOpen={usfmImportOpen}
         closeFn={() => {
           setLocalBookContent(null);
           setUsfmImportAnchorEl(null);
           handleClose();
         }}
-        titleLabel={`${doI18n("pages:core-contenthandler_text_translation:import_content", i18nRef.current)} - ${nameProject}`}
+        size={"md"}
+        fullWidth={false}
       >
         <DialogContent sx={{ mt: 1 }}>
           <Tooltip

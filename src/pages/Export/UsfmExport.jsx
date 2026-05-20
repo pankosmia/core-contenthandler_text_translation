@@ -148,7 +148,6 @@ function UsfmExport() {
         )}
         closeFn={() => handleClose()}
         isOpen={open}
-        theme={theme}
         fullWidth={true}
         size={"sm"}
       >
