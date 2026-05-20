@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { Box, DialogContent } from "@mui/material";
+import { Box, DialogContent, DialogContentText } from "@mui/material";
 import { postJson, doI18n, getAndSetJson, getJson } from "pithekos-lib";
 import {
   PanDialog,
@@ -56,9 +56,9 @@ export default function NewBibleContent() {
   const [isUsfmValid, setIsUsfmValid] = useState(false);
 
   const steps = [
-    `${doI18n("pages:core-contenthandler_text_translation:name_section", i18nRef.current)}`,
-    `${doI18n("pages:core-contenthandler_text_translation:language", i18nRef.current)}`,
     `${doI18n("pages:core-contenthandler_text_translation:content_section", i18nRef.current)}`,
+    `${doI18n("pages:core-contenthandler_text_translation:language", i18nRef.current)}`,
+    `${doI18n("pages:core-contenthandler_text_translation:name_section", i18nRef.current)}`,
   ];
 
   const handleClose = () => {
@@ -111,7 +111,7 @@ export default function NewBibleContent() {
 
   const renderStepContent = (step) => {
     switch (step) {
-      case 0:
+      case 2:
         return (
           <NameDocument
             contentType={contentType}
@@ -135,7 +135,7 @@ export default function NewBibleContent() {
             setIsValid={setLanguageIsValid}
           />
         );
-      case 2:
+      case 0:
         return uuid ? (
           <ContentZip
             open={open}
@@ -177,7 +177,7 @@ export default function NewBibleContent() {
   };
   const isStepValid = (step) => {
     switch (step) {
-      case 0:
+      case 2:
         return (
           contentName.trim().length > 0 &&
           contentAbbr.trim().length > 0 &&
@@ -192,7 +192,7 @@ export default function NewBibleContent() {
           currentLanguage?.language_name?.trim().length > 0 &&
           languageIsValid === true
         );
-      case 2:
+      case 0:
         if (contentOption === "book") {
           return (
             versification.trim().length === 3 &&
@@ -494,6 +494,7 @@ export default function NewBibleContent() {
             isStepValid={isStepValid}
             handleCreate={handleCreate}
             handleClose={handleClose}
+            requiredFieldsLabel
           />
         </DialogContent>
       </PanDialog>
