@@ -71,7 +71,34 @@ function AppLayout() {
     }
   }, []);
 
-  const theme = createTheme(themeSpec);
+  const theme = createTheme(
+    {
+      components: {
+        MuiButton: {
+          styleOverrides: {
+            root: {
+              textTransform: "none",
+            },
+          },
+        },
+        MuiFab: {
+          styleOverrides: {
+            root: {
+              textTransform: "none",
+            },
+          },
+        },
+        MuiTab: {
+          styleOverrides: {
+            root: {
+              textTransform: "none",
+            },
+          },
+        },
+      },
+    },
+    themeSpec,
+  );
   const CustomSnackbarContent = styled(MaterialDesignContent)(() => ({
     "&.notistack-MuiContent-error": {
       backgroundColor: "#FDEDED",

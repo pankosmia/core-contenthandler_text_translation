@@ -9,6 +9,7 @@ import {
   RadioGroup,
   Radio,
   Typography,
+  Box,
 } from "@mui/material";
 import { doI18n, getAndSetJson } from "pithekos-lib";
 
@@ -61,11 +62,13 @@ export default function ContentDocument({
   return (
     <>
       {contentOption !== "plan" && (
-        <PanVersificationPicker
-          versification={versification}
-          setVersification={setVersification}
-          isOpen={open}
-        />
+        <Box sx={{ paddingBottom: "16px" }}>
+          <PanVersificationPicker
+            versification={versification}
+            setVersification={setVersification}
+            isOpen={open}
+          />
+        </Box>
       )}
       <FormControl>
         <FormLabel id="book-create-options">
