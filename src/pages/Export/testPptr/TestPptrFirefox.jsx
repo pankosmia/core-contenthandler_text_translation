@@ -1,11 +1,12 @@
 import { Button, Typography, Box } from "@mui/material";
 import { originatePdfs } from "../pdfExport/pdf-gen/originatePdfs";
+import { assemblePdfs } from "../pdfExport/pdf-gen/assemblePdf";
 
 let testThing = {
   global: {
-    fonts: "allOpen",
+    fonts: "allGentium",
     pages: "A4P",
-    sizes: "12on14",
+    sizes: "9on10",
     outputPath: "/home/mark/Downloads/juxtas.pdf",
     workingDir: "/home/mark/.jxlpdf/working",
     verbose: false,
@@ -47,10 +48,10 @@ let testThing = {
 };
 
 export function TestPptrFirefox() {
-  let manifest = [];
-
   async function saveHtml() {
-    originatePdfs(testThing);
+    let manifest = await originatePdfs(testThing);
+    console.log(manifest);
+    await assemblePdfs(testThing, null, manifest);
   }
   return (
     <Box sx={{ p: 2 }}>

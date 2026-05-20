@@ -84,6 +84,7 @@ export class markdownSection extends Section {
     options,
     cssLookUp,
   }) {
+    let pdfPath;
     const mkdContent = `
 # h1 Heading 
 ## h2 Heading
@@ -106,7 +107,7 @@ export class markdownSection extends Section {
         "%%CSS%%",
         await (
           await fetch(
-            `http://127.0.0.1:19119/temp/bytes/${cssLookUp[section.content.forceMono ? "markdown_mono_page_styles" : "markdown_page_styles"]}`,
+            `/temp/bytes/${cssLookUp[section.content.forceMono ? "markdown_mono_page_styles" : "markdown_page_styles"]}`,
             {
               method: "GET",
             },
@@ -123,14 +124,14 @@ export class markdownSection extends Section {
     // IMPORTANT: field name must match backend (likely "file")
     formData.append("file", blob, "test.html");
     try {
-      const response = await fetch("http://127.0.0.1:19119/temp/bytes", {
+      const response = await fetch("/temp/bytes", {
         method: "POST",
         body: formData,
       });
 
       const result = await response.text();
       const { uuid } = JSON.parse(result);
-      const pdfPath = await window.api.generatePdf(uuid);
+      pdfPath = await window.api.generatePdf(uuid);
     } catch (err) {
       console.error("Upload failed:", err);
     }
@@ -148,7 +149,7 @@ export class markdownSection extends Section {
     //     pdfPath: path.join(options.pdfPath, `${section.id.replace('%%bookCode%%', bookCode)}.pdf`)
     // });
     manifest.push({
-      id: `${section.id}`,
+      id: pdfPath,
       type: section.type,
       startOn: section.content.startOn,
       showPageNumber: section.content.showPageNumber,

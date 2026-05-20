@@ -1,4 +1,4 @@
-const {
+import {
   unpackCellRange,
   pkWithDocs,
   getBookName,
@@ -6,9 +6,9 @@ const {
   cleanNoteLine,
   bcvNotes,
   toTemp,
-} = require("../helpers");
+} from "../helpers";
 
-const Section = require("./section");
+import { Section } from "./section";
 
 export class fourColumnSpreadSection extends Section {
   requiresWrapper() {

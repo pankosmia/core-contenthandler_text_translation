@@ -8,12 +8,11 @@ import templates from "./HTML";
 export const originatePdfs = async (options, doPdfCallback = null) => {
   // Set up workspace - options.workingDir should already exist
 
-  let cssLookUp = setupCSS({
-    pageFormat: pagesJson[options.pages],
-    fonts: fontsJson[options.fonts],
-    fontSizes: sizesJson[options.sizes],
+  let cssLookUp = await setupCSS({
+    pageFormat: pagesJson[options.global.pages],
+    fonts: fontsJson[options.global.fonts],
+    fontSizes: sizesJson[options.global.sizes],
   });
-
   let links = [];
   let manifest = [];
   let wrapperRange = null;
@@ -68,7 +67,7 @@ export const originatePdfs = async (options, doPdfCallback = null) => {
     }
   };
 
-  for (const section of options.configContent.sections) {
+  for (const section of options.sections) {
     options.verbose &&
       console.log(
         `   Section ${section.id ? `${section.id} (${section.type})` : section.type}`,
@@ -134,6 +133,7 @@ export const originatePdfs = async (options, doPdfCallback = null) => {
   //     templates['web_index_page']
   //         .replace("%%LINKS%%", links.join("\n"))
   // );
+  return manifest;
   // fse.writeJsonSync(
   //     options.manifestPath,
   //     manifest

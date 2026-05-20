@@ -18,9 +18,7 @@ export const pkWithDocs = async (bookCode, docSpecs, verbose = false) => {
   verbose && console.log("Loading USFM into Proskomma");
   for (const docSpec of docSpecs) {
     verbose && console.log(`${docSpec.id}`);
-    const summary = await getJson(
-      `http://127.0.0.1:19119/burrito/metadata/summary/${docSpec.path}`,
-    );
+    const summary = await getJson(`/burrito/metadata/summary/${docSpec.path}`);
     if (summary.ok) {
       let matchingBookUsfm = summary.json.book_codes.filter((f) =>
         f.includes(bookCode),
@@ -32,7 +30,7 @@ export const pkWithDocs = async (bookCode, docSpecs, verbose = false) => {
       }
 
       const contentString = await getText(
-        `http://127.0.0.1:19119/burrito/ingredient/raw/${docSpec.path}?ipath=${matchingBookUsfm}.usfm`,
+        `/burrito/ingredient/raw/${docSpec.path}?ipath=${matchingBookUsfm}.usfm`,
       );
 
       const [lang, abbr] = docSpec.id.split("_");

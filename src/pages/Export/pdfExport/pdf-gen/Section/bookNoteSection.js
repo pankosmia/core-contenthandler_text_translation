@@ -1,5 +1,5 @@
-const { formatNote, bcvNotes, toTemp } = require("../helpers");
 import { Section } from "./section";
+import { formatNote, bcvNotes, toTemp } from "../helpers";
 
 export class bookNoteSection extends Section {
   requiresWrapper() {

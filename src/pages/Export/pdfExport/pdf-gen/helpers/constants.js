@@ -2,6 +2,7 @@ import pageSizes from "../Css/Ressources/pages.json";
 import fontSets from "../Css/Ressources/fonts.json";
 import fontSizes from "../Css/Ressources/sizes.json";
 import packageJson from "../../../../../../package.json";
+
 export const constants = {
   VERSION: packageJson.version,
   // DEFAULT_WORKING_DIR: path.resolve(path.join(os.homedir(), ".jxlpdf/working")),

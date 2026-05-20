@@ -1,14 +1,13 @@
-const {
+import {
   unpackCellRange,
   pkWithDocs,
   getBookName,
   getCVTexts,
   cleanNoteLine,
   bcvNotes,
-  doPuppet,
   checkCssSubstitution,
   toTemp,
-} = require("../helpers");
+} from "../helpers";
 
 import { Section } from "./section";
 
@@ -330,7 +329,7 @@ export class biblePlusNotesSection extends Section {
             .replace("%%BOOKNAME%%", bookName);
     let css = await (
       await fetch(
-        `http://127.0.0.1:19119/temp/bytes/${cssLookUp["bible_plus_notes_in_columns_page_styles"]}`,
+        `/temp/bytes/${cssLookUp["bible_plus_notes_in_columns_page_styles"]}`,
         {
           method: "GET",
         },

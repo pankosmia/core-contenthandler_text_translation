@@ -7,7 +7,7 @@ export async function toTemp(html) {
   // IMPORTANT: field name must match backend (likely "file")
   formData.append("file", blob, "test.html");
   try {
-    const response = await fetch("http://127.0.0.1:19119/temp/bytes", {
+    const response = await fetch("/temp/bytes", {
       method: "POST",
       body: formData,
     });

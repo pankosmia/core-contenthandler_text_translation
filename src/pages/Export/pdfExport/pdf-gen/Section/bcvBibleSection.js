@@ -165,12 +165,9 @@ export class bcvBibleSection extends Section {
         .replace(
           "%%CSS%%",
           await (
-            await fetch(
-              `http://127.0.0.1:19119/temp/bytes/${cssLookUp["bcv_bible_verse"]}`,
-              {
-                method: "GET",
-              },
-            )
+            await fetch(`/temp/bytes/${cssLookUp["bcv_bible_verse"]}`, {
+              method: "GET",
+            })
           ).text(),
         )
         .replace(
@@ -212,12 +209,9 @@ export class bcvBibleSection extends Section {
       .replace("%%BOOKNAME%%", bookName);
 
     let css = await (
-      await fetch(
-        `http://127.0.0.1:19119/temp/bytes/${cssLookUp["bcv_bible_page_styles"]}`,
-        {
-          method: "GET",
-        },
-      )
+      await fetch(`/temp/bytes/${cssLookUp["bcv_bible_page_styles"]}`, {
+        method: "GET",
+      })
     ).text();
 
     const spaceOption = 0; // MAKE THIS CONFIGURABLE

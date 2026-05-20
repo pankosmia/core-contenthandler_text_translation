@@ -141,9 +141,10 @@ export class jxlSimpleSection extends Section {
   }
 
   async doSection({ section, templates, manifest, options, cssLookUp }) {
+    let pdfPath;
     const jsonFile = (
       await getJson(
-        `http://127.0.0.1:19119/burrito/ingredient/raw/${section.content.jxl}?ipath=${section.bcvRange}.json`,
+        `/burrito/ingredient/raw/${section.content.jxl}?ipath=${section.bcvRange}.json`,
       )
     ).json;
     const mergeCvs = (cvs, canonical = false) => {
@@ -198,7 +199,7 @@ export class jxlSimpleSection extends Section {
     if (section.content.glossNotes) {
       const pivotRows = (
         await getText(
-          `http://127.0.0.1:19119/burrito/ingredient/raw/${section.content.glossNotes[0].pivot}?ipath=${section.bcvRange}.tsv`,
+          `/burrito/ingredient/raw/${section.content.glossNotes[0].pivot}?ipath=${section.bcvRange}.tsv`,
         )
       ).text.split("\n");
 
@@ -219,7 +220,7 @@ export class jxlSimpleSection extends Section {
 
       const notesRows = (
         await getText(
-          `http://127.0.0.1:19119/burrito/ingredient/raw/${section.content.glossNotes[0].notes}?ipath=${section.bcvRange}.tsv`,
+          `/burrito/ingredient/raw/${section.content.glossNotes[0].notes}?ipath=${section.bcvRange}.tsv`,
         )
       ).text.split("\n");
 
@@ -437,12 +438,9 @@ export class jxlSimpleSection extends Section {
       .replace(
         "%%CSS%%",
         await (
-          await fetch(
-            `http://127.0.0.1:19119/temp/bytes/${cssLookUp["simple_juxta_page_styles"]}`,
-            {
-              method: "GET",
-            },
-          )
+          await fetch(`/temp/bytes/${cssLookUp["simple_juxta_page_styles"]}`, {
+            method: "GET",
+          })
         ).text(),
       )
       .replace("%%POLYFY%%", srcPolyfill);
@@ -455,14 +453,14 @@ export class jxlSimpleSection extends Section {
     // IMPORTANT: field name must match backend (likely "file")
     formData.append("file", blob, "test.html");
     try {
-      const response = await fetch("http://127.0.0.1:19119/temp/bytes", {
+      const response = await fetch("/temp/bytes", {
         method: "POST",
         body: formData,
       });
 
       const result = await response.text();
       const { uuid } = JSON.parse(result);
-      const pdfPath = await window.api.generatePdf(uuid);
+      pdfPath = await window.api.generatePdf(uuid);
     } catch (err) {
       console.error("Upload failed:", err);
     }
@@ -482,7 +480,7 @@ export class jxlSimpleSection extends Section {
     //   pdfPath: path.join(options.pdfPath, `${qualified_id}.pdf`),
     // });
     manifest.push({
-      id: qualified_id,
+      id: pdfPath,
       type: section.type,
       startOn: section.content.startOn,
       showPageNumber: section.content.showPageNumber,

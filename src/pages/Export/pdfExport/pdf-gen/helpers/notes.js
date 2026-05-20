@@ -10,39 +10,35 @@ export const cleanNoteLine = (noteLine) =>
     .replace(/\*([^*]+)\*/g, (m, m1) => `<i>${m1}</i>`)
     .replace(/\[(.+?)\]\(.+?\)/g, "$1");
 
-// const formatNote = (noteRecord, templates) => {
-//     const noteText = noteRecord
-//         .replace(/\\n/g, "\nSPLIT\n")
-//         .split("\nSPLIT\n")
-//         .map(l => l.trim())
-//         .map(l => l.replace(/^\*/, '-'))
-//     const noteHeading = noteText[0].replace(/^# +/, "");
-//     let noteParas = [];
-//     for (const noteLine of noteText.slice(1)) {
-//         let paraClass = "note_body";
-//         if (noteLine.startsWith("####")) {
-//             paraClass = "note_h4"
-//         } else if (noteLine.startsWith("###")) {
-//             paraClass = "note_h3"
-//         } else if (noteLine.startsWith("##")) {
-//             paraClass = "note_h2"
-//         } else if (noteLine.trim().startsWith("-")) {
-//             paraClass = "note_list2"
-//         } else if (/^[0-9]+\./.test(noteLine.trim())) {
-//             paraClass = "note_list1"
-//         }
-//         noteParas.push(
-//             templates.markdownPara
-//                 .replace("%%CLASS%%", paraClass)
-//                 .replace(
-//                     "%%NOTE%%",
-//                     cleanNoteLine(noteLine)
-//                 )
-//         );
-//     }
-//     return [noteHeading, noteParas.join('\n')];
-
-// }
+export const formatNote = (noteRecord, templates) => {
+  const noteText = noteRecord
+    .replace(/\\n/g, "\nSPLIT\n")
+    .split("\nSPLIT\n")
+    .map((l) => l.trim())
+    .map((l) => l.replace(/^\*/, "-"));
+  const noteHeading = noteText[0].replace(/^# +/, "");
+  let noteParas = [];
+  for (const noteLine of noteText.slice(1)) {
+    let paraClass = "note_body";
+    if (noteLine.startsWith("####")) {
+      paraClass = "note_h4";
+    } else if (noteLine.startsWith("###")) {
+      paraClass = "note_h3";
+    } else if (noteLine.startsWith("##")) {
+      paraClass = "note_h2";
+    } else if (noteLine.trim().startsWith("-")) {
+      paraClass = "note_list2";
+    } else if (/^[0-9]+\./.test(noteLine.trim())) {
+      paraClass = "note_list1";
+    }
+    noteParas.push(
+      templates.markdownPara
+        .replace("%%CLASS%%", paraClass)
+        .replace("%%NOTE%%", cleanNoteLine(noteLine)),
+    );
+  }
+  return [noteHeading, noteParas.join("\n")];
+};
 // const maybeChapterNotes = (chapterN, noteType, notes, templates, verbose = false) => {
 //     const chapterNoteRecord = notes[`${chapterN}_intro`];
 //     if (chapterNoteRecord) {
@@ -101,9 +97,7 @@ export const unpackCellRange = (cv) => {
 
 export const bcvNotes = async (notesPath, bookCode, excludeTags = []) => {
   const notes = {};
-  const summary = await getJson(
-    `http://127.0.0.1:19119/burrito/metadata/summary/${notesPath}`,
-  );
+  const summary = await getJson(`/burrito/metadata/summary/${notesPath}`);
   const fileWithBook = summary.json.book_codes.filter((p) =>
     p.includes(bookCode),
   );
@@ -112,7 +106,7 @@ export const bcvNotes = async (notesPath, bookCode, excludeTags = []) => {
     throw new Error(`No notes for ${bookCode} found in bcvNotes`);
   }
   const notesRowsRaw = await getText(
-    `http://127.0.0.1:19119/burrito/ingredient/raw/${notesPath}?ipath=${fileWithBook}.tsv`,
+    `/burrito/ingredient/raw/${notesPath}?ipath=${fileWithBook}.tsv`,
   );
   const notesRows = notesRowsRaw.text.split("\n");
   // Introspect type (question or note)

@@ -77,29 +77,30 @@ export async function setupCSS(options) {
     TWOCOL: TWOCOL,
   };
   const cssFileNames = [
-  "simple_juxta_page_styles",
-  "markdown_page_styles",
-  "markdown_mono_page_styles",
-  "bcv_bible_page_styles",
-  "bible_plus_notes_in_columns_page_styles",
-  "bible_plus_notes_in_rows_page_styles",
-  "four_col_header_page_styles",
-  "four_col_page_styles",
-  "juxta_page_styles",
-  "non_juxta_page_styles",
-  "obs_page_styles",
-  "obs_plus_notes_page_styles",
-  "page_number_master_styles",
-  "para_bible_page_styles",
-  "two_col_header_page_styles",
-  "two_col_page_styles",
+    "simple_juxta_page_styles",
+    "markdown_page_styles",
+    "markdown_mono_page_styles",
+    "bcv_bible_page_styles",
+    "bible_plus_notes_in_columns_page_styles",
+    "bible_plus_notes_in_rows_page_styles",
+    "four_col_header_page_styles",
+    "four_col_page_styles",
+    "juxta_page_styles",
+    "non_juxta_page_styles",
+    "obs_page_styles",
+    "obs_plus_notes_page_styles",
+    "page_number_master_styles",
+    "para_bible_page_styles",
+    "two_col_header_page_styles",
+    "two_col_page_styles",
   ];
   const cssCotent = {
     simple_juxta_page_styles: simple_juxta_page_styles,
     markdown_page_styles: markdown_page_styles,
     markdown_mono_page_styles: markdown_mono_page_styles,
     bcv_bible_page_styles: bcv_bible_page_styles,
-    bible_plus_notes_in_columns_page_styles:bible_plus_notes_in_columns_page_styles,
+    bible_plus_notes_in_columns_page_styles:
+      bible_plus_notes_in_columns_page_styles,
     bible_plus_notes_in_rows_page_styles: bible_plus_notes_in_rows_page_styles,
     four_col_header_page_styles: four_col_header_page_styles,
     four_col_page_styles: four_col_page_styles,
@@ -244,7 +245,7 @@ export async function setupCSS(options) {
     // IMPORTANT: field name must match backend (likely "file")
     formData.append("file", blob, "test.html");
 
-    const response = await fetch("http://127.0.0.1:19119/temp/bytes", {
+    const response = await fetch("/temp/bytes", {
       method: "POST",
       body: formData,
     });
