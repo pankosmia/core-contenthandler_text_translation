@@ -7,6 +7,7 @@ import ErrorIcon from "@mui/icons-material/Error";
 function FirefoxInstaller() {
   const [status, setStatus] = useState("checking"); // checking | idle | downloading | complete | error
   const [progress, setProgress] = useState(0);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   // Check on mount if Firefox is already installed
   useEffect(() => {
@@ -29,9 +30,14 @@ function FirefoxInstaller() {
       setProgress(percent);
     });
 
-    const removeComplete = window.electronAPI.onDownloadComplete((success) => {
-      setStatus(success ? "complete" : "error");
-    });
+    const removeComplete = window.electronAPI.onDownloadComplete(
+      (success, errorMessage) => {
+        setStatus(success ? "complete" : "error");
+        if (!success && errorMessage) {
+          setErrorMessage(errorMessage);
+        }
+      },
+    );
 
     return () => {
       removeProgress();
@@ -90,7 +96,8 @@ function FirefoxInstaller() {
 
       {status === "error" && (
         <Typography variant="body2" color="error">
-          Download failed. Please check your connection and try again.
+          Download failed{errorMessage ? `: ${errorMessage}` : ""}. Please check
+          your connection and try again.
         </Typography>
       )}
 
