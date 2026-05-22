@@ -10,6 +10,7 @@ import {
 import { getJson, getText } from "pithekos-lib";
 import books from "../Css/Ressources/books.json";
 import { Section } from "./section";
+import { getCssFromLookUp } from "../helpers/PankosmiaUtils";
 
 export class jxlSimpleSection extends Section {
   requiresWrapper() {
@@ -140,7 +141,7 @@ export class jxlSimpleSection extends Section {
     };
   }
 
-  async doSection({ section, templates, manifest, options, cssLookUp }) {
+  async doSection({ section, templates, manifest, options }) {
     let pdfPath;
     const jsonFile = (
       await getJson(
@@ -437,11 +438,7 @@ export class jxlSimpleSection extends Section {
       .replace("%%SENTENCES%%", sentences.join(""))
       .replace(
         "%%CSS%%",
-        await (
-          await fetch(`/temp/bytes/${cssLookUp["simple_juxta_page_styles"]}`, {
-            method: "GET",
-          })
-        ).text(),
+        await getCssFromLookUp(options.cssLookUp, "simple_juxta_page_styles"),
       )
       .replace("%%POLYFY%%", srcPolyfill);
 

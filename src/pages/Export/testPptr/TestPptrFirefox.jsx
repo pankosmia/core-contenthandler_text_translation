@@ -2,6 +2,10 @@ import { Button, Typography, Box } from "@mui/material";
 import { originatePdfs } from "../pdfExport/pdf-gen/originatePdfs";
 import { assemblePdfs } from "../pdfExport/pdf-gen/assemblePdf";
 import FirefoxInstaller from "./FirefoxInstaller";
+import pages from "../pdfExport/pdf-gen/Css/Ressources/pages.json";
+import fonts from "../pdfExport/pdf-gen/Css/Ressources/fonts.json";
+import sizes from "../pdfExport/pdf-gen/Css/Ressources/sizes.json";
+import { setupCSS } from "../pdfExport/pdf-gen/doCss";
 
 let testThing = {
   global: {
@@ -20,8 +24,19 @@ let testThing = {
   sections: [
     {
       type: "bcvWrapper",
-      ranges: ["TIT"],
+      ranges: ["MRK"],
       sections: [
+        {
+          id: "juxtaSimple",
+          type: "jxlSimple",
+          bcvRange: "MRK",
+          content: {
+            startOn: "recto",
+            showPageNumber: true,
+            jxl: "git.door43.org/burritotruck/en_juxta",
+            bcvNotes: "git.door43.org/unfoldingWord/en_tn",
+          },
+        },
         {
           id: "markdown",
           type: "markdown",
@@ -32,74 +47,42 @@ let testThing = {
             md: "this is the path of md",
           },
         },
-        {
-          id: "juxtaSimple",
-          type: "jxlSimple",
-          bcvRange: "TIT",
-          content: {
-            startOn: "recto",
-            showPageNumber: true,
-            jxl: "git.door43.org/BurritoTruck/en_juxta",
-            bcvNotes: "git.door43.org/unfoldingWord/en_tn",
-          },
-        },
       ],
     },
   ],
 };
-
+const options = {
+  verbose: false,
+  workingDir: "/home/mark/.jxlpdf/working",
+  steps: ["originate", "assemble"],
+  pageFormat: pages[testThing.global.pages],
+  fonts: fonts[testThing.global.fonts],
+  fontSizes: sizes[testThing.global.sizes],
+  referencePunctuation: testThing.global.referencePunctuation || {
+    bookChapter: " ",
+    chapterVerse: ":",
+    verseRange: "-",
+  },
+  configContent: testThing,
+  output: "/home/mark/Downloads/juxtas.pdf",
+  cssLookUp: null,
+};
 export function TestPptrFirefox() {
-  async function saveHtml() {
-    let manifest = await originatePdfs(testThing);
+  async function testPdfGen() {
+    let cssLookUp = await setupCSS({
+      pageFormat: options.pageFormat,
+      fonts: options.fonts,
+      fontSizes: options.fontSizes,
+    });
+    options.cssLookUp = cssLookUp;
+    let manifest = await originatePdfs(options, null);
     console.log(manifest);
-    await assemblePdfs(testThing, null, manifest);
+    await assemblePdfs(options, null, manifest);
   }
   return (
     <Box sx={{ p: 2 }}>
       <FirefoxInstaller />
-      <Button
-        variant="contained"
-        onClick={async () => {
-          const filePath = await window.api.generatePdf();
-          console.log("PDF created at:", filePath);
-        }}
-      >
-        pdfGen
-      </Button>
-
-      <Typography variant="h6" sx={{ mt: 2 }}>
-        Regular
-      </Typography>
-
-      <Typography dir="rtl">
-        اقوام متحدہ نے ہر ک
-        <Typography component="span" color="error">
-          ہ
-        </Typography>
-        یں دے حقوق دی حفاظت تے ود
-        <Typography component="span" color="error">
-          ھ
-        </Typography>
-        ارے دا جھنڈا اچار ک
-        <Typography component="span" color="error">
-          ک
-        </Typography>
-        ھ
-        <Typography component="span" color="error">
-          ں
-        </Typography>
-        دا ارادہ کیتا ہوئے اے
-        <Typography component="span" color="error">
-          ہ
-        </Typography>
-        ؤے و حشیانہ کماں دی صورت وچ ظاہر تھی
-        <Typography component="span" color="error">
-          ئ
-        </Typography>
-        ی ہں
-      </Typography>
-
-      <Button onClick={() => saveHtml()}>test save html file</Button>
+      <Button onClick={() => testPdfGen()}>test generate pdf</Button>
     </Box>
   );
 }

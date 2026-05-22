@@ -8,6 +8,7 @@ import {
   checkCssSubstitution,
   toTemp,
 } from "../helpers";
+import { getCssFromLookUp } from "../helpers/PankosmiaUtils";
 
 import { Section } from "./section";
 
@@ -179,7 +180,7 @@ export class biblePlusNotesSection extends Section {
     };
   }
 
-  async doSection({ section, templates, manifest, options, cssLookUp }) {
+  async doSection({ section, templates, manifest, options }) {
     const cvBySentence = (cvTexts, endSentenceRegex) => {
       const emptyRecord = () => ({
         textBits: [],
@@ -327,14 +328,10 @@ export class biblePlusNotesSection extends Section {
             .replace("%%TITLE%%", `${qualified_id} - ${section.type}`)
             .replace("%%BODY%%", verses.join("\n"))
             .replace("%%BOOKNAME%%", bookName);
-    let css = await (
-      await fetch(
-        `/temp/bytes/${cssLookUp["bible_plus_notes_in_columns_page_styles"]}`,
-        {
-          method: "GET",
-        },
-      )
-    ).text();
+    let css = await getCssFromLookUp(
+      options.cssLookUp,
+      "bible_plus_notes_in_columns_page_styles",
+    );
     const spaceOption = 0; // MAKE THIS CONFIGURABLE
     checkCssSubstitution(
       "bible_plus_notes_in_columns_page_styles.css",

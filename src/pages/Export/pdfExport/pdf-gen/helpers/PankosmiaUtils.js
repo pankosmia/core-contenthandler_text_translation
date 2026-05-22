@@ -19,3 +19,11 @@ export async function toTemp(html) {
     console.error("Upload failed:", err);
   }
 }
+
+export async function getCssFromLookUp(cssLookUp, styleName) {
+  return await (
+    await fetch(`/temp/bytes/${cssLookUp[styleName]}`, {
+      method: "GET",
+    })
+  ).text();
+}

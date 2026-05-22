@@ -11,5 +11,6 @@ export const simple_juxta_page = `<!DOCTYPE html>
 </head>
 <body>
 %%SENTENCES%%
+<div id="print-ready-marker"></div>
 </body>
 </html>`;

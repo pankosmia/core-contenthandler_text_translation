@@ -2,7 +2,7 @@ export { constants } from "./constants";
 
 export { setupOneCSS, checkCssSubstitution } from "./css";
 
-export { toTemp } from "./toTemp";
+export { toTemp } from "./PankosmiaUtils";
 export { quoteForCv, getCVTexts } from "./cv";
 
 export { cvForSentence, tidyLhsText, getGreekContent } from "./jxl";

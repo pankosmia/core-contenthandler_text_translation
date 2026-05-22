@@ -112,7 +112,7 @@ export class fourColumnSpreadSection extends Section {
     };
   }
 
-  async doSection({ section, templates, manifest, options, cssLookUp }) {
+  async doSection({ section, templates, manifest, options }) {
     const docSpecs = [];
     let scriptureN = 0;
     for (const scripture of section.content.scripture) {

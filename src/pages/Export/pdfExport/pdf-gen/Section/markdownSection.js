@@ -1,6 +1,7 @@
 import DOMPurify from "isomorphic-dompurify";
 import { marked } from "marked";
 import { Section } from "./section";
+import { getCssFromLookUp } from "../helpers/PankosmiaUtils";
 export class markdownSection extends Section {
   requiresWrapper() {
     return [];
@@ -76,14 +77,7 @@ export class markdownSection extends Section {
     };
   }
 
-  async doSection({
-    section,
-    templates,
-    bookCode,
-    manifest,
-    options,
-    cssLookUp,
-  }) {
+  async doSection({ section, templates, bookCode, manifest, options }) {
     let pdfPath;
     const mkdContent = `
 # h1 Heading 
@@ -105,14 +99,12 @@ export class markdownSection extends Section {
       .replace("%%BODY%%", DOMPurify.sanitize(await marked.parse(mkdContent)))
       .replace(
         "%%CSS%%",
-        await (
-          await fetch(
-            `/temp/bytes/${cssLookUp[section.content.forceMono ? "markdown_mono_page_styles" : "markdown_page_styles"]}`,
-            {
-              method: "GET",
-            },
-          )
-        ).text(),
+        await getCssFromLookUp(
+          options.cssLookUp,
+          section.content.forceMono
+            ? "markdown_mono_page_styles"
+            : "markdown_page_styles",
+        ),
       )
       .replace("%%POLYFY%%", srcPolyfill);
 

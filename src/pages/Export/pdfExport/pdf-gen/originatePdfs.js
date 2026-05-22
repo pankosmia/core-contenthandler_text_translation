@@ -1,18 +1,10 @@
 import { loadTemplates } from "./helpers";
 import { sectionHandlerLookup } from "./sectionHandlerLookup";
-import { setupCSS } from "./doCss";
-import pagesJson from "./Css/Ressources/pages.json";
-import fontsJson from "./Css/Ressources/fonts.json";
-import sizesJson from "./Css/Ressources/sizes.json";
+
 import templates from "./HTML";
 export const originatePdfs = async (options, doPdfCallback = null) => {
   // Set up workspace - options.workingDir should already exist
 
-  let cssLookUp = await setupCSS({
-    pageFormat: pagesJson[options.global.pages],
-    fonts: fontsJson[options.global.fonts],
-    fontSizes: sizesJson[options.global.sizes],
-  });
   let links = [];
   let manifest = [];
   let wrapperRange = null;
@@ -59,7 +51,6 @@ export const originatePdfs = async (options, doPdfCallback = null) => {
       wrapperRange,
       manifest,
       options,
-      cssLookUp,
     });
     if (section.forceQuit) {
       console.log("** Force quit in config file **");
@@ -67,7 +58,7 @@ export const originatePdfs = async (options, doPdfCallback = null) => {
     }
   };
 
-  for (const section of options.sections) {
+  for (const section of options.configContent.sections) {
     options.verbose &&
       console.log(
         `   Section ${section.id ? `${section.id} (${section.type})` : section.type}`,

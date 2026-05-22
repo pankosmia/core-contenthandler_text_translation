@@ -8,6 +8,7 @@ import {
 } from "./helpers";
 // import { fontKit } from "fontkit";
 import templates from "./HTML";
+import { getCssFromLookUp } from "./helpers/PankosmiaUtils";
 /**
  * Generates HTML for page numbers and converts it to a PDF.
  * Does this 100 pages at a time because of weird Puppeteer 180-page limit
@@ -16,9 +17,11 @@ import templates from "./HTML";
  *   - numPages: number - Total number of pages.
  * @returns {Promise<string>} - Path to the generated page numbers PDF.
  */
-const doPageNumber = async ({ options, numPages }) => {
+const doPageNumber = async ({ options, numPages, Css }) => {
   const masterTemplate = templates["page_number_master"];
   const pageNumTemplate = templates["page_number_page"];
+  const server = window.location.origin;
+  let srcPolyfill = `${server}/app-resources/pdf/paged.polyfill.js`;
   // All pages
   let pageNumbersHtmls = [...Array(numPages).keys()].map((pageNum) =>
     pageNumTemplate.replace("%%PAGENUM%%", pageNum + 1),
@@ -26,11 +29,14 @@ const doPageNumber = async ({ options, numPages }) => {
   const pageNumbersPaths = [];
   // Make PDFs of slices of page numbers
   while (pageNumbersHtmls.length > 0) {
-    let html = masterTemplate.replace(
-      "%%CONTENT%%",
-      pageNumbersHtmls.slice(0, 100).join(""),
-    );
-    let uuid = toTemp(html);
+    let html = masterTemplate
+      .replace(
+        "%%CSS%%",
+        await getCssFromLookUp(options.cssLookUp, "page_number_master_styles"),
+      )
+      .replace("%%CONTENT%%", pageNumbersHtmls.slice(0, 100).join(""))
+      .replace("%%POLYFY%%", srcPolyfill);
+    let uuid = await toTemp(html);
     const pdfPath = await window.api.generatePdf(uuid);
     pageNumbersPaths.push(pdfPath);
     pageNumbersHtmls = pageNumbersHtmls.slice(100);
@@ -86,11 +92,13 @@ const makePageNumber = async ({
     options,
     numPages,
   });
-  const pageNumbersPdf = await PDFDocument.load(
-    await fetch(`/temp/bytes/${pageNumbersPdfPath}`, {
-      method: "GET",
-    }),
-  );
+  const res = await fetch(`/temp/bytes/${pageNumbersPdfPath}`, {
+    method: "GET",
+  });
+
+  const arrayBuffer = await res.arrayBuffer();
+
+  const pageNumbersPdf = await PDFDocument.load(arrayBuffer);
   for (let i = 0; i < numPages; i++) {
     if (!showPageNumbersArray[i]) {
       continue;

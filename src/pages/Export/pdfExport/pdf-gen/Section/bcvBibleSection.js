@@ -9,6 +9,7 @@ import {
   checkCssSubstitution,
   toTemp,
 } from "../helpers";
+import { getCssFromLookUp } from "../helpers/PankosmiaUtils";
 
 import { Section } from "./section";
 
@@ -118,7 +119,7 @@ export class bcvBibleSection extends Section {
     };
   }
 
-  async doSection({ section, templates, manifest, options, cssLookUp }) {
+  async doSection({ section, templates, manifest, options }) {
     if (!section.bcvRange) {
       throw new Error(`No bcvRange found for section ${section.id}`);
     }
@@ -164,11 +165,7 @@ export class bcvBibleSection extends Section {
       const verseHtml = templates["bcv_bible_verse"]
         .replace(
           "%%CSS%%",
-          await (
-            await fetch(`/temp/bytes/${cssLookUp["bcv_bible_verse"]}`, {
-              method: "GET",
-            })
-          ).text(),
+          await getCssFromLookUp(options.cssLookUp, "bcv_bible_verse"),
         )
         .replace(
           "%%CV%%",
@@ -207,13 +204,10 @@ export class bcvBibleSection extends Section {
       .replace("%%TITLE%%", `${qualified_id} - ${section.type}`)
       .replace("%%BODY%%", verses.join("\n"))
       .replace("%%BOOKNAME%%", bookName);
-
-    let css = await (
-      await fetch(`/temp/bytes/${cssLookUp["bcv_bible_page_styles"]}`, {
-        method: "GET",
-      })
-    ).text();
-
+    let css = await getCssFromLookUp(
+      options.cssLookUp,
+      "bcv_bible_page_styles",
+    );
     const spaceOption = 0; // MAKE THIS CONFIGURABLE
     for (const [placeholder, values] of options.pageFormat.sections.bcvBible
       .cssValues) {
