@@ -258,6 +258,7 @@ export class jxlSimpleSection extends Section {
 
     const bookName = section.bcvRange;
     let sentences = [];
+    let first = true;
     const qualified_id = `${section.id}_${section.bcvRange}`;
     options.verbose && console.log(`       Sentences`);
     let jxls = [];
@@ -430,26 +431,65 @@ export class jxlSimpleSection extends Section {
         jxls = [];
         cvs = [];
       }
+      if (sentenceN % 25 === 24) {
+        const server = window.location.origin;
+        let srcPolyfill = `${server}/app-resources/pdf/paged.polyfill.js`;
+
+        let htmlContent = templates["simple_juxta_page"]
+          .replace("%%SENTENCES%%", sentences.join(""))
+          .replace(
+            "%%CSS%%",
+            await getCssFromLookUp(
+              options.cssLookUp,
+              "simple_juxta_page_styles",
+            ),
+          )
+          .replace("%%POLYFY%%", srcPolyfill);
+
+        const blob = new Blob([htmlContent], { type: "text/html" });
+
+        // 2. Create FormData
+        const formData = new FormData();
+
+        // IMPORTANT: field name must match backend (likely "file")
+        formData.append("file", blob, "test.html");
+        const response = await fetch("/temp/bytes", {
+          method: "POST",
+          body: formData,
+        });
+
+        const result = await response.text();
+        const { uuid } = JSON.parse(result);
+        pdfPath = await window.api.generatePdf(uuid);
+        sentences = [];
+        manifest.push({
+          id: pdfPath,
+          type: section.type,
+          startOn: first ? section.content.startOn : false,
+          showPageNumber: section.content.showPageNumber,
+          makeFromDouble: false,
+        });
+      }
     }
-    const server = window.location.origin;
-    let srcPolyfill = `${server}/app-resources/pdf/paged.polyfill.js`;
+    if (sentences.length > 0) {
+      const server = window.location.origin;
+      let srcPolyfill = `${server}/app-resources/pdf/paged.polyfill.js`;
 
-    let htmlContent = templates["simple_juxta_page"]
-      .replace("%%SENTENCES%%", sentences.join(""))
-      .replace(
-        "%%CSS%%",
-        await getCssFromLookUp(options.cssLookUp, "simple_juxta_page_styles"),
-      )
-      .replace("%%POLYFY%%", srcPolyfill);
+      let htmlContent = templates["simple_juxta_page"]
+        .replace("%%SENTENCES%%", sentences.join(""))
+        .replace(
+          "%%CSS%%",
+          await getCssFromLookUp(options.cssLookUp, "simple_juxta_page_styles"),
+        )
+        .replace("%%POLYFY%%", srcPolyfill);
 
-    const blob = new Blob([htmlContent], { type: "text/html" });
+      const blob = new Blob([htmlContent], { type: "text/html" });
 
-    // 2. Create FormData
-    const formData = new FormData();
+      // 2. Create FormData
+      const formData = new FormData();
 
-    // IMPORTANT: field name must match backend (likely "file")
-    formData.append("file", blob, "test.html");
-    try {
+      // IMPORTANT: field name must match backend (likely "file")
+      formData.append("file", blob, "test.html");
       const response = await fetch("/temp/bytes", {
         method: "POST",
         body: formData,
@@ -458,9 +498,16 @@ export class jxlSimpleSection extends Section {
       const result = await response.text();
       const { uuid } = JSON.parse(result);
       pdfPath = await window.api.generatePdf(uuid);
-    } catch (err) {
-      console.error("Upload failed:", err);
+      sentences = [];
+      manifest.push({
+        id: pdfPath,
+        type: section.type,
+        startOn: first ? section.content.startOn : false,
+        showPageNumber: section.content.showPageNumber,
+        makeFromDouble: false,
+      });
     }
+
     // fse.writeFileSync(
     //   path.join(options.htmlPath, `${qualified_id}.html`),
     //   templates["simple_juxta_page"]
@@ -476,13 +523,6 @@ export class jxlSimpleSection extends Section {
     //   htmlPath: path.join(options.htmlPath, `${qualified_id}.html`),
     //   pdfPath: path.join(options.pdfPath, `${qualified_id}.pdf`),
     // });
-    manifest.push({
-      id: pdfPath,
-      type: section.type,
-      startOn: section.content.startOn,
-      showPageNumber: section.content.showPageNumber,
-      makeFromDouble: false,
-    });
   }
 }
 
