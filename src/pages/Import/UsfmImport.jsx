@@ -242,10 +242,27 @@ function UsfmImport() {
         titleLabel={`${doI18n("pages:core-contenthandler_text_translation:import_content", i18nRef.current)} - ${nameProject}`}
       >
         <DialogContent sx={{ mt: 1 }}>
-          <Tooltip
-            open={localBookContent ? bookIsDuplicate || !isUsfmValid : false}
-            title={
-              !isUsfmValid
+          <Button
+            onClick={() => openUsfmPicker()}
+            type="button"
+            disabled={loading}
+            variant="contained"
+            color="primary"
+            component="span"
+            startIcon={<UploadFileIcon />}
+          >
+            {loading
+              ? "Reading File..."
+              : filePicked.name
+                ? filePicked.name
+                : doI18n(
+                    "pages:core-contenthandler_text_translation:import_click",
+                    i18nRef.current,
+                  )}
+          </Button>
+          {localBookContent && (bookIsDuplicate || !isUsfmValid) && (
+            <Typography sx={{ color: "red", paddingTop: "8px" }}>
+              {!isUsfmValid
                 ? doI18n(
                     "pages:core-contenthandler_text_translation:usfm_invalid",
                     i18nRef.current,
@@ -253,29 +270,9 @@ function UsfmImport() {
                 : doI18n(
                     "pages:core-contenthandler_text_translation:book_already_exists",
                     i18nRef.current,
-                  )
-            }
-            placement="bottom-end"
-          >
-            <Button
-              onClick={() => openUsfmPicker()}
-              type="button"
-              disabled={loading}
-              variant="contained"
-              color="primary"
-              component="span"
-              startIcon={<UploadFileIcon />}
-            >
-              {loading
-                ? "Reading File..."
-                : filePicked.name
-                  ? filePicked.name
-                  : doI18n(
-                      "pages:core-contenthandler_text_translation:import_click",
-                      i18nRef.current,
-                    )}
-            </Button>
-          </Tooltip>
+                  )}
+            </Typography>
+          )}
           {Object.keys(validationResult).length > 0 && !bookIsDuplicate && (
             <Stack spacing={2} sx={{ mt: 0.5 }}>
               <Typography variant="body1">
