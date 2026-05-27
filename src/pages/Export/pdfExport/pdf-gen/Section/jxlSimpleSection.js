@@ -10,7 +10,7 @@ import {
 import { getJson, getText } from "pithekos-lib";
 import books from "../Css/Ressources/books.json";
 import { Section } from "./section";
-import { getCssFromLookUp } from "../helpers/PankosmiaUtils";
+import { getCssFromLookUp, toTemp } from "../helpers/PankosmiaUtils";
 
 export class jxlSimpleSection extends Section {
   requiresWrapper() {
@@ -446,24 +446,11 @@ export class jxlSimpleSection extends Section {
           )
           .replace("%%POLYFY%%", srcPolyfill);
 
-        const blob = new Blob([htmlContent], { type: "text/html" });
-
-        // 2. Create FormData
-        const formData = new FormData();
-
-        // IMPORTANT: field name must match backend (likely "file")
-        formData.append("file", blob, "test.html");
-        const response = await fetch("/temp/bytes", {
-          method: "POST",
-          body: formData,
-        });
-
-        const result = await response.text();
-        const { uuid } = JSON.parse(result);
-        pdfPath = await window.api.generatePdf(uuid);
+        let uuidHtml = await toTemp(htmlContent);
+        let pdfPathUuid = await window.api.generatePdf(uuidHtml);
         sentences = [];
         manifest.push({
-          id: pdfPath,
+          id: pdfPathUuid,
           type: section.type,
           startOn: first ? section.content.startOn : false,
           showPageNumber: section.content.showPageNumber,
@@ -483,46 +470,17 @@ export class jxlSimpleSection extends Section {
         )
         .replace("%%POLYFY%%", srcPolyfill);
 
-      const blob = new Blob([htmlContent], { type: "text/html" });
-
-      // 2. Create FormData
-      const formData = new FormData();
-
-      // IMPORTANT: field name must match backend (likely "file")
-      formData.append("file", blob, "test.html");
-      const response = await fetch("/temp/bytes", {
-        method: "POST",
-        body: formData,
-      });
-
-      const result = await response.text();
-      const { uuid } = JSON.parse(result);
-      pdfPath = await window.api.generatePdf(uuid);
+      let uuidHtml = await toTemp(htmlContent);
+      let pdfPathUuid = await window.api.generatePdf(uuidHtml);
       sentences = [];
       manifest.push({
-        id: pdfPath,
+        id: pdfPathUuid,
         type: section.type,
         startOn: first ? section.content.startOn : false,
         showPageNumber: section.content.showPageNumber,
         makeFromDouble: false,
       });
     }
-
-    // fse.writeFileSync(
-    //   path.join(options.htmlPath, `${qualified_id}.html`),
-    //   templates["simple_juxta_page"]
-    //     .replace(
-    //       "%%TITLE%%",
-    //       `${section.id.replace("%%bookCode%%", section.bcvRange)} - ${section.type}`,
-    //     )
-    //     .replace("%%SENTENCES%%", sentences.join("")),
-    // );
-    // await doPuppet({
-    //   browser: options.browser,
-    //   verbose: options.verbose,
-    //   htmlPath: path.join(options.htmlPath, `${qualified_id}.html`),
-    //   pdfPath: path.join(options.pdfPath, `${qualified_id}.pdf`),
-    // });
   }
 }
 

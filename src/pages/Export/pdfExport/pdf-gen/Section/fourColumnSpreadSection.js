@@ -7,6 +7,7 @@ import {
   bcvNotes,
   toTemp,
 } from "../helpers";
+import { getCssFromLookUp } from "../helpers/PankosmiaUtils";
 
 import { Section } from "./section";
 
@@ -143,7 +144,7 @@ export class fourColumnSpreadSection extends Section {
     const qualified_id = `${section.id}_${section.bcvRange}`;
     const server = window.location.origin;
     let srcPolyfill = `${server}/app-resources/pdf/paged.polyfill.js`;
-    const headerHtml = templates["4_column_header_page"]
+    const headerHtml = templates["four_column_header_page"]
       .replace(
         "%%TITLE%%",
         `${section.id.replace("%%bookCode%%", section.bcvRange)} - ${section.type}`,
@@ -152,28 +153,24 @@ export class fourColumnSpreadSection extends Section {
       .replace(/%%TRANS1TITLE%%/g, section.content.scripture[0].text)
       .replace(/%%TRANS2TITLE%%/g, section.content.scripture[1].text)
       .replace(/%%TRANS3TITLE%%/g, section.content.scripture[2].text)
-      .replace(/%%TRANS4TITLE%%/g, section.content.scripture[3].text);
-    let uuidHeader = toTemp(headerHtml);
-    //doo it
-    // fse.writeFileSync(
-    //   path.join(
-    //     options.htmlPath,
-    //     `${section.id.replace("%%bookCode%%", section.bcvRange)}_superimpose.html`,
-    //   ),
-    //   headerHtml,
-    // );
-    // await doPuppet({
-    //   browser: options.browser,
-    //   verbose: options.verbose,
-    //   htmlPath: path.join(
-    //     options.htmlPath,
-    //     `${section.id.replace("%%bookCode%%", section.bcvRange)}_superimpose.html`,
-    //   ),
-    //   pdfPath: path.join(
-    //     options.pdfPath,
-    //     `${section.id.replace("%%bookCode%%", section.bcvRange)}_superimpose.pdf`,
-    //   ),
-    // });
+      .replace(/%%TRANS4TITLE%%/g, section.content.scripture[3].text)
+      .replace(
+        "%%CSS%%",
+        await getCssFromLookUp(
+          options.cssLookUp,
+          "four_column_header_page_styles",
+        ),
+      );
+    let uuidHeader = await toTemp(headerHtml);
+    let pdfHeaderfUuid = await window.api.generatePdf(uuidHeader);
+
+    manifest.push({
+      id: `${pdfHeaderfUuid}`,
+      type: "superimpose",
+      startOn: section.content.startOn,
+      showPageNumber: section.content.showPageNumber,
+      makeFromDouble: true,
+    });
     verses.push(`
 <section class="columnHeadings">
     <section class="versoPage">
@@ -192,7 +189,7 @@ export class fourColumnSpreadSection extends Section {
         seenCvs.add(cvRecord.cv);
       }
       const cvNotes = unpackCellRange(cvRecord.cv).map((cv) => notes[cv] || []);
-      const verseHtml = templates["4_column_spread_verse"]
+      const verseHtml = templates["four_column_spread_verse"]
         .replace(
           "%%VERSOCOLUMNS%%",
           `<div class="col1"><span class="cv">${cvRecord.cv.endsWith(":1") ? `${bookName}&nbsp;` : ""}${cvRecord.cv}</span> ${cvRecord.texts["xxx_yyy0"] || "-"}</div><div class="col2">${cvRecord.texts["xxx_yyy1"] || "-"}</div>`,
@@ -210,16 +207,21 @@ export class fourColumnSpreadSection extends Section {
         );
       verses.push(verseHtml);
     }
-    let html = templates["4_column_spread_page"]
+    let html = templates["four_column_spread_page"]
       .replace(
         "%%TITLE%%",
         `${qualified_id.replace("%%bookCode%%", section.bcvRange)} - ${section.type}`,
       )
       .replace("%%POLYFY%%", srcPolyfill)
       .replace("%%VERSES%%", verses.join("\n"))
-      .replace("%%BOOKNAME%%", bookName);
-
+      .replace("%%BOOKNAME%%", bookName)
+      .replace(
+        "%%CSS%%",
+        await getCssFromLookUp(options.cssLookUp, "four_col_page_styles"),
+      );
     let uuidBody = await toTemp(html);
+    let pdfUuid = await window.api.generatePdf(uuidBody);
+
     // await doPuppet({
     //   browser: options.browser,
     //   verbose: options.verbose,
@@ -233,7 +235,7 @@ export class fourColumnSpreadSection extends Section {
     //   ),
     // });
     manifest.push({
-      id: `${qualified_id}`,
+      id: `${pdfUuid}`,
       type: section.type,
       startOn: section.content.startOn,
       showPageNumber: section.content.showPageNumber,

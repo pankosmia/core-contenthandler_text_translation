@@ -2,7 +2,9 @@ export const bible_plus_notes_in_rows_page = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../resources/bible_plus_notes_in_rows_page_styles.css">
+    <style>
+    %%CSS%%
+    </style>    
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <script src="%%POLYFY%%"></script>
     <title>%%TITLE%%</title>

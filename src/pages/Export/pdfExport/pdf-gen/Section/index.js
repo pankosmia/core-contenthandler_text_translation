@@ -5,3 +5,5 @@ export { bookNoteSection } from "./bookNoteSection";
 export { fourColumnSpreadSection } from "./fourColumnSpreadSection";
 export { jxlSimpleSection } from "./jxlSimpleSection";
 export { markdownSection } from "./markdownSection";
+export { paraBibleSection } from "./paraBibleSection";
+export { jxlSpreadSection } from "./jxlSpreadSection";

@@ -2,7 +2,9 @@ export const bcv_bible_page = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../resources/bcv_bible_page_styles.css">
+    <style>
+    %%CSS%%
+    </style>
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <script src="%%POLYFY%%"></script>
     <title>%%TITLE%%</title>

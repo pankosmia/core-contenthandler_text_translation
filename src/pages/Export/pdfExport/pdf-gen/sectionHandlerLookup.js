@@ -5,6 +5,8 @@ import {
   bcvBibleSection,
   biblePlusNotesSection,
   markdownSection,
+  paraBibleSection,
+  jxlSpreadSection,
 } from "./Section";
 
 export const sectionHandlerLookup = {
@@ -14,4 +16,6 @@ export const sectionHandlerLookup = {
   bcvBible: new bcvBibleSection(),
   bookNote: new bookNoteSection(),
   biblePlusNotes: new biblePlusNotesSection(),
+  paraBible: new paraBibleSection(),
+  jxlSpread: new jxlSpreadSection(),
 };

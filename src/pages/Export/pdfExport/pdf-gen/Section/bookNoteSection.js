@@ -81,7 +81,9 @@ export class bookNoteSection extends Section {
       .replace("%%POLYFY%%", srcPolyfill)
       .replace("%%TITLE%%", title)
       .replace("%%BODY%%", `<h1>${title}</h1>\n\n${body}`);
-    let uuid = await toTemp(html);
+
+    let htmlUuid = await toTemp(html);
+    let pdfUuid = await window.api.generatePdf(htmlUuid);
 
     // await doPuppet({
     //     browser: options.browser,
@@ -90,7 +92,7 @@ export class bookNoteSection extends Section {
     //     pdfPath: path.join(options.pdfPath, `${qualified_id}.pdf`)
     // });
     manifest.push({
-      id: qualified_id,
+      id: pdfUuid,
       type: section.type,
       startOn: section.content.startOn,
       showPageNumber: section.content.showPageNumber,

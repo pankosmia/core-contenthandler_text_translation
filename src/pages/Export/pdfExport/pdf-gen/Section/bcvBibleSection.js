@@ -123,7 +123,7 @@ export class bcvBibleSection extends Section {
     if (!section.bcvRange) {
       throw new Error(`No bcvRange found for section ${section.id}`);
     }
-    const pk = pkWithDocs(
+    const pk = await pkWithDocs(
       section.bcvRange,
       [
         {
@@ -215,19 +215,12 @@ export class bcvBibleSection extends Section {
     }
     checkCssSubstitution("bcv_bible_page_styles.css", css, "%");
     html = html.replace("%%CSS%%", css);
-    let uuid = await toTemp(html);
 
-    //   const pdfPath = await window.api.generatePdf(uuid);
+    let htmlUuid = await toTemp(html);
+    let pdfUuid = await window.api.generatePdf(htmlUuid);
 
-    // fse.writeFileSync(cssPath, css);
-    // await doPuppet({
-    //     browser: options.browser,
-    //     verbose: options.verbose,
-    //     htmlPath: path.join(options.htmlPath, `${qualified_id}.html`),
-    //     pdfPath: path.join(options.pdfPath, `${qualified_id}.pdf`)
-    // });
     manifest.push({
-      id: qualified_id,
+      id: pdfUuid,
       type: section.type,
       startOn: section.content.startOn,
       showPageNumber: section.content.showPageNumber,

@@ -218,7 +218,7 @@ export class biblePlusNotesSection extends Section {
     section.content.notesUnit = section.content.notesUnit || "verse";
     section.content.notesPosition = section.content.notesPosition || "columns";
     section.content.notesWidth = section.content.notesWidth || 70;
-    const pk = pkWithDocs(
+    const pk = await pkWithDocs(
       section.bcvRange,
       [
         {
@@ -229,7 +229,7 @@ export class biblePlusNotesSection extends Section {
       options.verbose,
     );
     const bookName = getBookName(pk, "xxx_yyy", section.bcvRange);
-    const notes = bcvNotes(section.content.notes, section.bcvRange, []);
+    const notes = await bcvNotes(section.content.notes, section.bcvRange, []);
     const cvTexts = getCVTexts(section.bcvRange, pk);
     const verses = [`<h1>${bookName}</h1>`];
     const qualified_id = `${section.id}_${section.bcvRange}`;
@@ -253,6 +253,13 @@ export class biblePlusNotesSection extends Section {
         const verseHtml = templates[
           `bible_plus_notes_${section.content.notesPosition}`
         ]
+          .replace(
+            "%%CSS%%",
+            await getCssFromLookUp(
+              options.cssLookUp,
+              `bible_plus_notes_in_${section.content.notesPosition}_page_styles`,
+            ),
+          )
           .replace("%%TRANS1TITLE%%", section.content.scriptureText)
           .replace("%%TRANS2TITLE%%", section.content.scriptureText)
           .replace("%%SCRIPTUREWIDTH%%", 100 - section.content.notesWidth)
@@ -292,6 +299,13 @@ export class biblePlusNotesSection extends Section {
         const verseHtml = templates[
           `bible_plus_notes_${section.content.notesPosition}`
         ]
+          .replace(
+            "%%CSS%%",
+            await getCssFromLookUp(
+              options.cssLookUp,
+              `bible_plus_notes_in_${section.content.notesPosition}_page_styles`,
+            ),
+          )
           .replace("%%TRANS1TITLE%%", section.content.scriptureText)
           .replace("%%TRANS2TITLE%%", section.content.scriptureText)
           .replace("%%SCRIPTUREWIDTH%%", 100 - section.content.notesWidth)
@@ -328,27 +342,26 @@ export class biblePlusNotesSection extends Section {
             .replace("%%TITLE%%", `${qualified_id} - ${section.type}`)
             .replace("%%BODY%%", verses.join("\n"))
             .replace("%%BOOKNAME%%", bookName);
+
     let css = await getCssFromLookUp(
       options.cssLookUp,
-      "bible_plus_notes_in_columns_page_styles",
+      section.content.notesPosition === "columns"
+        ? "bible_plus_notes_in_columns_page_styles"
+        : "bible_plus_notes_in_rows_page_styles",
     );
-    const spaceOption = 0; // MAKE THIS CONFIGURABLE
-    checkCssSubstitution(
-      "bible_plus_notes_in_columns_page_styles.css",
-      css,
-      "%",
-    );
+    // const spaceOption = 0; // MAKE THIS CONFIGURABLE
+    // checkCssSubstitution(
+    //   "bible_plus_notes_in_columns_page_styles.css",
+    //   css,
+    //   "%",
+    // );
     html = html.replace("%%CSS%%", css);
 
-    let uuid = toTemp(html);
-    // await doPuppet({
-    //   browser: options.browser,
-    //   verbose: options.verbose,
-    //   htmlPath: path.join(options.htmlPath, `${qualified_id}.html`),
-    //   pdfPath: path.join(options.pdfPath, `${qualified_id}.pdf`),
-    // });
+    let htmlUuid = await toTemp(html);
+    let pdfUuid = await window.api.generatePdf(htmlUuid);
+
     manifest.push({
-      id: `${qualified_id}`,
+      id: `${pdfUuid}`,
       type: section.type,
       startOn: section.content.startOn,
       showPageNumber: section.content.showPageNumber,

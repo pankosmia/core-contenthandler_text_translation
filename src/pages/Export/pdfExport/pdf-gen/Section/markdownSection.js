@@ -1,7 +1,7 @@
 import DOMPurify from "isomorphic-dompurify";
 import { marked } from "marked";
 import { Section } from "./section";
-import { getCssFromLookUp } from "../helpers/PankosmiaUtils";
+import { getCssFromLookUp, toTemp } from "../helpers/PankosmiaUtils";
 export class markdownSection extends Section {
   requiresWrapper() {
     return [];
@@ -108,38 +108,8 @@ export class markdownSection extends Section {
       )
       .replace("%%POLYFY%%", srcPolyfill);
 
-    const blob = new Blob([htmlContent], { type: "text/html" });
-
-    // 2. Create FormData
-    const formData = new FormData();
-
-    // IMPORTANT: field name must match backend (likely "file")
-    formData.append("file", blob, "test.html");
-    try {
-      const response = await fetch("/temp/bytes", {
-        method: "POST",
-        body: formData,
-      });
-
-      const result = await response.text();
-      const { uuid } = JSON.parse(result);
-      pdfPath = await window.api.generatePdf(uuid);
-    } catch (err) {
-      console.error("Upload failed:", err);
-    }
-
-    // section.doPdfCallback && section.doPdfCallback({
-    //     type: "pdf",
-    //     level: 3,
-    //     msg: `Originating PDF ${path.join(options.pdfPath, `${section.id.replace('%%bookCode%%', bookCode)}.pdf`)} for Markdown'`,
-    //     args: [path.join(options.pdfPath, `${section.id.replace('%%bookCode%%', bookCode)}.pdf`)]
-    // });
-    // await doPuppet({
-    //     browser: options.browser,
-    //     verbose: options.verbose,
-    //     htmlPath: path.join(options.htmlPath, `${section.id.replace('%%bookCode%%', bookCode)}.html`),
-    //     pdfPath: path.join(options.pdfPath, `${section.id.replace('%%bookCode%%', bookCode)}.pdf`)
-    // });
+    let uuid = await toTemp(htmlContent);
+    pdfPath = await window.api.generatePdf(uuid);
     manifest.push({
       id: pdfPath,
       type: section.type,
