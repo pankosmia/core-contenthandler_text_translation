@@ -9,6 +9,7 @@ import {
   RadioGroup,
   Radio,
   Typography,
+  Box,
 } from "@mui/material";
 import { doI18n, getAndSetJson } from "pithekos-lib";
 
@@ -61,11 +62,13 @@ export default function ContentDocument({
   return (
     <>
       {contentOption !== "plan" && (
-        <PanVersificationPicker
-          versification={versification}
-          setVersification={setVersification}
-          isOpen={open}
-        />
+        <Box sx={{ paddingBottom: "16px" }}>
+          <PanVersificationPicker
+            versification={versification}
+            setVersification={setVersification}
+            isOpen={open}
+          />
+        </Box>
       )}
       <FormControl>
         <FormLabel id="book-create-options">
@@ -81,8 +84,14 @@ export default function ContentDocument({
           value={contentOption}
           onChange={(event) => setContentOption(event.target.value)}
         >
-          {/*<FormControlLabel value="none" control={<Radio />}
-                                label={doI18n("pages:core-contenthandler_text_translation:no_content_radio", i18nRef.current)} />*/}
+          <FormControlLabel
+            value="none"
+            control={<Radio />}
+            label={doI18n(
+              "pages:core-contenthandler_text_translation:no_content_radio",
+              i18nRef.current,
+            )}
+          />
           <FormControlLabel
             value="book"
             control={<Radio />}
