@@ -1,10 +1,4 @@
-import {
-  unpackCellRange,
-  pkWithDocs,
-  getBookName,
-  bcvNotes,
-  resolvePath,
-} from "../helpers";
+import { unpackCellRange, pkWithDocs, getBookName, bcvNotes } from "../helpers";
 import { SofriaRenderFromProskomma, render } from "proskomma-json-tools";
 import { getCssFromLookUp, toTemp } from "../helpers/PankosmiaUtils";
 import { Section } from "./section";

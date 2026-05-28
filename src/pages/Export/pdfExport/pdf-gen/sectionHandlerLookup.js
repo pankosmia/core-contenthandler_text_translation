@@ -7,6 +7,10 @@ import {
   markdownSection,
   paraBibleSection,
   jxlSpreadSection,
+  obsPlusNotesSection,
+  obsSection,
+  pdfSection,
+  twoColumnSection,
 } from "./Section";
 
 export const sectionHandlerLookup = {
@@ -18,4 +22,8 @@ export const sectionHandlerLookup = {
   biblePlusNotes: new biblePlusNotesSection(),
   paraBible: new paraBibleSection(),
   jxlSpread: new jxlSpreadSection(),
+  obsPlusNotes: new obsPlusNotesSection(),
+  obs: new obsSection(),
+  pdf: new pdfSection(),
+  twoColumn: new twoColumnSection(),
 };

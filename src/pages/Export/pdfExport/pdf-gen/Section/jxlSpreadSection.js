@@ -5,13 +5,11 @@ import {
   quoteForCv,
   tidyLhsText,
   cleanNoteLine,
-  doPuppet,
-  resolvePath,
   bcvNotes,
   unpackCellRange,
   toTemp,
 } from "../helpers";
-import books from "../Css/resources/books.json";
+import books from "../Css/Ressources/books.json";
 import { Section } from "./section";
 import { getJson, getText } from "pithekos-lib";
 import { getCssFromLookUp } from "../helpers/PankosmiaUtils";
@@ -214,7 +212,7 @@ export class jxlSpreadSection extends Section {
       sentenceN++;
     }
     let vNotes = section.content.bcvNotes
-      ? bcvNotes(resolvePath(section.content.bcvNotes), section.bcvRange)
+      ? await bcvNotes(section.content.bcvNotes, section.bcvRange)
       : {};
     for (const [cv, noteArray] of Object.entries(vNotes)) {
       vNotes[cv] = [
@@ -264,7 +262,7 @@ export class jxlSpreadSection extends Section {
     for (const scripture of section.content.lhs) {
       docSpecs.push({
         id: `xxx_yyy${scriptureN}`,
-        path: resolvePath(scripture.src),
+        path: scripture.src,
         type: scripture.type,
         text: scripture.text,
       });

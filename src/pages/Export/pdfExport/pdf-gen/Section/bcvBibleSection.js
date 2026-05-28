@@ -164,10 +164,6 @@ export class bcvBibleSection extends Section {
 
       const verseHtml = templates["bcv_bible_verse"]
         .replace(
-          "%%CSS%%",
-          await getCssFromLookUp(options.cssLookUp, "bcv_bible_verse"),
-        )
-        .replace(
           "%%CV%%",
           cvRecord.cv
             .replace(/(\d):/, (match, p1) => `${p1}${chapterVerseSeparator}`)

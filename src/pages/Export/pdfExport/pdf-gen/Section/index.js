@@ -7,3 +7,7 @@ export { jxlSimpleSection } from "./jxlSimpleSection";
 export { markdownSection } from "./markdownSection";
 export { paraBibleSection } from "./paraBibleSection";
 export { jxlSpreadSection } from "./jxlSpreadSection";
+export { obsPlusNotesSection } from "./obsPlusNotesSection";
+export { obsSection } from "./obsSection";
+export { twoColumnSection } from "./twoColumnSection";
+export { pdfSection } from "./pdfSection";

@@ -1,14 +1,8 @@
 import { PDFDocument } from "pdf-lib";
-import {
-  loadTemplate,
-  doPuppet,
-  constants,
-  resolvePath,
-  toTemp,
-} from "./helpers";
+import { constants, toTemp } from "./helpers";
 // import { fontKit } from "fontkit";
 import templates from "./HTML";
-import { getCssFromLookUp } from "./helpers/PankosmiaUtils";
+import { getCssFromLookUp, pdfToTemp } from "./helpers/PankosmiaUtils";
 /**
  * Generates HTML for page numbers and converts it to a PDF.
  * Does this 100 pages at a time because of weird Puppeteer 180-page limit
@@ -314,20 +308,10 @@ export const assemblePdfs = async function (options, doPdfCallback, manifest) {
 
   // Serialize the PDFDocument to bytes (a Uint8Array)
   const pdfBuffer = await pdfDocWithPageNum.save();
-  // fse.writeFileSync(resolvePath(options.output), pdfBytes);
-  const formData = new FormData();
 
-  const blob = new Blob([pdfBuffer], {
-    type: "application/pdf",
-  });
+  let pdfUuid = await pdfToTemp(pdfBuffer);
+  await window.api.generatePdfToFile(pdfUuid);
 
-  formData.append("file", blob, "document.pdf");
-
-  // Upload PDF to temp endpoint
-  const uploadResponse = await fetch(`/temp/bytes`, {
-    method: "POST",
-    body: formData,
-  });
   options.verbose &&
     console.log(
       `   Assembled PDF (with ${pdfDocWithPageNum.getPageCount()} pages, ${Math.floor(pdfBuffer.length / (1024 * 1024))} Mb) written to ${options.output}`,
@@ -340,5 +324,4 @@ export const assemblePdfs = async function (options, doPdfCallback, manifest) {
       args: [options.output, pdfDocWithPageNum.getPageCount()],
     });
   // Cleanup
-  await options.browser.close();
 };

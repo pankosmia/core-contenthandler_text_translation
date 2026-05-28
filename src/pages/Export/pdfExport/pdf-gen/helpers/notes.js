@@ -98,6 +98,7 @@ export const unpackCellRange = (cv) => {
 export const bcvNotes = async (notesPath, bookCode, excludeTags = []) => {
   const notes = {};
   const summary = await getJson(`/burrito/metadata/summary/${notesPath}`);
+
   const fileWithBook = summary.json.book_codes.filter((p) =>
     p.includes(bookCode),
   );

@@ -1,4 +1,3 @@
-import { loadTemplates } from "./helpers";
 import { sectionHandlerLookup } from "./sectionHandlerLookup";
 
 import templates from "./HTML";
@@ -26,18 +25,18 @@ export const originatePdfs = async (options, doPdfCallback = null) => {
         section.id.replace("%%bookCode%%", wrapperRange),
       ),
     );
-    if (["4ColumnSpread", "2Column"].includes(section.type)) {
+    if (["fourColumnSpread", "twoColumn"].includes(section.type)) {
       links.push(
         templates["web_index_page_link"].replace(
           /%%ID%%/g,
           `${section.id.replace("%%bookCode%%", wrapperRange)}_superimpose`,
         ),
       );
-      manifest.push({
-        id: `${section.id.replace("%%bookCode%%", wrapperRange)}_superimpose`,
-        type: "superimpose",
-        for: section.id.replace("%%bookCode%%", wrapperRange),
-      });
+      // manifest.push({
+      //   id: `${section.id.replace("%%bookCode%%", wrapperRange)}_superimpose`,
+      //   type: "superimpose",
+      //   for: section.id.replace("%%bookCode%%", wrapperRange),
+      // });
     }
     const sectionHandler = sectionHandlerLookup[section.type];
     if (!sectionHandler) {

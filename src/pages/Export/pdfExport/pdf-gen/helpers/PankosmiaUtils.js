@@ -19,7 +19,29 @@ export async function toTemp(html) {
     console.error("Upload failed:", err);
   }
 }
+export async function pdfToTemp(pdf) {
+  // pdf can be a Blob, File, or ArrayBuffer
 
+  const blob =
+    pdf instanceof Blob ? pdf : new Blob([pdf], { type: "application/pdf" });
+
+  const formData = new FormData();
+
+  formData.append("file", blob, "file.pdf");
+
+  try {
+    const response = await fetch("/temp/bytes", {
+      method: "POST",
+      body: formData,
+    });
+
+    const result = await response.json();
+
+    return result.uuid;
+  } catch (err) {
+    console.error("PDF upload failed:", err);
+  }
+}
 export async function getCssFromLookUp(cssLookUp, styleName) {
   return await (
     await fetch(`/temp/bytes/${cssLookUp[styleName]}`, {

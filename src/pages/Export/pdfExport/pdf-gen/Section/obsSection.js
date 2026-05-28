@@ -1,31 +1,17 @@
-import { setupOneCSS, checkCssSubstitution } from "../helpers";
 import { marked } from "marked";
 import DOMPurify from "isomorphic-dompurify";
 import { Section } from "./section";
-import { getJson, getText } from "pithekos-lib";
+import { getJson } from "pithekos-lib";
 import { getCssFromLookUp, toTemp } from "../helpers/PankosmiaUtils";
-import { forEach } from "jszip";
 
-const getObsNotes = async (notesPath, notesRef) => {
-  return (
-    await getText(`/burrito/ingredient/raw/${notesPath}?ipath=${"OBS.tsv"}`)
-  ).text
-    .split("\n")
-    .map((l) => l.trim())
-    .filter((l) => l.startsWith(`${notesRef}\t`))
-    .map((l) => l.split(`\t`))
-    .map((lc) => `<p class="note\"><b>${lc[4]}</b> ${lc[6]}</p>`)
-    .join("\n");
-};
-
-export class obsPlusNotesSection extends Section {
+export class obsSection extends Section {
   requiresWrapper() {
     return ["obs"];
   }
 
   signature() {
     return {
-      sectionType: "obsPlusNotes",
+      sectionType: "obs",
       requiresWrapper: this.requiresWrapper(),
       fields: [
         {
@@ -71,15 +57,6 @@ export class obsPlusNotesSection extends Section {
           suggestedDefault: true,
         },
         {
-          id: "obs",
-          label: {
-            en: "OBS Source",
-            fr: "Source pour OBS",
-          },
-          typeName: "obs",
-          nValues: [1, 1],
-        },
-        {
           id: "obsImg",
           label: {
             en: "OBS Source Images",
@@ -89,29 +66,20 @@ export class obsPlusNotesSection extends Section {
           nValues: [1, 1],
         },
         {
-          id: "notes",
+          id: "obs",
           label: {
-            en: "Notes Source",
-            setupOneCSS,
-
-            fr: "Source pour notes",
+            en: "OBS Source",
+            fr: "Source pour OBS",
           },
-          typeName: "obsNotes",
+          typeName: "obs",
           nValues: [1, 1],
         },
       ],
     };
   }
 
-  async doSection({
-    section,
-    templates,
-    bookCode,
-    manifest,
-    options,
-    doPdfCallback,
-  }) {
-    let isFirst = false;
+  async doSection({ section, templates, manifest, options }) {
+    let isFirst = true;
     let stories = (
       await getJson(
         `/burrito/ingredients/raw/${section.content.obs}?ipath=content`,
@@ -120,13 +88,6 @@ export class obsPlusNotesSection extends Section {
     let mkdStories = Object.keys(stories).filter((e) => e.includes(".md"));
     for (const mdName of mkdStories) {
       const [name, suffix] = mdName.split(".");
-      let storyNotes = "";
-      if (section.obsNotesPath) {
-        storyNotes = await getObsNotes(
-          section.content.notes,
-          `${parseInt(name)}:0`,
-        );
-      }
       if (suffix !== "md" || !parseInt(name)) {
         continue;
       }
@@ -165,31 +126,6 @@ export class obsPlusNotesSection extends Section {
 
       imagesLinks.forEach((tup) => markdown.replace(tup[0], tup[1]));
 
-      if (section.content.notes) {
-        markdown = markdown.replace(
-          /<\/h1>/g,
-          `</h1><section class=\"storynotes\">\n${storyNotes}\n</section>\n`,
-        );
-        markdown = markdown.replace(
-          /<p><img/g,
-          '<section class="storysection">\n<p class="storypara"><img',
-        );
-        markdown = markdown.replace(/jpg"><\/p>\n<p>/g, 'jpg">');
-        markdown = markdown.replace(
-          /<\/p>\n<section/g,
-          '</p>\n<section class="storynotes">%%%%NOTES%%%%</section>\n</section>\n<section',
-        );
-        let noteParaN = 1;
-        while (RegExp(/%%%%NOTES%%%%/).test(markdown)) {
-          const noteParaRef = `${parseInt(name)}:${noteParaN}`;
-          markdown = markdown.replace(
-            "%%%%NOTES%%%%",
-            await getObsNotes(section.content.notes, noteParaRef),
-          );
-          noteParaN++;
-        }
-      }
-      const qualified_id = `${section.id}_${section.bcvRange}`;
       const server = window.location.origin;
       let srcPolyfill = `${server}/app-resources/pdf/paged.polyfill.js`;
       let html = templates["obs_page"]
@@ -198,33 +134,24 @@ export class obsPlusNotesSection extends Section {
           "%%TITLE%%",
           `${section.id.replace("%%bookCode%%", name)} - ${section.type}`,
         )
-        .replace("%%BODY%%", markdown);
+        .replace("%%BODY%%", markdown)
+        .replace(
+          "%%CSS%%",
+          await getCssFromLookUp(options.cssLookUp, "obs_page_styles"),
+        );
 
-      let css = await getCssFromLookUp(
-        options.cssLookUp,
-        "obs_plus_notes_page_styles",
-      );
-      for (const [placeholder, values] of options.pageFormat.sections
-        .obsPlusNotes.cssValues) {
-        css = setupOneCSS(css, placeholder, "%", values[0]);
-      }
-
-      checkCssSubstitution("obs_plus_notes_page_styles.css", css, "%");
-      html.replace("%%CSS%%", css);
-
+      let uuidHtml = await toTemp(html);
       //   section.doPdfCallback &&
       //     section.doPdfCallback({
       //       type: "pdf",
       //       level: 3,
-      //       msg: `Originating PDF ${path.join(options.pdfPath, `${section.id}_${name}.pdf}`)} for OBSPlusNotes story '${mdName}'`,
+      //       msg: `Originating PDF ${path.join(options.pdfPath, `${section.id}_${name}.pdf}`)} for OBS story '${mdName}'`,
       //       args: [
       //         `${path.join(options.pdfPath, `${section.id}_${name}.pdf`)}`,
       //         mdName,
       //       ],
       //     });
-      let uuidHtml = await toTemp(html);
       let pdfUuid = await window.api.generatePdf(uuidHtml);
-
       manifest.push({
         id: pdfUuid,
         type: section.type,
@@ -236,4 +163,4 @@ export class obsPlusNotesSection extends Section {
     }
   }
 }
-module.exports = obsPlusNotesSection;
+module.exports = obsSection;
