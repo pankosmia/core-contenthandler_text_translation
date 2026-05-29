@@ -35,7 +35,7 @@ function UsfmExport() {
   const getProjectSummaries = async () => {
     setRepoPath(path);
     const summariesResponse = await getJson(
-      `/burrito/metadata/summary/${path}`,
+      `/api/burrito/metadata/summary/${path}`,
       debugContext.current,
     );
     if (summariesResponse.ok) {
@@ -51,7 +51,7 @@ function UsfmExport() {
   }, []);
 
   const usfmExportOneBook = async (bookCode) => {
-    const bookUrl = `/burrito/ingredient/raw/${repoPath}?ipath=${bookCode}.usfm`;
+    const bookUrl = `/api/burrito/ingredient/raw/${repoPath}?ipath=${bookCode}.usfm`;
     const bookUsfmResponse = await getText(bookUrl, debugRef.current);
     if (!bookUsfmResponse.ok) {
       enqueueSnackbar(
@@ -92,14 +92,14 @@ function UsfmExport() {
         setTimeout(() => {
           window.location.href = "/clients/main";
           resolve();
-        }, 1500),
+        }, 500),
       );
     } else {
       await new Promise((resolve) =>
         setTimeout(() => {
           window.location.href = "/clients/content";
           resolve();
-        }, 1500),
+        }, 500),
       );
     }
   };
@@ -107,7 +107,7 @@ function UsfmExport() {
   useEffect(() => {
     const doFetch = async () => {
       const versificationResponse = await getJson(
-        "/content-utils/versification/eng",
+        "/api/content-utils/versification/eng",
         debugRef.current,
       );
       if (versificationResponse.ok) {
@@ -130,7 +130,7 @@ function UsfmExport() {
           backgroundPosition: "center",
           zIndex: -1,
           backgroundImage:
-            'url("/app-resources/pages/content/background_blur.png")',
+            'url("/api/app-resources/pages/content/background_blur.png")',
           backgroundRepeat: "no-repeat",
           backdropFilter: "blur(3px)",
         }}
