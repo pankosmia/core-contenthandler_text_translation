@@ -2,7 +2,7 @@
   "id": "core-contenthandler_text_translation",
   "exclude_from_menu": true,
   "exclude_from_dashboard": true,
-  "minServerVersion": "0.16.0",
+  "minServerVersion": "0.16.1",
   "require": {
     "net": false,
     "debug": true
