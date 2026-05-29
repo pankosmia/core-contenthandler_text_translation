@@ -53,7 +53,7 @@ export default function ContentDocument({
   useEffect(() => {
     if (open) {
       getAndSetJson({
-        url: "/burrito/metadata/summaries",
+        url: "/api/burrito/metadata/summaries",
         setter: setMetadataSummaries,
       }).then();
     }
