@@ -80,5 +80,12 @@ export const JUXTA = `.jxlGreek {
 }
 
 .jxlTable {
-    margin-bottom: 0;
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.jxlRow {
+  display: flex;
+  align-items: flex-start;
 }`;

@@ -96,6 +96,9 @@ h2.sentenceHeader {
     padding-left: 6pt;
     text-indent: -6pt;
     font-family: %%FOOTNOTEFONT%%;
+    display: block !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
 }
 
 .not_first_note {

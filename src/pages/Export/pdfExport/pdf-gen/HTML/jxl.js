@@ -1,5 +1,3 @@
-export const jxl = `<table class="jxlTable">
-    <tbody>
+export const jxl = `<div class="jxlTable">
 %%ROWS%%
-    </tbody>
-</table>`;
+</div>`;

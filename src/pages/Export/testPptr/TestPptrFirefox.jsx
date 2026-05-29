@@ -47,7 +47,7 @@ let configContentBibles = {
           content: {
             startOn: "recto",
             showPageNumber: true,
-            notes: "/git.door43.org/burritotruck/fr_sq",
+            notes: "/git.door43.org/burritotruck/en_sq",
           },
         },
         {
@@ -80,7 +80,7 @@ let configContentBibles = {
           content: {
             startOn: "recto",
             showPageNumber: true,
-            notes: "/git.door43.org/burritotruck/fr_sq",
+            notes: "/git.door43.org/burritotruck/en_sq",
             scriptureSrc: "/git.door43.org/burritotruck/fr_psle",
             scriptureType: "translation",
           },
@@ -158,28 +158,28 @@ let configContentJxl = {
       type: "bcvWrapper",
       ranges: ["TIT"],
       sections: [
-        {
-          id: "juxtaSpread",
-          type: "jxlSpread",
-          content: {
-            startOn: "verso",
-            showPageNumber: true,
-            jxl: "/git.door43.org/burritotruck/fr_juxta",
-            lhs: [
-              {
-                text: "GREC",
-                type: "greek",
-                src: "^/git.door43.org/unfoldingWord/el-x-koine_ugnt",
-              },
-              {
-                text: "PSLE",
-                type: "translation",
-                src: "/git.door43.org/burritotruck/fr_psle",
-              },
-            ],
-            bcvNotes: "/git.door43.org/burritotruck/fr_sq",
-          },
-        },
+        // {
+        //   id: "juxtaSpread",
+        //   type: "jxlSpread",
+        //   content: {
+        //     startOn: "verso",
+        //     showPageNumber: true,
+        //     jxl: "/git.door43.org/burritotruck/fr_juxta",
+        //     lhs: [
+        //       {
+        //         text: "GREC",
+        //         type: "greek",
+        //         src: "/git.door43.org/unfoldingWord/el-x-koine_ugnt",
+        //       },
+        //       {
+        //         text: "PSLE",
+        //         type: "translation",
+        //         src: "/git.door43.org/burritotruck/fr_psle",
+        //       },
+        //     ],
+        //     bcvNotes: "/git.door43.org/burritotruck/en_sq",
+        //   },
+        // },
         {
           id: "juxtaSimple",
           type: "jxlSimple",
@@ -187,13 +187,7 @@ let configContentJxl = {
             startOn: "recto",
             showPageNumber: true,
             jxl: "/git.door43.org/burritotruck/fr_juxta",
-            bcvNotes: "/git.door43.org/burritotruck/fr_sq",
-            glossNotes: [
-              {
-                notes: "/git.door43.org/unfoldingWord/en_tn",
-                pivot: "^/test/test_resources/jxl2note",
-              },
-            ],
+            bcvNotes: "/git.door43.org/burritotruck/en_sq",
           },
         },
       ],

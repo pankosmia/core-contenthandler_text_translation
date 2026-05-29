@@ -268,7 +268,7 @@ export class jxlSpreadSection extends Section {
       });
       scriptureN++;
     }
-    const pk = pkWithDocs(section.bcvRange, docSpecs, options.verbose);
+    const pk = await pkWithDocs(section.bcvRange, docSpecs, options.verbose);
     const bookName = getBookName(pk, "xxx_yyy0", section.bcvRange);
     let sentences = [];
     options.verbose && console.log(`       Sentences`);

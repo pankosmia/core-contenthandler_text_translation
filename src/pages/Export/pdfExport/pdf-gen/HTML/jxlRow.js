@@ -1,4 +1,4 @@
-export const jxlRow = `<tr>
-    <td class="%%SOURCECLASS%%">%%SOURCE%%</td>
-    <td class="jxlGloss">%%GLOSS%%%%NOTECALLERS%%</td>
-</tr>`;
+export const jxlRow = `<div class="jxlRow">
+    <div class="%%SOURCECLASS%%">%%SOURCE%%</div>
+    <div class="jxlGloss">%%GLOSS%%%%NOTECALLERS%%</div>
+</div>`;
