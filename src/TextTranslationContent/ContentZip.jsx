@@ -34,7 +34,7 @@ export default function ContentZip({
   useEffect(() => {
     if (open) {
       getAndSetJson({
-        url: "/content-utils/versifications",
+        url: "/api/content-utils/versifications",
         setter: setVersificationCodes,
       }).then();
     }

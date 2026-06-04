@@ -41,7 +41,7 @@ export default function DeleteTextTranslationBook() {
   const getProjectSummaries = async () => {
     setRepoPath(path);
     const summariesResponse = await getJson(
-      `/burrito/metadata/summary/${path}`,
+      `/api/burrito/metadata/summary/${path}`,
       debugContext.current,
     );
     if (summariesResponse.ok) {
@@ -78,7 +78,7 @@ export default function DeleteTextTranslationBook() {
   };
 
   const handleCloseCreate = async () => {
-    await postJson(`/burrito/metadata/remake-ingredients/${repoPath}`);
+    await postJson(`/api/burrito/metadata/remake-ingredients/${repoPath}`);
     setOpen(false);
     setTimeout(() => {
       window.location.href = "/clients/content";
@@ -87,7 +87,7 @@ export default function DeleteTextTranslationBook() {
 
   const handleDelete = async () => {
     const deleteResponse = await postJson(
-      `/burrito/ingredient/delete/${repoPath}?ipath=${bookCode}.usfm`,
+      `/api/burrito/ingredient/delete/${repoPath}?ipath=${bookCode}.usfm`,
       debugRef.current,
     );
     if (deleteResponse.ok) {
@@ -119,7 +119,7 @@ export default function DeleteTextTranslationBook() {
           backgroundPosition: "center",
           zIndex: -1,
           backgroundImage:
-            'url("/app-resources/pages/content/background_blur.png")',
+            'url("/api/app-resources/pages/content/background_blur.png")',
           backgroundRepeat: "no-repeat",
           backdropFilter: "blur(3px)",
         }}

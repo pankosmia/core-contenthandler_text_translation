@@ -77,7 +77,7 @@ export default function NewBibleContent() {
   useEffect(() => {
     const doFetch = async () => {
       const versificationResponse = await getJson(
-        "/content-utils/versification/eng",
+        "/api/content-utils/versification/eng",
         debugRef.current,
       );
       if (versificationResponse.ok) {
@@ -92,7 +92,7 @@ export default function NewBibleContent() {
   useEffect(() => {
     if (open) {
       getAndSetJson({
-        url: "/git/list-local-repos",
+        url: "/api/git/list-local-repos",
         setter: setLocalRepos,
       }).then();
     }
@@ -221,7 +221,7 @@ export default function NewBibleContent() {
 
     if (contentOption === "plan" && selectedPlan) {
       const planResponse = await getJson(
-        `/burrito/ingredient/raw/${selectedPlan}?ipath=plan.json`,
+        `/api/burrito/ingredient/raw/${selectedPlan}?ipath=plan.json`,
         debugRef.current,
       );
       if (planResponse.ok) {
@@ -252,7 +252,7 @@ export default function NewBibleContent() {
     };
 
     const response = await postJson(
-      "/git/new-text-translation",
+      "/api/git/new-text-translation",
       JSON.stringify(payload),
       debugRef.current,
     );
@@ -341,7 +341,7 @@ export default function NewBibleContent() {
           payload: usfmBits.join("\n"),
         };
         const newBookResponse = await postJson(
-          `/burrito/ingredient/raw/_local_/_local_/${contentAbbr}?ipath=${bookCode}.usfm&update_ingredients`,
+          `/api/burrito/ingredient/raw/_local_/_local_/${contentAbbr}?ipath=${bookCode}.usfm&update_ingredients`,
           JSON.stringify(payload),
         );
         if (!newBookResponse.ok) {
@@ -357,7 +357,7 @@ export default function NewBibleContent() {
     } else if (zipContent.length > 0) {
       for (let l of selectedBookList) {
         const response = await postJson(
-          `/burrito/ingredient/raw/_local_/_local_/${contentAbbr}?ipath=${l.split("-")[1]}&update_ingredients`,
+          `/api/burrito/ingredient/raw/_local_/_local_/${contentAbbr}?ipath=${l.split("-")[1]}&update_ingredients`,
           JSON.stringify({
             payload: zipContent.find((e) => e.name === l).data,
           }),
@@ -366,7 +366,7 @@ export default function NewBibleContent() {
       }
     } else if (contentOption === "usfm_file" && localBookContent) {
       const response = await postJson(
-        `/burrito/ingredient/raw/${repoPath}?ipath=${`${localBookContent.split("toc1")[0].split(" ")[1]}.usfm`}&update_ingredients`,
+        `/api/burrito/ingredient/raw/${repoPath}?ipath=${`${localBookContent.split("toc1")[0].split(" ")[1]}.usfm`}&update_ingredients`,
         JSON.stringify({ payload: localBookContent }),
         debugRef.current,
       );
@@ -421,7 +421,7 @@ export default function NewBibleContent() {
   useEffect(() => {
     async function fetchUuid() {
       if (uuid) {
-        let download = await fetch(`/temp/bytes/${uuid}`, {
+        let download = await fetch(`/api/temp/bytes/${uuid}`, {
           method: "GET",
         });
         const arrayBuffer = await download.arrayBuffer();
@@ -466,7 +466,7 @@ export default function NewBibleContent() {
           backgroundPosition: "center",
           zIndex: -1,
           backgroundImage:
-            'url("/app-resources/pages/content/background_blur.png")',
+            'url("/api/app-resources/pages/content/background_blur.png")',
           backgroundRepeat: "no-repeat",
         }}
       />

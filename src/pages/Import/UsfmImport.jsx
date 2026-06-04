@@ -1,12 +1,5 @@
 import { useContext, useState, useEffect } from "react";
-import {
-  Button,
-  DialogContent,
-  Tooltip,
-  Box,
-  Typography,
-  Stack,
-} from "@mui/material";
+import { Button, DialogContent, Box, Typography, Stack } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
 import { doI18n, getJson, postJson } from "pithekos-lib";
 import { i18nContext, debugContext, Header } from "pankosmia-rcl";
@@ -77,7 +70,7 @@ function UsfmImport() {
   const getProjectSummaries = async () => {
     setRepoPath(path);
     const summariesResponse = await getJson(
-      `/burrito/metadata/summary/${path}`,
+      `/api/burrito/metadata/summary/${path}`,
       debugContext.current,
     );
     if (summariesResponse.ok) {
@@ -131,7 +124,7 @@ function UsfmImport() {
   const handleCreateLocalBook = async (localBookContent, repoPath) => {
     if (!repoBooks.includes(localBookContent.split("toc1")[0].split(" ")[1])) {
       const response = await postJson(
-        `/burrito/ingredient/raw/${repoPath}?ipath=${`${localBookContent.split("toc1")[0].split(" ")[1]}.usfm`}&update_ingredients`,
+        `/api/burrito/ingredient/raw/${repoPath}?ipath=${`${localBookContent.split("toc1")[0].split(" ")[1]}.usfm`}&update_ingredients`,
         JSON.stringify({ payload: localBookContent }),
         debugRef.current,
       );
@@ -222,7 +215,7 @@ function UsfmImport() {
           backgroundPosition: "center",
           zIndex: -1,
           backgroundImage:
-            'url("/app-resources/pages/content/background_blur.png")',
+            'url("/api/app-resources/pages/content/background_blur.png")',
           backgroundRepeat: "no-repeat",
           backdropFilter: "blur(3px)",
         }}
