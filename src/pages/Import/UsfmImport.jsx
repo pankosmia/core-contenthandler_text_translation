@@ -122,9 +122,33 @@ function UsfmImport() {
   };
 
   const handleCreateLocalBook = async (localBookContent, repoPath) => {
-    if (!repoBooks.includes(localBookContent.split("toc1")[0].split(" ")[1])) {
+    const localBookCodeLine = localBookContent
+      .split("\n")
+      .filter((l) => l.startsWith("\\id"))[0];
+    if (!localBookCodeLine) {
+      enqueueSnackbar(
+        doI18n(
+          "pages:core-contenthandler_text_translation:no_usfm_id_found",
+          i18nRef.current,
+        ),
+        { variant: "error" },
+      );
+      return;
+    }
+    const localBookCode = localBookCodeLine.split(" ")[1];
+    if (!localBookCode || localBookCode.length !== 3) {
+      enqueueSnackbar(
+        doI18n(
+          "pages:core-contenthandler_text_translation:bad_usfm_id_line",
+          i18nRef.current,
+        ),
+        { variant: "error" },
+      );
+      return;
+    }
+    if (!repoBooks.includes(localBookCode)) {
       const response = await postJson(
-        `/api/burrito/ingredient/raw/${repoPath}?ipath=${`${localBookContent.split("toc1")[0].split(" ")[1]}.usfm`}&update_ingredients`,
+        `/api/burrito/ingredient/raw/${repoPath}?ipath=${`${localBookCode}.usfm`}&update_ingredients`,
         JSON.stringify({ payload: localBookContent }),
         debugRef.current,
       );
