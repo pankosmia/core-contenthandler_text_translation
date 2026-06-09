@@ -43,7 +43,15 @@ export default function LanguagePicker({
         />
       </Grid2>
       <Grid2 item size={12}>
-        <Typography> </Typography>
+        <Typography>
+          {" "}
+          Bibles use books, chapters and verses to divide up content. Different
+          traditions (eg Protestant, Catholic, Orthodox) do this in different
+          ways. This choice affects the number of chapters in some books and the
+          number of verses in each chapter, especially in the Old Testament. You
+          may change this setting later, but choosing now will make things
+          easier later on.{" "}
+        </Typography>
         <FormControl sx={{ width: "100%" }}>
           <InputLabel
             id="booksVersification-label"
