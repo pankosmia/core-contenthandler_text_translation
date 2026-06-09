@@ -17,9 +17,11 @@ import { useSearchParams } from "react-router-dom";
 import yaml from "js-yaml";
 import JSZip from "jszip";
 import { enqueueSnackbar } from "notistack";
+import ModalCreateTextTranslation from "../TextTranslationContent/ModalCreateTextTranslation";
 
 export default function NewBibleContent() {
   const [open, setOpen] = useState(true);
+  const [openModalCreate, setOpenModalCreate] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { i18nRef } = useContext(i18nContext);
@@ -34,7 +36,7 @@ export default function NewBibleContent() {
   const [bookAbbr, setBookAbbr] = useState("Ti");
   const [postCount, setPostCount] = useState(0);
   const [showVersification, setShowVersification] = useState(true);
-  const [versification, setVersification] = useState("eng");
+  const [versification, setVersification] = useState("");
   const [bookCodes, setBookCodes] = useState([]);
   const [localRepos, setLocalRepos] = useState([]);
   const [repoExists, setRepoExists] = useState(false);
@@ -56,7 +58,6 @@ export default function NewBibleContent() {
   const [isUsfmValid, setIsUsfmValid] = useState(false);
 
   const steps = [
-    `${doI18n("pages:core-contenthandler_text_translation:content_section", i18nRef.current)}`,
     `${doI18n("pages:core-contenthandler_text_translation:language", i18nRef.current)}`,
     `${doI18n("pages:core-contenthandler_text_translation:name_section", i18nRef.current)}`,
   ];
@@ -106,12 +107,12 @@ export default function NewBibleContent() {
     setBookTitle("Titus");
     setBookAbbr("Ti");
     setShowVersification(true);
-    setVersification("eng");
+    setVersification("");
   }, [postCount]);
 
   const renderStepContent = (step) => {
     switch (step) {
-      case 2:
+      case 1:
         return (
           <NameDocument
             contentType={contentType}
@@ -127,48 +128,15 @@ export default function NewBibleContent() {
             localRepos={localRepos}
           />
         );
-      case 1:
+      case 0:
         return (
           <LanguagePicker
             currentLanguage={currentLanguage}
             setCurrentLanguage={setCurrentLanguage}
             setIsValid={setLanguageIsValid}
-          />
-        );
-      case 0:
-        return uuid ? (
-          <ContentZip
-            open={open}
             versification={versification}
             setVersification={setVersification}
-            booklist={zipContent
-              .map((e) => e.name)
-              .filter((e) => e.endsWith(".usfm"))}
-            setSelectedBookList={setSelectedBookList}
-            selectedBookList={selectedBookList}
-          />
-        ) : (
-          <ContentDocument
             open={open}
-            contentOption={contentOption}
-            setContentOption={setContentOption}
-            versification={versification}
-            setVersification={setVersification}
-            bookCode={bookCode}
-            setBookCode={setBookCode}
-            bookAbbr={bookAbbr}
-            bookCodes={bookCodes}
-            setBookAbbr={setBookAbbr}
-            bookTitle={bookTitle}
-            setBookTitle={setBookTitle}
-            showVersification={showVersification}
-            setShowVersification={setShowVersification}
-            selectedPlan={selectedPlan}
-            setSelectedPlan={setSelectedPlan}
-            localBookContent={localBookContent}
-            setLocalBookContent={setLocalBookContent}
-            isUsfmValid={isUsfmValid}
-            setIsUsfmValid={setIsUsfmValid}
           />
         );
       default:
@@ -177,7 +145,7 @@ export default function NewBibleContent() {
   };
   const isStepValid = (step) => {
     switch (step) {
-      case 2:
+      case 1:
         return (
           contentName.trim().length > 0 &&
           contentAbbr.trim().length > 0 &&
@@ -186,55 +154,23 @@ export default function NewBibleContent() {
           repoExists === false
         );
 
-      case 1:
+      case 0:
         return (
           currentLanguage?.language_code?.trim().length > 0 &&
           currentLanguage?.language_name?.trim().length > 0 &&
           languageIsValid === true
         );
-      case 0:
-        if (contentOption === "book") {
-          return (
-            versification.trim().length === 3 &&
-            bookCode.trim().length === 3 &&
-            bookTitle.trim().length > 0 &&
-            bookAbbr.trim().length > 0
-          );
-        }
-
-        if (contentOption === "plan") {
-          return versification.trim().length === 3 && Boolean(selectedPlan);
-        }
-        if (contentOption === "usfm_file") {
-          return isUsfmValid === true;
-        }
-        return true;
       default:
         return true;
     }
   };
 
+  const handleOpenModalCreateProject = async () => {
+    setOpenModalCreate(true);
+  };
   const handleCreate = async () => {
     // versification for plan comes from plan
-    let planJson = null;
     let submittedVersification = versification;
-
-    if (contentOption === "plan" && selectedPlan) {
-      const planResponse = await getJson(
-        `/api/burrito/ingredient/raw/${selectedPlan}?ipath=plan.json`,
-        debugRef.current,
-      );
-      if (planResponse.ok) {
-        planJson = planResponse.json;
-        submittedVersification = planJson.versification;
-      } else {
-        setErrorMessage(
-          `${doI18n("pages:core-contenthandler_text_translation:content_creation_error", i18nRef.current)}: ${planResponse.status}`,
-        );
-        setErrorDialogOpen(true);
-        return;
-      }
-    }
 
     // Make repo (empty for plans)
     const payload = {
@@ -267,194 +203,10 @@ export default function NewBibleContent() {
       setErrorDialogOpen(true);
       return;
     }
-    const repoPath =
-      response.json?.repo_path ?? `_local_/_local_/${contentAbbr}`;
-    // Add books for plan
-    if (planJson) {
-      // Get bookCode list
-      const bookCodes = Array.from(
-        new Set(planJson.sections.map((s) => s.bookCode)),
-      );
-      for (const bookCode of bookCodes) {
-        const bookSections = planJson.sections.filter(
-          (s) => s.bookCode === bookCode,
-        );
-        let chapterNo = 0;
-        let usfmBits = [];
-        usfmBits.push(
-          `\\id ${bookCode} -- ${planJson.short_name} -- v${planJson.version} -- ${planJson.copyright}`,
-        );
-        const printableBookCode = ["1", "2", "3"].includes(bookCode[0])
-          ? `${bookCode[0]} ${bookCode[1]}${bookCode[2].toLowerCase()}`
-          : `${bookCode[0]}${bookCode[1].toLowerCase()}${bookCode[2].toLowerCase()}`;
-        for (const headerTag of ["toc1", "toc2", "toc3", "mt"]) {
-          usfmBits.push(`\\${headerTag} ${printableBookCode}`);
-        }
-        for (const bookSection of bookSections) {
-          usfmBits.push(`\\rem ${bookSection.cv[0]}-${bookSection.cv[1]}`);
-          usfmBits.push(`\\ts\\*`);
-          for (const sectionField of planJson.sectionStructure) {
-            if (sectionField.type === "paraField") {
-              if (
-                bookSection.fieldInitialValues &&
-                bookSection.fieldInitialValues[sectionField.name]
-              ) {
-                usfmBits.push(`\\${sectionField.paraTag}`);
-                usfmBits.push("___");
-              } else if (
-                planJson.fieldInitialValues &&
-                planJson.fieldInitialValues[sectionField.name]
-              ) {
-                usfmBits.push(`\\${sectionField.paraTag}`);
-                usfmBits.push("___");
-              }
-            } else if (sectionField.type === "scripture") {
-              for (const para of bookSection.paragraphs) {
-                if (para.units) {
-                  const paraChapter = parseInt(para.units[0].split(":")[0]);
-                  if (paraChapter !== chapterNo) {
-                    usfmBits.push(`\\c ${paraChapter}`);
-                    chapterNo = paraChapter;
-                  }
-                  usfmBits.push(`\\${para.paraTag}`);
-                  for (const unit of para.units) {
-                    const [ch, vr] = unit.split(":");
-                    if (parseInt(ch) !== chapterNo) {
-                      usfmBits.push(`\\c ${ch}`);
-                      chapterNo = parseInt(ch);
-                      usfmBits.push(`\\${para.paraTag}`);
-                    }
-                    usfmBits.push(`\\v ${vr}`);
-                    usfmBits.push("___");
-                  }
-                } else {
-                  // bridge
-                  usfmBits.push(`\\rem ${para.cv[0]}-${para.cv[1]}`);
-                  usfmBits.push(`\\${para.paraTag}`);
-                  usfmBits.push("___");
-                }
-              }
-            }
-          }
-        }
-        const payload = {
-          payload: usfmBits.join("\n"),
-        };
-        const newBookResponse = await postJson(
-          `/api/burrito/ingredient/raw/_local_/_local_/${contentAbbr}?ipath=${bookCode}.usfm&update_ingredients`,
-          JSON.stringify(payload),
-        );
-        if (!newBookResponse.ok) {
-          setErrorMessage(
-            `${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${
-              response.status
-            }`,
-          );
-          setErrorDialogOpen(true);
-          return;
-        }
-      }
-    } else if (zipContent.length > 0) {
-      for (let l of selectedBookList) {
-        const response = await postJson(
-          `/api/burrito/ingredient/raw/_local_/_local_/${contentAbbr}?ipath=${l.split("-")[1]}&update_ingredients`,
-          JSON.stringify({
-            payload: zipContent.find((e) => e.name === l).data,
-          }),
-          debugRef.current,
-        );
-      }
-    } else if (contentOption === "usfm_file" && localBookContent) {
-      const response = await postJson(
-        `/api/burrito/ingredient/raw/${repoPath}?ipath=${`${localBookContent.split("toc1")[0].split(" ")[1]}.usfm`}&update_ingredients`,
-        JSON.stringify({ payload: localBookContent }),
-        debugRef.current,
-      );
-      if (response.ok) {
-        enqueueSnackbar(
-          doI18n(
-            "pages:core-contenthandler_text_translation:book_created",
-            i18nRef.current,
-          ),
-          {
-            variant: "success",
-          },
-        );
-      } else {
-        enqueueSnackbar(
-          `${doI18n("pages:core-contenthandler_text_translation:book_creation_error", i18nRef.current)}: ${response.status}`,
-          { variant: "error" },
-        );
-      }
-    }
-    await handleClose();
+
+    setOpenModalCreate(true);
   };
 
-  async function getZipFilesDepth2WithData(zipSource) {
-    const zip = await JSZip.loadAsync(zipSource);
-
-    const results = [];
-
-    const tasks = Object.keys(zip.files).map(async (path) => {
-      const entry = zip.files[path];
-
-      // Skip directories
-      if (entry.dir) return;
-
-      const clean = path.replace(/\/$/, "");
-      const parts = clean.split("/").filter(Boolean);
-
-      // Only depth 1 or 2
-      if (parts.length > 2) return;
-
-      const data = await entry.async("text"); // or "blob", "arraybuffer"
-
-      results.push({
-        name: parts[parts.length - 1],
-        data,
-      });
-    });
-
-    await Promise.all(tasks);
-    return results;
-  }
-  useEffect(() => {
-    async function fetchUuid() {
-      if (uuid) {
-        let download = await fetch(`/api/temp/bytes/${uuid}`, {
-          method: "GET",
-        });
-        const arrayBuffer = await download.arrayBuffer();
-        const tree = await getZipFilesDepth2WithData(arrayBuffer);
-        let t = yaml.load(tree.find((e) => e.name.includes("manifest")).data);
-        prefillFromManifest(t.dublin_core);
-        setZipContent(tree);
-        setSelectedBookList(
-          tree.map((e) => e.name).filter((e) => e.endsWith(".usfm")),
-        );
-        setContentOption(null);
-      }
-    }
-    fetchUuid();
-  }, [uuid]);
-  function prefillFromManifest(manifest) {
-    setContentName(manifest.title ?? "");
-    setContentAbbr(manifest.identifier.toUpperCase() ?? "");
-
-    setContentType("text_translation");
-    setContentOption("book");
-
-    if (manifest.language) {
-      setCurrentLanguage({
-        language_code: manifest.language.identifier,
-        language_name: manifest.language.title,
-      });
-      setLanguageIsValid(true);
-    }
-
-    setShowVersification(true);
-    setVersification("eng");
-  }
   return (
     <Box>
       <Box
@@ -492,7 +244,7 @@ export default function NewBibleContent() {
             steps={steps}
             renderStepContent={renderStepContent}
             isStepValid={isStepValid}
-            handleCreate={handleCreate}
+            handleCreate={handleOpenModalCreateProject}
             handleClose={handleClose}
             requiredFieldsLabel
           />
@@ -504,6 +256,10 @@ export default function NewBibleContent() {
         handleClose={handleClose}
         errorDialogOpen={errorDialogOpen}
         errorMessage={errorMessage}
+      />
+      <ModalCreateTextTranslation
+        openModalCreate={openModalCreate}
+        handleCreate={handleCreate}
       />
     </Box>
   );
