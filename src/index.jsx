@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { getAndSetJson } from "pithekos-lib";
 import { createTheme, styled } from "@mui/material";
 import { SnackbarProvider, MaterialDesignContent } from "notistack";
+import ManagerBook from "./BookManager";
 
 const router = createHashRouter([
   {
@@ -43,6 +44,13 @@ const router = createHashRouter([
   {
     path: "/export/pdf",
     element: <PdfGenerate />,
+  },
+  {
+    path: "/managerBook",
+    element: <ManagerBook />,
+  },
+  {
+    path: "/modalChooseOption",
   },
 ]);
 function AppLayout() {
