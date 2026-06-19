@@ -6,10 +6,9 @@ import ErrorIcon from "@mui/icons-material/Error";
 
 function FirefoxInstaller() {
   const [status, setStatus] = useState("checking"); // checking | idle | downloading | complete | error
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(null); // null = unknown
   const [errorMessage, setErrorMessage] = useState(null);
 
-  // Check on mount if Firefox is already installed
   useEffect(() => {
     let cancelled = false;
 
@@ -24,17 +23,21 @@ function FirefoxInstaller() {
     };
   }, []);
 
-  // Register IPC listeners with cleanup
   useEffect(() => {
     const removeProgress = window.electronAPI.onDownloadProgress((percent) => {
-      setProgress(percent);
+      if (typeof percent === "number" && !Number.isNaN(percent)) {
+        setProgress(Math.max(0, Math.min(100, percent)));
+      }
     });
 
     const removeComplete = window.electronAPI.onDownloadComplete(
       (success, errorMessage) => {
         setStatus(success ? "complete" : "error");
-        if (!success && errorMessage) {
-          setErrorMessage(errorMessage);
+        if (success) {
+          setProgress(100);
+          setErrorMessage(null);
+        } else {
+          setErrorMessage(errorMessage || null);
         }
       },
     );
@@ -47,9 +50,12 @@ function FirefoxInstaller() {
 
   const handleInstall = () => {
     setStatus("downloading");
-    setProgress(0);
+    setProgress(null); // assume unknown until progress events arrive
+    setErrorMessage(null);
     window.electronAPI.downloadFirefox();
   };
+
+  const hasProgress = typeof progress === "number";
 
   return (
     <Stack spacing={2} sx={{ maxWidth: 400 }}>
@@ -87,9 +93,12 @@ function FirefoxInstaller() {
 
       {status === "downloading" && (
         <>
-          <LinearProgress variant="determinate" value={progress} />
+          <LinearProgress
+            variant={hasProgress ? "determinate" : "indeterminate"}
+            value={hasProgress ? progress : undefined}
+          />
           <Typography variant="body2" color="text.secondary">
-            {progress}% complete
+            {hasProgress ? `${Math.round(progress)}% complete` : "Downloading…"}
           </Typography>
         </>
       )}
