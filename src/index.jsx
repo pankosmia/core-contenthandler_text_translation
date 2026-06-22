@@ -15,6 +15,7 @@ import { getAndSetJson } from "pithekos-lib";
 import { createTheme, styled } from "@mui/material";
 import { SnackbarProvider, MaterialDesignContent } from "notistack";
 import ManagerBook from "./BookManager";
+import SelectionOptionTranslationPlan from "./TextTranslationContent/TranslationPlan";
 
 const router = createHashRouter([
   {
@@ -50,7 +51,8 @@ const router = createHashRouter([
     element: <ManagerBook />,
   },
   {
-    path: "/modalChooseOption",
+    path: "/optionsTranslationPlan",
+    element: <SelectionOptionTranslationPlan />,
   },
 ]);
 function AppLayout() {

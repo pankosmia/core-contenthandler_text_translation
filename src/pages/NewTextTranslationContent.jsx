@@ -145,6 +145,13 @@ export default function NewBibleContent() {
   };
   const isStepValid = (step) => {
     switch (step) {
+      case 0:
+        return (
+          currentLanguage?.language_code?.trim().length > 0 &&
+          currentLanguage?.language_name?.trim().length > 0 &&
+          versification.trim().length === 3 &&
+          languageIsValid === true
+        );
       case 1:
         return (
           contentName.trim().length > 0 &&
@@ -154,12 +161,6 @@ export default function NewBibleContent() {
           repoExists === false
         );
 
-      case 0:
-        return (
-          currentLanguage?.language_code?.trim().length > 0 &&
-          currentLanguage?.language_name?.trim().length > 0 &&
-          languageIsValid === true
-        );
       default:
         return true;
     }
@@ -260,6 +261,7 @@ export default function NewBibleContent() {
       <ModalCreateTextTranslation
         openModalCreate={openModalCreate}
         handleCreate={handleCreate}
+        setOpenModalCreate={setOpenModalCreate}
       />
     </Box>
   );

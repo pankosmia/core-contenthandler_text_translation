@@ -4,7 +4,6 @@ import {
   CardActionArea,
   CardContent,
   DialogContent,
-  DialogContentText,
   Stack,
   Typography,
 } from "@mui/material";
@@ -16,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 export default function ModalCreateTextTranslation({
   openModalCreate,
   handleCreate,
+  setOpenModalCreate,
 }) {
   const { i18nRef } = useContext(i18nContext);
   const navigate = useNavigate();
@@ -71,7 +71,7 @@ export default function ModalCreateTextTranslation({
             </CardActionArea>
           </Card>
           <Card>
-            <CardActionArea>
+            <CardActionArea onClick={() => navigate("/optionsTranslationPlan")}>
               <CardContent>
                 <Box
                   sx={{
@@ -112,7 +112,7 @@ export default function ModalCreateTextTranslation({
         </Stack>
       </DialogContent>
       <PanDialogActions
-        //closeFn={}
+        closeFn={() => setOpenModalCreate(false)}
         closeLabel={doI18n(
           "pages:core-contenthandler_text_translation:close",
           i18nRef.current,

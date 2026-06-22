@@ -3,8 +3,14 @@ import {
   Button,
   DialogContent,
   DialogContentText,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Grid2,
   IconButton,
   ListItem,
+  Radio,
+  RadioGroup,
   Typography,
 } from "@mui/material";
 import { doI18n, getJson } from "pithekos-lib";
@@ -77,12 +83,23 @@ export default function ManageBook() {
         isOpen={open}
         closeFn={() => handleClose()}
       >
-        <DialogContent>
+        <DialogContent sx={{ overflowY: "auto", maxHeight: "60vh" }}>
+          <Grid2 container size={12} sx={{ mb: 2 }}>
+            <Grid2 item size={6}>
+              <Button variant="contained"> New Book </Button>
+            </Grid2>
+            <Grid2 item size={6}>
+              <Button variant="contained"> Import </Button>
+            </Grid2>
+          </Grid2>
           <div>{livres}</div>
         </DialogContent>
-        <Button> ajouter un nouveau livre </Button>
         <PanDialogActions
           closeFn={() => handleClose()}
+          actionLabel={doI18n(
+            "pages:core-contenthandler_bcv:create",
+            i18nRef.current,
+          )}
           closeLabel={doI18n("pages:content:close", i18nRef.current)}
           onlyCloseButton={true}
         />
