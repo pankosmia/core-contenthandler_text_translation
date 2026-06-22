@@ -655,7 +655,7 @@ function PdfGenerate() {
                 ))}
             </Select>
           </FormControl>
-          <Typography variant="subtitle2" fontWeight="bold" sx={{ pt: 2 }}>
+          <Typography variant="body1" fontWeight="bold" sx={{ pt: 2 }}>
             {doI18n(
               "pages:core-contenthandler_text_translation:formatting_template",
               i18nRef.current,
@@ -677,7 +677,7 @@ function PdfGenerate() {
               }
             />
           </FormGroup>
-          <Typography variant="subtitle2" fontWeight="bold" sx={{ pt: 2 }}>
+          <Typography variant="body1" fontWeight="bold" sx={{ pt: 2 }}>
             {doI18n(
               "pages:core-contenthandler_text_translation:custom_formatting",
               i18nRef.current,
