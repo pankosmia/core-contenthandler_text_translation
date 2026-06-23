@@ -4,7 +4,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 
-function FirefoxInstaller() {
+function FirefoxInstaller({ onInstalledChange }) {
   const [status, setStatus] = useState("checking"); // checking | idle | downloading | complete | error
   const [progress, setProgress] = useState(null); // null = unknown
   const [errorMessage, setErrorMessage] = useState(null);
@@ -15,13 +15,14 @@ function FirefoxInstaller() {
     window.electronAPI.checkFirefoxInstalled().then((installed) => {
       if (!cancelled) {
         setStatus(installed ? "complete" : "idle");
+        onInstalledChange(installed);
       }
     });
 
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [onInstalledChange]);
 
   useEffect(() => {
     const removeProgress = window.electronAPI.onDownloadProgress((percent) => {
@@ -33,6 +34,7 @@ function FirefoxInstaller() {
     const removeComplete = window.electronAPI.onDownloadComplete(
       (success, errorMessage) => {
         setStatus(success ? "complete" : "error");
+        onInstalledChange(success);
         if (success) {
           setProgress(100);
           setErrorMessage(null);
@@ -46,11 +48,11 @@ function FirefoxInstaller() {
       removeProgress();
       removeComplete();
     };
-  }, []);
+  }, [onInstalledChange]);
 
   const handleInstall = () => {
     setStatus("downloading");
-    setProgress(null); // assume unknown until progress events arrive
+    setProgress(null);
     setErrorMessage(null);
     window.electronAPI.downloadFirefox();
   };

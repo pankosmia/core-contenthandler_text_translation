@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button, Typography, Box } from "@mui/material";
 import { originatePdfs } from "../pdfExport/pdf-gen/originatePdfs";
 import { assemblePdfs } from "../pdfExport/pdf-gen/assemblePdf";
@@ -247,6 +248,8 @@ const optionsBibles = {
 };
 
 export function TestPptrFirefox() {
+  const [firefoxInstalled, setFirefoxInstalled] = useState(false);
+
   async function testPdfGen(options) {
     let cssLookUp = await setupCSS({
       pageFormat: options.pageFormat,
@@ -261,14 +264,25 @@ export function TestPptrFirefox() {
 
   return (
     <Box sx={{ p: 2 }}>
-      <FirefoxInstaller />
-      <Button onClick={() => testPdfGen(optionsJxl)}>
+      <FirefoxInstaller onInstalledChange={setFirefoxInstalled} />
+      <Button
+        disabled={!firefoxInstalled}
+        onClick={() => testPdfGen(optionsJxl)}
+      >
         test generate pdf juxta + markdown
       </Button>
-      <Button onClick={() => testPdfGen(optionsBibles)}>
+      <Button
+        disabled={!firefoxInstalled}
+        onClick={() => testPdfGen(optionsBibles)}
+      >
         test generate bible
       </Button>
-      <Button onClick={() => testPdfGen(optionsObs)}>test obs</Button>
+      <Button
+        disabled={!firefoxInstalled}
+        onClick={() => testPdfGen(optionsObs)}
+      >
+        test obs
+      </Button>
     </Box>
   );
 }
