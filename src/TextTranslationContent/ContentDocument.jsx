@@ -11,8 +11,8 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { doI18n, getAndSetJson } from "pithekos-lib";
-
+import { getAndSetJson } from "pankosmia-lib/http";
+import { doI18n } from "pankosmia-lib/i18n";
 import sx from "../pages/Selection.styles";
 import ListMenuItem from "../pages/ListMenuItem";
 import OptionUsfmImport from "../pages/Import/OptionUsfmImport";

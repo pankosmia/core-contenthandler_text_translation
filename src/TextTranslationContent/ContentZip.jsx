@@ -8,7 +8,8 @@ import {
   Checkbox,
 } from "@mui/material";
 import { useState, useEffect, useContext } from "react";
-import { getAndSetJson, doI18n } from "pithekos-lib";
+import { getAndSetJson } from "pankosmia-lib/http";
+import { doI18n } from "pankosmia-lib/i18n";
 import {
   InputLabel,
   FormControl,

@@ -11,7 +11,7 @@ import App from "./App";
 import DeleteTextTranslationBook from "./pages/DeleteTextTranslationBook";
 import { ThemeProvider } from "@emotion/react";
 import { useEffect, useState } from "react";
-import { getAndSetJson } from "pithekos-lib";
+import { getAndSetJson } from "pankosmia-lib/http";
 import { createTheme, styled } from "@mui/material";
 import { SnackbarProvider, MaterialDesignContent } from "notistack";
 

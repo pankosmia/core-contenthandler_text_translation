@@ -1,6 +1,7 @@
 import { useState, useContext, useEffect } from "react";
-import { Box, DialogContent, DialogContentText } from "@mui/material";
-import { postJson, doI18n, getAndSetJson, getJson } from "pithekos-lib";
+import { Box, DialogContent } from "@mui/material";
+import { postJson, getAndSetJson, getJson } from "pankosmia-lib/http";
+import { doI18n } from "pankosmia-lib/i18n";
 import {
   PanDialog,
   i18nContext,
