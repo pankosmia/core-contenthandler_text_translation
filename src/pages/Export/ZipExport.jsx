@@ -17,14 +17,9 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import {
-  getText,
-  debugContext,
-  i18nContext,
-  doI18n,
-  getJson,
-  Header,
-} from "pithekos-lib";
+import { getText, getJson } from "pankosmia-lib/http";
+import { doI18n } from "pankosmia-lib/i18n";
+import { debugContext, i18nContext, Header } from "pankosmia-rcl";
 import { enqueueSnackbar } from "notistack";
 import { useExportUsfmZip } from "zip-project";
 

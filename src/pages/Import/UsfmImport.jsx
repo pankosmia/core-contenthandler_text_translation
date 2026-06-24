@@ -1,7 +1,8 @@
 import { useContext, useState, useEffect } from "react";
 import { Button, DialogContent, Box, Typography, Stack } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
-import { doI18n, getJson, postJson } from "pithekos-lib";
+import { getJson, postJson } from "pankosmia-lib/http";
+import { doI18n } from "pankosmia-lib/i18n";
 import { i18nContext, debugContext, Header } from "pankosmia-rcl";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { Proskomma } from "proskomma-core";

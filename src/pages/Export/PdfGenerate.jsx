@@ -20,7 +20,8 @@ import LooksTwoOutlinedIcon from "@mui/icons-material/LooksTwoOutlined";
 import Looks3OutlinedIcon from "@mui/icons-material/Looks3Outlined";
 import { Proskomma } from "proskomma-core";
 import { SofriaRenderFromProskomma, render } from "proskomma-json-tools";
-import { getText, doI18n, getJson } from "pithekos-lib";
+import { getText, getJson } from "pankosmia-lib/http";
+import { doI18n } from "pankosmia-lib/i18n";
 import {
   debugContext,
   i18nContext,
