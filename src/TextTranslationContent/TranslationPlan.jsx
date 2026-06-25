@@ -6,7 +6,7 @@ import {
   Select,
   Typography,
 } from "@mui/material";
-import { doI18n } from "pithekos-lib";
+import { doI18n } from "pankosmia-lib/i18n";
 import { PanDialog, PanDialogActions, i18nContext } from "pankosmia-rcl";
 import sx from "../pages/Selection.styles";
 import ListMenuItem from "../pages/ListMenuItem";

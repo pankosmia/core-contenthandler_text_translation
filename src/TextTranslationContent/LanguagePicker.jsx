@@ -9,7 +9,8 @@ import {
   Typography,
 } from "@mui/material";
 import { PanLanguagePicker, i18nContext } from "pankosmia-rcl";
-import { doI18n, getAndSetJson } from "pithekos-lib";
+import { doI18n } from "pankosmia-lib/i18n";
+import { getAndSetJson } from "pankosmia-lib/http";
 import { useContext, useEffect, useState } from "react";
 import ListMenuItem from "../pages/ListMenuItem";
 import sx from "../pages/Selection.styles";
@@ -45,15 +46,6 @@ export default function LanguagePicker({
       </Grid2>
       <Grid2 item size={12}>
         <Stack spacing={1}>
-          <Typography variant="body1">Choose versification </Typography>
-          <Typography variant="caption">
-            Bibles use books, chapters and verses to divide up content.
-            Different traditions (eg Protestant, Catholic, Orthodox) do this in
-            different ways. This choice affects the number of chapters in some
-            books and the number of verses in each chapter, especially in the
-            Old Testament. You may change this setting later, but choosing now
-            will make things easier later on.
-          </Typography>
           <FormControl sx={{ width: "100%" }}>
             <InputLabel
               id="booksVersification-label"

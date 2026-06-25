@@ -13,7 +13,7 @@ import {
   RadioGroup,
   Typography,
 } from "@mui/material";
-import { doI18n, getJson } from "pithekos-lib";
+import { doI18n } from "pankosmia-lib/i18n";
 import {
   PanDialog,
   PanDialogActions,

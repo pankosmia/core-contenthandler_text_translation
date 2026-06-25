@@ -8,7 +8,8 @@ import {
   Typography,
 } from "@mui/material";
 import { PanDialog, PanDialogActions, i18nContext } from "pankosmia-rcl";
-import { doI18n, getAndSetJson } from "pithekos-lib";
+import { getAndSetJson } from "pankosmia-lib/http";
+import { doI18n } from "pankosmia-lib/i18n";
 import { useContext, useEffect, useState } from "react";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import { useNavigate } from "react-router-dom";
