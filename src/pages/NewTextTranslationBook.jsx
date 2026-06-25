@@ -1,7 +1,8 @@
 import { useState, useContext, useEffect } from "react";
 import { Grid2, Box, DialogContent, DialogContentText } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
-import { postJson, doI18n, getJson } from "pithekos-lib";
+import { postJson, getJson } from "pankosmia-lib/http";
+import { doI18n } from "pankosmia-lib/i18n";
 import {
   PanDialog,
   PanDialogActions,

@@ -20,7 +20,8 @@ import LooksTwoOutlinedIcon from "@mui/icons-material/LooksTwoOutlined";
 import Looks3OutlinedIcon from "@mui/icons-material/Looks3Outlined";
 import { Proskomma } from "proskomma-core";
 import { SofriaRenderFromProskomma, render } from "proskomma-json-tools";
-import { getText, doI18n, getJson } from "pithekos-lib";
+import { getText, getJson } from "pankosmia-lib/http";
+import { doI18n } from "pankosmia-lib/i18n";
 import {
   debugContext,
   i18nContext,
@@ -655,7 +656,7 @@ function PdfGenerate() {
                 ))}
             </Select>
           </FormControl>
-          <Typography variant="subtitle2" fontWeight="bold" sx={{ pt: 2 }}>
+          <Typography variant="body1" fontWeight="bold" sx={{ pt: 2 }}>
             {doI18n(
               "pages:core-contenthandler_text_translation:formatting_template",
               i18nRef.current,
@@ -677,7 +678,7 @@ function PdfGenerate() {
               }
             />
           </FormGroup>
-          <Typography variant="subtitle2" fontWeight="bold" sx={{ pt: 2 }}>
+          <Typography variant="body1" fontWeight="bold" sx={{ pt: 2 }}>
             {doI18n(
               "pages:core-contenthandler_text_translation:custom_formatting",
               i18nRef.current,
