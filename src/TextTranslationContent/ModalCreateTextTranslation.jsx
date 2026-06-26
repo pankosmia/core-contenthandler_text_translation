@@ -20,6 +20,8 @@ export default function ModalCreateTextTranslation({
   handleCreate,
   setOpenModalCreate,
   setContentOption,
+  bookCodes,
+  listBookCodes,
 }) {
   const { i18nRef } = useContext(i18nContext);
   const navigate = useNavigate();
@@ -29,7 +31,6 @@ export default function ModalCreateTextTranslation({
   const planResources = Object.entries(metadataSummaries)
     .filter((r) => r[1].flavor === "x-translationplan")
     .map((r) => r[1].name);
-  console.log("planResources", planResources);
   useEffect(() => {
     if (openModalOptionTranslationPlan) {
       getAndSetJson({
@@ -53,7 +54,13 @@ export default function ModalCreateTextTranslation({
               need at least one empty book structure.{" "}
             </Typography>
             <Card>
-              <CardActionArea onClick={() => navigate("/managerBook")}>
+              <CardActionArea
+                onClick={() =>
+                  navigate("/managerBook", {
+                    state: { bookCodes, listBookCodes },
+                  })
+                }
+              >
                 <CardContent>
                   <Box
                     sx={{

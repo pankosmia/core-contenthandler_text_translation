@@ -6,6 +6,7 @@ import {
   InputLabel,
   Box,
   DialogContent,
+  IconButton,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { postJson, getJson } from "pankosmia-lib/http";
@@ -20,15 +21,18 @@ import {
   Header,
 } from "pankosmia-rcl";
 import ErrorDialog from "../TextTranslationContent/ErrorDialog";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-export default function DeleteTextTranslationBook() {
+export default function DeleteTextTranslationBook({
+  bookCodes,
+  setBookCodes,
+  bookCode,
+}) {
   const { enqueueSnackbar } = useSnackbar();
   const { i18nRef } = useContext(i18nContext);
   const { debugRef } = useContext(debugContext);
-  const [bookCode, setBookCode] = useState("");
   const [open, setOpen] = useState(true);
   const [repoPath, setRepoPath] = useState([]);
-  const [bookCodes, setBookCodes] = useState([]);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [nameProject, setNameProject] = useState("");
@@ -38,45 +42,6 @@ export default function DeleteTextTranslationBook() {
   const path = repoPathQuery.get("repoPath");
   const typePageQuery = new URLSearchParams(query[2]);
   const returnType = typePageQuery.get("returnTypePage");
-
-  const getProjectSummaries = async () => {
-    setRepoPath(path);
-    const summariesResponse = await getJson(
-      `/api/burrito/metadata/summary/${path}`,
-      debugContext.current,
-    );
-    if (summariesResponse.ok) {
-      const data = summariesResponse.json;
-      const bookCode = data.book_codes;
-      setNameProject(data.name);
-      setBookCodes(bookCode);
-    } else {
-      console.error(
-        `${doI18n("pages:core-contenthandler_text_translation:error_data", i18nRef.current)}`,
-      );
-    }
-  };
-
-  useEffect(() => {
-    getProjectSummaries();
-  }, []);
-
-  useEffect(() => {
-    const doFetch = async () => {
-      setBookCode("");
-    };
-    if (open) {
-      doFetch().then();
-    }
-  }, [open]);
-
-  const handleClose = () => {
-    if (returnType === "dashboard") {
-      window.location.href = "/clients/main";
-    } else {
-      window.location.href = "/clients/content";
-    }
-  };
 
   const handleCloseCreate = async () => {
     await postJson(`/api/burrito/metadata/remake-ingredients/${repoPath}`);
@@ -111,92 +76,12 @@ export default function DeleteTextTranslationBook() {
 
   return (
     <Box>
-      <Box
-        sx={{
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          zIndex: -1,
-          backgroundImage:
-            'url("/api/app-resources/pages/content/background_blur.png")',
-          backgroundRepeat: "no-repeat",
-          backdropFilter: "blur(3px)",
-        }}
-      />
-      <Header
-        titleKey="pages:core-contenthandler_text_translation:title"
-        currentId="core-contenthandler_text_translation"
-        requireNet={false}
-      />
-      <PanDialog
-        titleLabel={`${doI18n("pages:core-contenthandler_text_translation:delete_book", i18nRef.current)} - ${nameProject}`}
-        isOpen={open}
-        closeFn={() => handleClose()}
-        fullWidth={false}
-      >
-        <DialogContent>
-          <FormControl sx={{ width: "100%" }}>
-            <InputLabel
-              id="bookCode-label"
-              htmlFor="bookCode"
-              sx={sx.inputLabel}
-            >
-              {doI18n(
-                "pages:core-contenthandler_text_translation:book_code",
-                i18nRef.current,
-              )}
-            </InputLabel>
-            <Select
-              variant="outlined"
-              required
-              labelId="bookCode-label"
-              name="bookCode"
-              inputProps={{
-                id: "bookCode",
-              }}
-              value={bookCode}
-              label={doI18n(
-                "pages:core-contenthandler_text_translation:book_code",
-                i18nRef.current,
-              )}
-              onChange={(event) => {
-                setBookCode(event.target.value);
-              }}
-              sx={sx.select}
-            >
-              {bookCodes.map((listItem, n) => (
-                <MenuItem key={n} value={listItem} dense>
-                  <ListMenuItem
-                    listItem={`${listItem} - ${doI18n(
-                      `scripture:books:${listItem}`,
-                      i18nRef.current,
-                    )}`}
-                  />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </DialogContent>
-        <PanDialogActions
-          closeFn={() => handleClose()}
-          closeLabel={doI18n(
-            "pages:core-contenthandler_text_translation:close",
-            i18nRef.current,
-          )}
-          actionFn={handleDelete}
-          closeOnAction={false}
-          actionLabel={doI18n(
-            "pages:core-contenthandler_text_translation:delete_button",
-            i18nRef.current,
-          )}
-        />
-      </PanDialog>
+      <IconButton onClick={handleDelete} edge="end" aria-label="delete">
+        <DeleteIcon />
+      </IconButton>
       {/* Error Dialog */}
       <ErrorDialog
         setErrorDialogOpen={setErrorDialogOpen}
-        handleClose={handleClose}
         errorDialogOpen={errorDialogOpen}
         errorMessage={errorMessage}
       />

@@ -2,30 +2,37 @@ import {
   Box,
   Button,
   DialogContent,
-  DialogContentText,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
   Grid2,
-  IconButton,
+  List,
   ListItem,
-  Radio,
-  RadioGroup,
-  Typography,
+  ListItemAvatar,
+  ListItemText,
 } from "@mui/material";
+import { getJson } from "pankosmia-lib/http";
 import { doI18n } from "pankosmia-lib/i18n";
 import {
   PanDialog,
   PanDialogActions,
   i18nContext,
-  debugContext,
   Header,
+  debugContext,
 } from "pankosmia-rcl";
-
-import { useContext, useEffect, useState } from "react";
+import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
+import React, { useContext, useEffect, useState } from "react";
+import NewBook from "./pages/NewBook";
+import UsfmImport from "./pages/Import/UsfmImport";
+import DeleteTextTranslationBook from "./pages/DeleteTextTranslationBook";
+import { useLocation } from "react-router-dom";
+
 export default function ManageBook() {
   const { i18nRef } = useContext(i18nContext);
+  const { state } = useLocation();
+  const [bookCodes, setBookCodes] = useState(state?.bookCodes || []);
+  const [listBookCodes, setListBookCodes] = useState(
+    state?.listBookCodes || [],
+  );
+  console.log("listbookcodes", listBookCodes);
   const [open, setOpen] = useState(true);
   const hash = window.location.hash;
   const query = hash.includes("?") ? hash.split("?") : "";
@@ -35,7 +42,50 @@ export default function ManageBook() {
   const path = repoPathQuery.get("repoPath");
   const [repoData, setRepodata] = useState({});
   const [repoInfo, setRepoInfo] = useState();
+  const { debugRef } = useContext(debugContext);
+  const [bookCode, setBookCode] = useState("");
+  const [repoPath, setRepoPath] = useState([]);
+  //const [bookCodes, setBookCodes] = useState(["TIT", "MRK"]);
+  const [showVersification, setShowVersification] = useState(true);
+  const [bookTitle, setBookTitle] = useState("");
+  const [bookAbbr, setBookAbbr] = useState("");
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [nameProject, setNameProject] = useState("");
+  const [openPanel, setOpenPanel] = useState(null);
+  const toggle = (panel) =>
+    setOpenPanel((prev) => (prev === panel ? null : panel));
 
+  const getProjectSummaries = async () => {
+    setRepoPath(path);
+    const summariesResponse = await getJson(
+      `/api/burrito/metadata/summary/${path}`,
+      debugContext.current,
+    );
+    if (summariesResponse.ok) {
+      const data = summariesResponse.json;
+      const bookCode = data.book_codes;
+      setNameProject(data.name);
+      setBookCodes(bookCode);
+    } else {
+      console.error(
+        `${doI18n("pages:core-contenthandler_text_translation:error_data", i18nRef.current)}`,
+      );
+    }
+  };
+
+  useEffect(() => {
+    getProjectSummaries();
+  }, []);
+
+  useEffect(() => {
+    const doFetch = async () => {
+      setBookCode("");
+    };
+    if (open) {
+      doFetch().then();
+    }
+  }, [open]);
   const handleClose = () => {
     setOpen(false);
     if (returnType === "dashboard") {
@@ -48,11 +98,7 @@ export default function ManageBook() {
       });
     }
   };
-  const livres = [];
 
-  for (let i = 0; i < 100; i++) {
-    livres.push(<p key={i}>livre {i + 1}</p>);
-  }
   return (
     <Box>
       <Box
@@ -83,17 +129,59 @@ export default function ManageBook() {
         isOpen={open}
         closeFn={() => handleClose()}
       >
-        <DialogContent sx={{ overflowY: "auto", maxHeight: "60vh" }}>
-          <Grid2 container size={12} sx={{ mb: 2 }}>
-            <Grid2 item size={6}>
-              <Button variant="contained"> New Book </Button>
-            </Grid2>
-            <Grid2 item size={6}>
-              <Button variant="contained"> Import </Button>
-            </Grid2>
-          </Grid2>
-          <div>{livres}</div>
+        <DialogContent sx={{ overflowY: "auto" }}>
+          <List>
+            {listBookCodes?.map((item, index) => (
+              <ListItem
+                key={index}
+                secondaryAction={
+                  <DeleteTextTranslationBook
+                    bookCodes={bookCodes}
+                    bookCode={item}
+                  />
+                }
+              >
+                <ListItemText primary={item} />
+              </ListItem>
+            ))}
+          </List>
         </DialogContent>
+        <Grid2
+          container
+          spacing={1}
+          direction="row"
+          size={12}
+          sx={{ m: 2, justifyContent: "flex-start", alignItems: "center" }}
+        >
+          <Grid2 item size={12}>
+            {openPanel === "newBook" && (
+              <NewBook
+                bookCode={List}
+                setBookCode={setListBookCodes}
+                bookAbbr={bookAbbr}
+                setBookAbbr={setBookAbbr}
+                bookCodes={bookCodes}
+                bookTitle={bookTitle}
+                setBookTitle={setBookTitle}
+                showVersification={showVersification}
+                setShowVersification={setShowVersification}
+              />
+            )}
+            {openPanel === "import" && <UsfmImport />}
+          </Grid2>
+          <Grid2 item size="auto">
+            <Button onClick={() => toggle("newBook")} variant="contained">
+              {" "}
+              New Book{" "}
+            </Button>
+          </Grid2>
+          <Grid2 item size="auto">
+            <Button onClick={() => toggle("import")} variant="contained">
+              {" "}
+              Import{" "}
+            </Button>
+          </Grid2>
+        </Grid2>
         <PanDialogActions
           closeFn={() => handleClose()}
           actionLabel={doI18n(

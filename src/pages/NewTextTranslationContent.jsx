@@ -39,6 +39,8 @@ export default function NewBibleContent() {
   const [showVersification, setShowVersification] = useState(true);
   const [versification, setVersification] = useState("");
   const [bookCodes, setBookCodes] = useState([]);
+  const [listBookCodes, setListBookCodes] = useState([]);
+  console.log("bookCodes", bookCodes);
   const [localRepos, setLocalRepos] = useState([]);
   const [repoExists, setRepoExists] = useState(false);
   const [zipContent, setZipContent] = useState([]);
@@ -402,6 +404,9 @@ export default function NewBibleContent() {
         setOpenModalCreate={setOpenModalCreate}
         contentOption={contentOption}
         setContentOption={setContentOption}
+        bookCodes={bookCodes}
+        listBookCodes={listBookCodes}
+        setListBookCodes={setListBookCodes}
       />
     </Box>
   );

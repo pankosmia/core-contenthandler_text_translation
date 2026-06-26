@@ -230,104 +230,52 @@ function UsfmImport() {
   }, [localBookContent, isUsfmValid, filePicked]);
 
   return (
-    <Box>
-      <Box
-        sx={{
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          zIndex: -1,
-          backgroundImage:
-            'url("/api/app-resources/pages/content/background_blur.png")',
-          backgroundRepeat: "no-repeat",
-          backdropFilter: "blur(3px)",
-        }}
-      />
-      <Header
-        titleKey="pages:core-contenthandler_text_translation:title"
-        currentId="core-contenthandler_text_translation"
-        requireNet={false}
-      />
-      <PanDialog
-        isOpen={usfmImportOpen}
-        closeFn={() => {
-          setLocalBookContent(null);
-          setUsfmImportAnchorEl(null);
-          handleClose();
-        }}
-        titleLabel={`${doI18n("pages:core-contenthandler_text_translation:import_content", i18nRef.current)} - ${nameProject}`}
+    <>
+      <Button
+        onClick={() => openUsfmPicker()}
+        type="button"
+        disabled={loading}
+        variant="contained"
+        color="primary"
+        component="span"
+        startIcon={<UploadFileIcon />}
       >
-        <DialogContent sx={{ mt: 1 }}>
-          <Button
-            onClick={() => openUsfmPicker()}
-            type="button"
-            disabled={loading}
-            variant="contained"
-            color="primary"
-            component="span"
-            startIcon={<UploadFileIcon />}
-          >
-            {loading
-              ? "Reading File..."
-              : filePicked.name
-                ? filePicked.name
-                : doI18n(
-                    "pages:core-contenthandler_text_translation:import_click",
-                    i18nRef.current,
-                  )}
-          </Button>
-          {localBookContent && (bookIsDuplicate || !isUsfmValid) && (
-            <Typography sx={{ color: "red", paddingTop: "8px" }}>
-              {!isUsfmValid
-                ? doI18n(
-                    "pages:core-contenthandler_text_translation:usfm_invalid",
-                    i18nRef.current,
-                  )
-                : doI18n(
-                    "pages:core-contenthandler_text_translation:book_already_exists",
-                    i18nRef.current,
-                  )}
-            </Typography>
-          )}
-          {Object.keys(validationResult).length > 0 && !bookIsDuplicate && (
-            <Stack spacing={2} sx={{ mt: 0.5 }}>
-              <Typography variant="body1">
-                {`Book Code: ${JSON.stringify(bookCode?.value, null, 2)}`}
-              </Typography>
-              <Typography variant="body1">
-                {`Title: ${JSON.stringify(title?.value, null, 2)}`}
-              </Typography>
-              <Typography variant="body1">
-                {`Chapters from ${JSON.stringify(cvIndexes[0]?.chapter, null, 2)} to ${JSON.stringify(cvIndexes[cvIndexes.length - 1]?.chapter, null, 2)}`}
-              </Typography>
-            </Stack>
-          )}
-        </DialogContent>
-        <PanDialogActions
-          closeFn={() => {
-            setLocalBookContent(null);
-            setUsfmImportAnchorEl(null);
-            handleClose();
-          }}
-          closeLabel={doI18n(
-            "pages:core-contenthandler_text_translation:cancel",
-            i18nRef.current,
-          )}
-          actionFn={() => {
-            handleCreateLocalBook(localBookContent, repoPath);
-            setUsfmImportAnchorEl(null);
-          }}
-          closeOnAction={false}
-          actionLabel={doI18n(
-            "pages:core-contenthandler_text_translation:create",
-            i18nRef.current,
-          )}
-          isDisabled={localBookContent ? bookIsDuplicate || !isUsfmValid : true}
-        />
-      </PanDialog>
-    </Box>
+        {loading
+          ? "Reading File..."
+          : filePicked.name
+            ? filePicked.name
+            : doI18n(
+                "pages:core-contenthandler_text_translation:import_click",
+                i18nRef.current,
+              )}
+      </Button>
+      {localBookContent && (bookIsDuplicate || !isUsfmValid) && (
+        <Typography sx={{ color: "red", paddingTop: "8px" }}>
+          {!isUsfmValid
+            ? doI18n(
+                "pages:core-contenthandler_text_translation:usfm_invalid",
+                i18nRef.current,
+              )
+            : doI18n(
+                "pages:core-contenthandler_text_translation:book_already_exists",
+                i18nRef.current,
+              )}
+        </Typography>
+      )}
+      {Object.keys(validationResult).length > 0 && !bookIsDuplicate && (
+        <Stack spacing={2} sx={{ mt: 0.5 }}>
+          <Typography variant="body1">
+            {`Book Code: ${JSON.stringify(bookCode?.value, null, 2)}`}
+          </Typography>
+          <Typography variant="body1">
+            {`Title: ${JSON.stringify(title?.value, null, 2)}`}
+          </Typography>
+          <Typography variant="body1">
+            {`Chapters from ${JSON.stringify(cvIndexes[0]?.chapter, null, 2)} to ${JSON.stringify(cvIndexes[cvIndexes.length - 1]?.chapter, null, 2)}`}
+          </Typography>
+        </Stack>
+      )}
+    </>
   );
 }
 export default UsfmImport;
