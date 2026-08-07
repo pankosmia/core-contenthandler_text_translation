@@ -3,6 +3,11 @@
   "version": "0.2.0",
   "private": true,
   "homepage": "/clients/core-contenthandler_text_translation",
+  "packageManager": "pnpm@11.20.0",
+  "engines": {
+    "node": ">=24",
+    "pnpm": "11.20.0"
+  },
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
@@ -15,7 +20,7 @@
     "jszip": "^3.10.1",
     "notistack": "^3.0.2",
     "pankosmia-lib": "^0.0.3",
-    "pankosmia-rcl": "0.4.0",
+    "pankosmia-rcl": "0.4.22",
     "prop-types": "^15.8.1",
     "proskomma-core": "^0.11.2",
     "proskomma-json-tools": "^0.9.1",
@@ -59,9 +64,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "optionalDependencies": {
-    "@rollup/rollup-darwin-x64": "^4.60.4",
-    "@rollup/rollup-win32-x64-msvc": "^4.60.4"
   }
 }
