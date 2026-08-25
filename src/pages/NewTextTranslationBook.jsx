@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { Grid2, Box, DialogContent, DialogContentText } from "@mui/material";
+import { Grid, Box, DialogContent, DialogContentText } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
 import { postJson, getJson } from "pankosmia-lib/http";
 import { doI18n } from "pankosmia-lib/i18n";
@@ -166,11 +166,10 @@ export default function NewTextTranslationBook() {
           )}
         </DialogContentText>
         <DialogContent>
-          <Grid2
+          <Grid
             container
             spacing={2}
-            justifyItems="flex-end"
-            alignItems="stretch"
+            sx={{ justifyContent: "flex-end", alignItems: "stretch" }}
           >
             {fileVrs === false ? (
               <PanVersificationPicker
@@ -192,7 +191,7 @@ export default function NewTextTranslationBook() {
               setShowVersification={setShowVersification}
               bookProject={bookName}
             />
-          </Grid2>
+          </Grid>
         </DialogContent>
         <PanDialogActions
           closeFn={() => handleClose()}
