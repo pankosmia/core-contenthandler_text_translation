@@ -3,7 +3,7 @@ import {
   Button,
   Tooltip,
   Box,
-  Grid2,
+  Grid,
   IconButton,
   List,
   ListItem,
@@ -166,7 +166,7 @@ function OptionUsfmImport({
       </Tooltip>
 
       {Object.keys(validationResult).length > 0 && (
-        <Grid2 item xs={12} md={6}>
+        <Grid item xs={12} md={6}>
           <List>
             <ListItem
               secondaryAction={
@@ -189,7 +189,7 @@ function OptionUsfmImport({
               />
             </ListItem>
           </List>
-        </Grid2>
+        </Grid>
       )}
     </Box>
   );
