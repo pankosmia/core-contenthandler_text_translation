@@ -292,7 +292,9 @@ export default function NewBibleContent() {
           usfmBits.push(`\\${headerTag} ${printableBookCode}`);
         }
         for (const bookSection of bookSections) {
-          usfmBits.push(`\\rem ${bookSection.cv[0]}-${bookSection.cv[1]}`);
+          usfmBits.push(
+            `\\rem ${bookSection.fieldInitialValues && bookSection.fieldInitialValues.sectionNumber}: ${bookSection.fieldInitialValues && bookSection.fieldInitialValues.sectionTitle} (${bookSection.bookCode} ${bookSection.cv[0]}-${bookSection.cv[1]})`,
+          );
           usfmBits.push(`\\ts\\*`);
           for (const sectionField of planJson.sectionStructure) {
             if (sectionField.type === "paraField") {
