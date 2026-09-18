@@ -8,7 +8,8 @@ import {
   DialogContent,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { postJson, doI18n, getJson } from "pithekos-lib";
+import { postJson, getJson } from "pankosmia-lib/http";
+import { doI18n } from "pankosmia-lib/i18n";
 import sx from "./Selection.styles";
 import ListMenuItem from "./ListMenuItem";
 import {

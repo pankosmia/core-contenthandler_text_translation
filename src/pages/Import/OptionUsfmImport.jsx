@@ -3,15 +3,14 @@ import {
   Button,
   Tooltip,
   Box,
-  Grid2,
+  Grid,
   IconButton,
   List,
   ListItem,
   ListItemText,
   ListItemIcon,
 } from "@mui/material";
-import { enqueueSnackbar } from "notistack";
-import { doI18n } from "pithekos-lib";
+import { doI18n } from "pankosmia-lib/i18n";
 import { i18nContext } from "pankosmia-rcl";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { Proskomma } from "proskomma-core";
@@ -167,7 +166,7 @@ function OptionUsfmImport({
       </Tooltip>
 
       {Object.keys(validationResult).length > 0 && (
-        <Grid2 item xs={12} md={6}>
+        <Grid item xs={12} md={6}>
           <List>
             <ListItem
               secondaryAction={
@@ -190,7 +189,7 @@ function OptionUsfmImport({
               />
             </ListItem>
           </List>
-        </Grid2>
+        </Grid>
       )}
     </Box>
   );

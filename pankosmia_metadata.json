@@ -223,7 +223,7 @@
       "id": "Tampil catatan kaki"
     },
     "show_xrefs": {
-      "en": "Show cross references",
+      "en": "Show cross-references",
       "es": "Mostrar referencias cruzadas",
       "fr": "Afficher les références croisées",
       "id": "Tampil referensi silang"
@@ -235,10 +235,10 @@
       "id": "Tampil gaya paragraf"
     },
     "show_character_markup": {
-      "en": "Show character formatting marks",
-      "es": "Mostrar el marcado de caracteres",
-      "fr": "Afficher les marques de formatage des caractères",
-      "id": "@Tampil markup karakter"
+      "en": "Show character-level formatting",
+      "es": "Mostrar formato a nivel de carácter",
+      "fr": "@Afficher la mise en forme au niveau des caractères",
+      "id": "@Tampilkan pemformatan pada tingkat karakter"
     },
     "show_chapter_labels": {
       "en": "Show chapter numbers",
@@ -253,10 +253,10 @@
       "id": "@Tampil label ayat"
     },
     "show_first_verse_label": {
-      "en": "Show verse one",
-      "es": "Mostrar el primer versículo",
-      "fr": "Afficher le verset un",
-      "id": "@Tampil label ayat"
+      "en": "Show verse number for verse one",
+      "es": "Mostrar el número del versículo uno",
+      "fr": "@Afficher le numéro du premier verset",
+      "id": "@Tampilkan nomor ayat untuk ayat pertama"
     },
     "number_of_columns": {
       "en": "Number of columns",
