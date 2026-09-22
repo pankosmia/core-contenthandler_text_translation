@@ -1,6 +1,6 @@
 {
   "name": "pankosmia-text_translation-muncher",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": false,
   "homepage": "https://github.com/pankosmia/core-contenthandler_text_translation",
   "main": "munchersPackageExport/text_translation-muncher-rcl.umd.js",

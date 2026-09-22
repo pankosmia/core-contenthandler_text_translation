@@ -60,6 +60,8 @@ export default defineConfig(({ mode }) => {
           emptyOutDir: true,
           sourcemap: true,
         },
-    base: "/clients/core-contenthandler_text_translation",
+    base: isMuncher
+      ? undefined
+      : "/clients/core-contenthandler_text_translation",
   };
 });
