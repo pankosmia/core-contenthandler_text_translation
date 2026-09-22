@@ -24,16 +24,6 @@ It is intended for read-only visualization use cases where editing capabilities 
 
 ---
 
-## Scripts
-
-### `usfm2draftJson.worker.js`
-
-## A component that allows users to use worker for paralleloading of textTranslation for editing
-
-### `usfm2viewerJson.worker.js`
-
-## A component that allows users to use worker for paralleloading of textTranslation for viewing
-
 ## Scope
 
 This package contains only reusable BCV-related components.
@@ -42,8 +32,6 @@ Included:
 
 - textTranslation editing components
 - textTranslation viewing components
-- usfm2draftJson.worker.js scripts
-- usfm2viewerJson.worker.js scripts
 
 Not included:
 
