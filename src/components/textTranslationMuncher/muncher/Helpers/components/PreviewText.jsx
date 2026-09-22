@@ -2,16 +2,21 @@ import { SofriaRenderFromProskomma, render } from "proskomma-json-tools";
 import { Proskomma } from "proskomma-core";
 import { getText } from "pankosmia-lib/http";
 import { doI18n } from "pankosmia-lib/i18n";
-import { debugContext, i18nContext, typographyContext } from "pankosmia-rcl";
 import { enqueueSnackbar } from "notistack";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTheme } from "@mui/material";
 import GraphiteTest from "./GraphiteTest";
-import TextDir from "../../../helpers/TextDir";
+import TextDir from "../TextDir";
 
-function PreviewText({ open, setOpenModalPreviewText, metadata, systemBcv }) {
-  const { i18nRef } = useContext(i18nContext);
-  const { debugRef } = useContext(debugContext);
+function PreviewText({
+  open,
+  setOpenModalPreviewText,
+  metadata,
+  systemBcv,
+  i18nRef,
+  debugRef,
+  typographyRef,
+}) {
   const fileExport = useRef();
   const [showTitles, setShowTitles] = useState(true);
   const [showHeadings, setShowHeadings] = useState(true);
@@ -24,8 +29,6 @@ function PreviewText({ open, setOpenModalPreviewText, metadata, systemBcv }) {
   const [showVersesLabels, setShowVersesLabels] = useState(true);
   const [showFirstVerseLabel, setShowFirstVerseLabel] = useState(true);
   const [selectedColumns, setSelectedColumns] = useState(2);
-
-  const { typographyRef } = useContext(typographyContext);
 
   useEffect(() => {
     if (open) {
@@ -47,8 +50,10 @@ function PreviewText({ open, setOpenModalPreviewText, metadata, systemBcv }) {
   const [adjSelectedFontFamilies, setAdjSelectedFontFamilies] = useState(null);
   useEffect(() => {
     const element = document.getElementById("fontWrapper");
-    const computedStyles = window.getComputedStyle(element);
-    setAdjSelectedFontFamilies(computedStyles.fontFamily);
+    if (element) {
+      const computedStyles = window.getComputedStyle(element);
+      setAdjSelectedFontFamilies(computedStyles.fontFamily);
+    }
   }, [adjSelectedFontClass]);
 
   const theme = useTheme(); // used for DOM preview print button style

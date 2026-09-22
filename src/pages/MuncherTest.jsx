@@ -6,22 +6,27 @@ import {
   debugContext,
   i18nContext,
   typographyContext,
+  wordContext,
+  snippetContext,
+  productContext,
 } from "pankosmia-rcl";
 import { Box, Button } from "@mui/material";
-import WrapperNav from "../components/textTransationMuncher/wrapperMuncher/WrapperNav";
+import WrapperNav from "../components/textTranslationMuncher/wrapperMuncher/WrapperNav";
 import TextTranslationEditorMuncher from "../components/textTranslationMuncher/muncher/Editor/TextTranslationEditorMuncher";
 import TextTranslationViewerMuncher from "../components/textTranslationMuncher/muncher/Viewer/TextTranslationViewerMuncher";
 
 export default function MuncherTest() {
+  const { word } = useContext(wordContext);
+  const { snippet } = useContext(snippetContext);
   const { bcvRef } = useContext(bcvContext);
   const { systemBcv } = useContext(bcvContext);
   const { debugRef } = useContext(debugContext);
   const { i18nRef } = useContext(i18nContext);
   const { typographyRef } = useContext(typographyContext);
   const { currentProjectRef } = useContext(currentProjectContext);
+  const { product } = useContext(productContext);
   const [currentBurrito, setCurrentBurrito] = useState(null);
-  const [modified, setModified] = useState(false);
-  const [flavor, setFlavor] = useState();
+  const [flavor, setFlavor] = useState(null);
   useEffect(() => {
     async function getSummary() {
       if (currentProjectRef.current) {
@@ -62,16 +67,18 @@ export default function MuncherTest() {
         height: "98vh",
       }}
     >
-      <WrapperNav flavor={["x-bcvnotes", "x-bcvquestions"]} />
+      <WrapperNav flavor={["textTranslation"]} />
 
       <Box sx={{ display: "flex", width: "100%", overflowY: "scroll" }}>
-        {metadata && flavor === "x-bcvnotes" && (
+        {metadata && flavor === "textTranslation" && (
           <Box sx={{ flex: 1, margin: 5 }}>
             <TextTranslationViewerMuncher
               metadata={metadata}
               debugRef={debugRef}
               systemBcv={systemBcv}
               i18nRef={i18nRef}
+              snippet={snippet}
+              word={word}
             />
           </Box>
         )}
@@ -80,11 +87,13 @@ export default function MuncherTest() {
           <Box sx={{ flex: 1, margin: 2 }}>
             <TextTranslationEditorMuncher
               metadata={metadata}
-              debugRef={debugRef}
               systemBcv={systemBcv}
+              debugRef={debugRef}
               i18nRef={i18nRef}
-              bcvRef={bcvRef}
+              product={product}
+              typographyRef={typographyRef}
               currentProjectRef={currentProjectRef}
+              bcvRef={bcvRef}
             />
           </Box>
         )}

@@ -1,19 +1,22 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import usfm2draftJson from "../Helpers/usfmToDraft/usfm2draftJson";
 import usfm2viewerJson from "../Helpers/usfmToDraft/usfm2viewerJson";
 import filterByChapter from "../Helpers/usfmToDraft/filterByChapter";
 import ViewableBible from "../Helpers/components/ViewableBible";
 
 import { getText } from "pankosmia-lib/http";
-import { debugContext, bcvContext } from "pankosmia-rcl";
 import "./TextTranslationViewerMuncher.css";
 import TextDir from "../Helpers/TextDir";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 
-function TextTranslationViewerMuncher({ metadata }) {
-  const { systemBcv } = useContext(bcvContext);
-  const { debugRef } = useContext(debugContext);
+function TextTranslationViewerMuncher({
+  metadata,
+  debugRef,
+  systemBcv,
+  word,
+  snippet,
+}) {
   const [bookData, setBookData] = useState(null);
   const [viewerData, setViewerData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -76,6 +79,9 @@ function TextTranslationViewerMuncher({ metadata }) {
       <ViewableBible
         chapterJson={chapterData}
         dir={!sbScriptDirSet ? textDir : undefined}
+        systemBcv={systemBcv}
+        word={word}
+        snippet={snippet}
       />
     )
   );

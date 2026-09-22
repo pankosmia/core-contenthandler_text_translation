@@ -28,7 +28,9 @@
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.9.4",
     "use-file-picker": "^2.1.4",
-    "zip-project": "^1.0.0"
+    "zip-project": "^1.0.0",
+    "use-editable": "^2.3.3",
+    "md5": "^2.3.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
@@ -41,9 +43,9 @@
     "react-dom": "^19.2.8"
   },
   "scripts": {
-    "start": "vite",
+    "publish": "pnpm run build:package  && cd ./src/components/bcvMuncher && npm publish --dry-run",
     "build": "vite build",
-    "build:vite": "vite build",
+    "build:package": "vite build --mode isMuncher",
     "dev": "vite",
     "prepare": "husky"
   },

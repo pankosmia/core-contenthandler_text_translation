@@ -1,18 +1,16 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, MenuItem, TextField } from "@mui/material";
 import { getJson } from "pankosmia-lib/http";
 import { doI18n } from "pankosmia-lib/i18n";
-import {
-  bcvContext as BcvContext,
-  i18nContext as I18nContext,
-  currentProjectContext as CurrentProjectContext,
-  debugContext as DebugContext,
-} from "pankosmia-rcl";
-function BookPicker({ setFirstChapter, disable = false }) {
-  const { bcvRef } = useContext(BcvContext);
-  const { debugRef } = useContext(DebugContext);
-  const { i18nRef } = useContext(I18nContext);
-  const { currentProjectRef } = useContext(CurrentProjectContext);
+
+function BookPicker({
+  setFirstChapter,
+  bcvRef,
+  debugRef,
+  i18nRef,
+  currentProjectRef,
+  disable = false,
+}) {
   const [contentBooks, setContentBooks] = useState([]);
   const [currentBook, setCurrentBook] = useState(bcvRef.current.bookCode);
   useEffect(() => {

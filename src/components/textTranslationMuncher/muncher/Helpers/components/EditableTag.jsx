@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { ListItemText, Menu, MenuItem } from "@mui/material";
 import { updateBlockTag } from "../Controller";
 import mainBlockMenu from "../menuSpecs/main_blocks.json";
@@ -7,15 +7,14 @@ import titleBlockMenu from "../menuSpecs/title_blocks.json";
 import headingBlockMenu from "../menuSpecs/heading_blocks.json";
 import introduction_titleBlockMenu from "../menuSpecs/intro_title_blocks.json";
 import introduction_headingBlockMenu from "../menuSpecs/intro_heading_blocks.json";
-import { i18nContext as I18nContext } from "pankosmia-rcl";
 import { doI18n } from "pankosmia-lib/i18n";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 export default function EditableTag({
   scriptureJson,
   setScriptureJson,
   position,
+  i18nRef,
 }) {
-  const { i18nRef } = useContext(I18nContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const incomingBlock = scriptureJson.blocks
     ? scriptureJson.blocks[position[0]]

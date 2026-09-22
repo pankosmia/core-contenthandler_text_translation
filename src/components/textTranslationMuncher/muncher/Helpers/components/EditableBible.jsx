@@ -1,16 +1,17 @@
 import EditableBibleBlock from "./EditableBibleBlock";
 import EditableGraft from "./EditableGraft";
 import EditableRemark from "./EditableRemark";
-import { useContext, useEffect } from "react";
-import { bcvContext } from "pankosmia-rcl";
+import { useEffect } from "react";
 
 export default function EditableBible({
   scriptDir,
   chapterJson,
   scriptureJson,
   setScriptureJson,
+  systemBcv,
+  debugRef,
+  i18nRef,
 }) {
-  const { systemBcv } = useContext(bcvContext);
   useEffect(() => {
     async function loadCSS() {
       const url =
@@ -53,6 +54,9 @@ export default function EditableBible({
                 scriptureJson={scriptureJson}
                 setScriptureJson={setScriptureJson}
                 position={[b.position]}
+                systemBcv={systemBcv}
+                debugRef={debugRef}
+                i18nRef={i18nRef}
               />
             );
 
@@ -63,6 +67,7 @@ export default function EditableBible({
                 scriptureJson={scriptureJson}
                 setScriptureJson={setScriptureJson}
                 position={[b.position]}
+                i18nRef={i18nRef}
               />
             );
         }

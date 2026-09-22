@@ -4,21 +4,16 @@ import SaveButton from "./SaveButton";
 import BookPicker from "./BookPicker";
 import PreviewText from "./PreviewText";
 import md5sum from "md5";
-import { useContext, useEffect, useState } from "react";
-import usfm2draftJson from "../../../../components/usfm2draftJson";
+import { useEffect, useState } from "react";
+import usfm2draftJson from "../usfmToDraft/usfm2draftJson";
 import { useNavigate } from "react-router-dom";
 import LayoutIcon from "../layouts/LayoutIcon";
 import { getText } from "pankosmia-lib/http";
 import { doI18n } from "pankosmia-lib/i18n";
-import { getFirstChapterTextTranslation } from "../../../../common/findFirstChapter";
-import {
-  bcvContext as BcvContext,
-  debugContext as DebugContext,
-  i18nContext as I18nContext,
-  productContext as ProductContext,
-} from "pankosmia-rcl";
+import { getFirstChapterTextTranslation } from "../FindFirst/findFirstChapter";
+
 import { PrintOutlined } from "@mui/icons-material";
-import { getFirstverseTextTranslation } from "../../../../common/findFirstVerse";
+import { getFirstverseTextTranslation } from "../FindFirst/findFirstVerse";
 
 function EditorTools({
   metadata,
@@ -29,11 +24,14 @@ function EditorTools({
   scriptureJson,
   currentBookCode,
   setCurrentBookCode,
+  systemBcv,
+  typographyRef,
+  debugRef,
+  i18nRef,
+  product,
+  currentProjectRef,
+  bcvRef,
 }) {
-  const { systemBcv } = useContext(BcvContext);
-  const { debugRef } = useContext(DebugContext);
-  const { i18nRef } = useContext(I18nContext);
-  const { product } = useContext(ProductContext);
   const [openModalPreviewText, setOpenModalPreviewText] = useState(false);
   const [chapterNumbers, setChapterNumbers] = useState([]);
 
@@ -102,6 +100,7 @@ function EditorTools({
             md5sumScriptureJson={md5sumScriptureJson}
             setMd5sumScriptureJson={setMd5sumScriptureJson}
             scriptureJson={scriptureJson}
+            i18nRef={i18nRef}
           />
           {product && product.os !== "android" && (
             <>
@@ -117,17 +116,30 @@ function EditorTools({
                 systemBcv={systemBcv}
                 open={openModalPreviewText}
                 setOpenModalPreviewText={setOpenModalPreviewText}
+                i18nRef={i18nRef}
+                debugRef={debugRef}
+                typographyRef={typographyRef}
               />
             </>
           )}
         </Grid>
 
         <Grid sx={{ display: "flex" }} gap={1}>
-          <BookPicker setFirstChapter={getFirstChapterTextTranslation} />
+          <BookPicker
+            setFirstChapter={getFirstChapterTextTranslation}
+            bcvRef={bcvRef}
+            debugRef={debugRef}
+            i18nRef={i18nRef}
+            currentProjectRef={currentProjectRef}
+          />
           <ChapterPicker
             chapterNumbers={chapterNumbers}
             repoMetadata={metadata}
             findFirstVerse={getFirstverseTextTranslation}
+            systemBcv={systemBcv}
+            bcvRef={bcvRef}
+            debugRef={debugRef}
+            currentProjectRef={currentProjectRef}
           />
         </Grid>
         <Grid sx={{ display: "flex" }} gap={1}>

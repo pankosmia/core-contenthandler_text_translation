@@ -4,10 +4,8 @@ import md5sum from "md5";
 import { postJson } from "pankosmia-lib/http";
 import { doI18n } from "pankosmia-lib/i18n";
 import { enqueueSnackbar } from "notistack";
-import { useContext } from "react";
-import draftJson2usfm from "../../../../components/draftJson2usfm";
+import draftJson2usfm from "../usfmToDraft/draftJson2usfm";
 import { useEffect } from "react";
-import { i18nContext as I18nContext } from "pankosmia-rcl";
 
 function SaveButton({
   metadata,
@@ -17,8 +15,8 @@ function SaveButton({
   md5sumScriptureJson,
   setMd5sumScriptureJson,
   scriptureJson,
+  i18nRef,
 }) {
-  const { i18nRef } = useContext(I18nContext);
   useEffect(() => {
     const isElectron = !!window.electronAPI;
     if (isElectron) {

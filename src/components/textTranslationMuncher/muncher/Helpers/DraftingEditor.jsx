@@ -1,25 +1,29 @@
-import { useEffect, useContext, useState } from "react";
+import { useEffect, useState } from "react";
 import { getText } from "pankosmia-lib/http";
-import {
-  bcvContext as BcvContext,
-  debugContext as DebugContext,
-} from "pankosmia-rcl";
 import { enqueueSnackbar } from "notistack";
 import { Box, CircularProgress, Typography } from "@mui/material";
-import usfm2draftJson from "../../../components/usfm2draftJson";
+import usfm2draftJson from "../Helpers/usfmToDraft/usfm2draftJson";
 import EditableBible from "./components/EditableBible";
 import md5sum from "md5";
 import EditorTools from "./components/EditorTools";
-import filterByChapter from "../../../components/filterByChapter";
-import TextDir from "../../helpers/TextDir";
-import ExtractJsonValues from "../../helpers/ExtractJsonValues";
+import filterByChapter from "../Helpers/usfmToDraft/filterByChapter";
+import TextDir from "../Helpers/TextDir";
+import ExtractJsonValues from "../Helpers/ExtractJsonValues";
 import { doI18n } from "pankosmia-lib/i18n";
-import { i18nContext } from "pankosmia-rcl";
-function DraftingEditor({ metadata, modified, setModified }) {
+
+function DraftingEditor({
+  metadata,
+  modified,
+  setModified,
+  systemBcv,
+  debugRef,
+  i18nRef,
+  product,
+  typographyRef,
+  currentProjectRef,
+  bcvRef,
+}) {
   const [error, setError] = useState(false);
-  const { systemBcv } = useContext(BcvContext);
-  const { debugRef } = useContext(DebugContext);
-  const { i18nRef } = useContext(i18nContext);
   const [scriptureJson, setScriptureJson] = useState({
     headers: {},
     blocks: [],
@@ -119,6 +123,13 @@ function DraftingEditor({ metadata, modified, setModified }) {
             scriptureJson={scriptureJson}
             currentBookCode={currentBookCode}
             setCurrentBookCode={setCurrentBookCode}
+            product={product}
+            systemBcv={systemBcv}
+            debugRef={debugRef}
+            i18nRef={i18nRef}
+            typographyRef={typographyRef}
+            currentProjectRef={currentProjectRef}
+            bcvRef={bcvRef}
           />
 
           <Box dir={!sbScriptDirSet ? textDir : undefined}>
@@ -129,6 +140,9 @@ function DraftingEditor({ metadata, modified, setModified }) {
                 scriptureJson={scriptureJson}
                 setScriptureJson={setScriptureJson}
                 key={bookChangeCount}
+                systemBcv={systemBcv}
+                debugRef={debugRef}
+                i18nRef={i18nRef}
               />
             ) : (
               <Box

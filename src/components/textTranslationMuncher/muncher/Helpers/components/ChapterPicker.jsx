@@ -2,17 +2,20 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, IconButton, MenuItem, TextField } from "@mui/material";
 import { ButtonGroup } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
-import { getJson, postEmptyJson } from "pankosmia-lib/http";
-import { bcvContext, debugContext, currentProjectContext } from "pankosmia-rcl";
+import { useEffect, useState } from "react";
+import { getJson } from "pankosmia-lib/http";
 
-function ChapterPicker({ repoMetadata, chapterNumbers, findFirstVerse }) {
+function ChapterPicker({
+  repoMetadata,
+  chapterNumbers,
+  findFirstVerse,
+  systemBcv,
+  bcvRef,
+  debugRef,
+  currentProjectRef,
+}) {
   const [scriptDirection, setScriptDirection] = useState([]);
-  const { bcvRef, systemBcv } = useContext(bcvContext);
   const currentPosition = chapterNumbers.indexOf(systemBcv.chapterNum);
-  const { debugRef } = useContext(debugContext);
-
-  const { currentProjectRef } = useContext(currentProjectContext);
   const [currentBook, setCurrentBook] = useState(bcvRef.current.bookCode);
 
   useEffect(() => {

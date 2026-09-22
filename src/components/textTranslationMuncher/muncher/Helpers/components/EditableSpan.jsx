@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useEditable } from "use-editable";
 import { updateUnitContent } from "../Controller";
 import { postEmptyJson, postJson } from "pankosmia-lib/http";
@@ -16,6 +16,8 @@ export default function EditableSpan({
   chapter,
   verse,
   endVerse,
+  debugRef,
+  systemBcv,
 }) {
   const incomingBlock = scriptureJson.blocks[position[0]];
   const incomingContent =
@@ -24,8 +26,6 @@ export default function EditableSpan({
       : null;
   const [firstTime, setFirstTime] = useState(true);
   const [value, setValue] = useState(incomingContent || "");
-  const { debugRef } = useContext(DebugContext);
-  const { systemBcv } = useContext(BcvContext);
   const editorRef = useRef(null);
   useEditable(editorRef, setValue);
 

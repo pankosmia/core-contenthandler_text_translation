@@ -5,6 +5,9 @@ export default function EditableBibleBlock({
   scriptureJson,
   setScriptureJson,
   position,
+  systemBcv,
+  debugRef,
+  i18nRef,
 }) {
   if (scriptureJson.blocks[position[0]]) {
     const tag = scriptureJson.blocks[position[0]].tag;
@@ -14,6 +17,7 @@ export default function EditableBibleBlock({
           scriptureJson={scriptureJson}
           setScriptureJson={setScriptureJson}
           position={position}
+          i18nRef={i18nRef}
         />
         {!["b", "ib"].includes(tag) &&
           scriptureJson.blocks[position[0]].units &&
@@ -25,6 +29,8 @@ export default function EditableBibleBlock({
                 </span>
                 <EditableSpan
                   key={i}
+                  debugRef={debugRef}
+                  systemBcv={systemBcv}
                   scriptureJson={scriptureJson}
                   setScriptureJson={setScriptureJson}
                   position={[...position, i]}

@@ -7,6 +7,7 @@ export default function EditableGraft({
   scriptureJson,
   setScriptureJson,
   position,
+  i18nRef,
 }) {
   const [value, setValue] = useState("");
   const [firstTime, setFirstTime] = useState(true);
@@ -36,6 +37,7 @@ export default function EditableGraft({
           scriptureJson={scriptureJson}
           setScriptureJson={setScriptureJson}
           position={position}
+          i18nRef={i18nRef}
         />
         <span
           contentEditable="plaintext-only"
