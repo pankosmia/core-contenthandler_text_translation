@@ -41,6 +41,18 @@ Not included:
 
 The goal of this package is to provide lightweight, reusable building blocks for textTranslation features across the Pankosmia ecosystem.
 
+## Using this package
+
+Add :
+
+```
+  optimizeDeps: {
+    exclude: ["pankosmia-text_translation-muncher"],
+  },
+```
+
+to your vite.config.js return
+
 ## Testing
 
 To test the Muncher components locally:
