@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { getAndSetJson } from "pankosmia-lib/http";
 import { createTheme, styled } from "@mui/material";
 import { SnackbarProvider, MaterialDesignContent } from "notistack";
-
+import MuncherTest from "./pages/MuncherTest";
 const router = createHashRouter([
   {
     path: "/",
@@ -43,6 +43,10 @@ const router = createHashRouter([
   {
     path: "/export/pdf",
     element: <PdfGenerate />,
+  },
+  {
+    path: "MuncherTest",
+    element: <MuncherTest />,
   },
 ]);
 function AppLayout() {
