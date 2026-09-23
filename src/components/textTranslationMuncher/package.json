@@ -1,13 +1,13 @@
 {
-  "name": "core-contenthandler_text_translation",
+  "name": "pankosmia-text_translation-muncher",
   "version": "0.2.3",
-  "private": true,
-  "homepage": "/clients/core-contenthandler_text_translation",
-  "packageManager": "pnpm@11.20.0",
-  "engines": {
-    "node": ">=24",
-    "pnpm": "11.20.0"
-  },
+  "private": false,
+  "homepage": "https://github.com/pankosmia/core-contenthandler_text_translation",
+  "main": "munchersPackageExport/text_translation-muncher-rcl.umd.js",
+  "module": "munchersPackageExport/text_translation-muncher-rcl.es.js",
+  "files": [
+    "munchersPackageExport"
+  ],
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
@@ -47,7 +47,6 @@
     "proskomma-core": "^0.11.2"
   },
   "scripts": {
-    "publish": "pnpm run build:package  && cd ./src/components/textTranslationMuncher && npm publish",
     "build": "vite build",
     "build:package": "vite build --mode isMuncher",
     "dev": "vite",
