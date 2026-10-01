@@ -1,12 +1,4 @@
-import {
-  FormControl,
-  FormControlLabel,
-  Grid,
-  Radio,
-  RadioGroup,
-  TextField,
-  Tooltip,
-} from "@mui/material";
+import { Grid, TextField, Tooltip } from "@mui/material";
 import { doI18n } from "pankosmia-lib/i18n";
 import { i18nContext, PanCopyright } from "pankosmia-rcl";
 import { useContext } from "react";
