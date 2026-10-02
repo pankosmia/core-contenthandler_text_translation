@@ -12,7 +12,9 @@ function BookPicker({
   disable = false,
 }) {
   const [contentBooks, setContentBooks] = useState([]);
+  console.log("🚀 ~ BookPicker ~ contentBooks:", contentBooks);
   const [currentBook, setCurrentBook] = useState(bcvRef.current.bookCode);
+
   useEffect(() => {
     setCurrentBook(bcvRef.current.bookCode);
   }, [bcvRef.current.bookCode]);

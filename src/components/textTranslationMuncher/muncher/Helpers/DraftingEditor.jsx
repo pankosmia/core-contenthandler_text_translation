@@ -53,7 +53,7 @@ function DraftingEditor({
 
   // Get whole book content
   useEffect(() => {
-    if (systemBcv.bookCode !== currentBookCode) {
+    if (systemBcv.bookCode && systemBcv.bookCode !== currentBookCode) {
       const doScriptureJson = async () => {
         try {
           setChapterJson(null);
