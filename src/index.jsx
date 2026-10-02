@@ -8,7 +8,6 @@ import UsfmExport from "./pages/Export/UsfmExport";
 import PdfGenerate from "./pages/Export/PdfGenerate";
 import UsfmImport from "./pages/Import/UsfmImport";
 import App from "./App";
-import DeleteTextTranslationBook from "./pages/DeleteTextTranslationBook";
 import { ThemeProvider } from "@emotion/react";
 import { useEffect, useState } from "react";
 import { getAndSetJson } from "pankosmia-lib/http";
@@ -27,10 +26,6 @@ const router = createHashRouter([
   {
     path: "newBook",
     element: <NewTextTranslationBook />,
-  },
-  {
-    path: "deleteBook",
-    element: <DeleteTextTranslationBook />,
   },
   {
     path: "importBook",

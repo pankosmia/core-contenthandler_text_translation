@@ -29,18 +29,6 @@
           "url": "/newBook?repoPath=%%REPO_PATH%%"
         }
       ],
-      "delete_book": [
-        {
-          "doc": "Delete a book to a textTranslation document",
-          "placeHolders": {
-            "REPO_PATH": {
-              "doc": "The path to the repo in <X>/<Y>/<Z> format"
-            }
-          },
-          "label": "pages:core-contenthandler_text_translation:delete_book",
-          "url": "/deleteBook?repoPath=%%REPO_PATH%%"
-        }
-      ],
       "import_book": [
         {
           "doc": "Import a book into a textTranslation document",
