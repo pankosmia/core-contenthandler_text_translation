@@ -19,7 +19,6 @@ import LayoutIcon from "../layouts/LayoutIcon";
 import { getText } from "pankosmia-lib/http";
 import { doI18n } from "pankosmia-lib/i18n";
 import { getFirstChapterTextTranslation } from "../FindFirst/findFirstChapter";
-
 import { PrintOutlined } from "@mui/icons-material";
 import { getFirstverseTextTranslation } from "../FindFirst/findFirstVerse";
 
@@ -122,7 +121,7 @@ function EditorTools({
             <>
               <Tooltip
                 title={doI18n(
-                  "pages:core-local-workspace:button_preview_text",
+                  "pages:core-contenthandler_text_translation:button_preview_text",
                   i18nRef.current,
                   debugRef.current,
                 )}

@@ -17,6 +17,7 @@ import ExtractJsonValues from "../Helpers/ExtractJsonValues";
 import md5sum from "md5";
 import EditorTools from "../Helpers/components/EditorTools";
 import EditableBible from "../Helpers/components/EditableBible";
+import { doI18n } from "pankosmia-lib/i18n";
 
 function TextTranslationEditorMuncher({
   metadata,
@@ -176,7 +177,7 @@ function TextTranslationEditorMuncher({
               <Alert severity="error">
                 {" "}
                 {doI18n(
-                  `pages:core-local-workspace:unsaved_changes`,
+                  `pages:core-contenthandler_text_translation:unsaved_changes`,
                   i18nRef.current,
                 )}
               </Alert>
