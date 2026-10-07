@@ -1,4 +1,12 @@
-import { Box, Grid, IconButton, Tooltip } from "@mui/material";
+import {
+  Alert,
+  AlertTitle,
+  Box,
+  Dialog,
+  Grid,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
 import ChapterPicker from "./ChapterPicker";
 import SaveButton from "./SaveButton";
 import BookPicker from "./BookPicker";
@@ -31,10 +39,11 @@ function EditorTools({
   product,
   currentProjectRef,
   bcvRef,
+  showPrintAlert,
+  setShowPrintAlert,
 }) {
   const [openModalPreviewText, setOpenModalPreviewText] = useState(false);
   const [chapterNumbers, setChapterNumbers] = useState([]);
-
   const navigate = useNavigate();
 
   // Set up chapter numbers when changing book
@@ -71,7 +80,14 @@ function EditorTools({
     setCurrentBookCode,
     debugRef,
   ]);
-
+  const handlePrintClick = () => {
+    if (md5sum(JSON.stringify(scriptureJson)) === md5sumScriptureJson) {
+      setShowPrintAlert(false);
+      setOpenModalPreviewText(true);
+    } else {
+      setShowPrintAlert(true);
+    }
+  };
   return (
     <Box
       sx={{
@@ -104,13 +120,17 @@ function EditorTools({
           />
           {product && product.os !== "android" && (
             <>
-              <IconButton
-                onClick={() => {
-                  setOpenModalPreviewText(true);
-                }}
+              <Tooltip
+                title={doI18n(
+                  "pages:core-local-workspace:button_preview_text",
+                  i18nRef.current,
+                  debugRef.current,
+                )}
               >
-                <PrintOutlined />
-              </IconButton>
+                <IconButton onClick={handlePrintClick}>
+                  <PrintOutlined />
+                </IconButton>
+              </Tooltip>
               <PreviewText
                 metadata={metadata}
                 systemBcv={systemBcv}
