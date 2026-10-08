@@ -1,7 +1,24 @@
 import "./TextTranslationEditorMuncher.css";
-import { Box } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Typography,
+  Alert,
+  AlertTitle,
+  Snackbar,
+} from "@mui/material";
 import { useState, useEffect } from "react";
-import DraftingEditor from "../Helpers/DraftingEditor";
+import { getText } from "pankosmia-lib/http";
+import { enqueueSnackbar } from "notistack";
+import usfm2draftJson from "../Helpers/usfmToDraft/usfm2draftJson";
+import filterByChapter from "../Helpers/usfmToDraft/filterByChapter";
+import TextDir from "../Helpers/TextDir";
+import ExtractJsonValues from "../Helpers/ExtractJsonValues";
+import md5sum from "md5";
+import EditorTools from "../Helpers/components/EditorTools";
+import EditableBible from "../Helpers/components/EditableBible";
+import { doI18n } from "pankosmia-lib/i18n";
+
 function TextTranslationEditorMuncher({
   metadata,
   systemBcv,
@@ -13,22 +30,166 @@ function TextTranslationEditorMuncher({
   bcvRef,
 }) {
   const [modified, setModified] = useState(false);
+  const [showPrintAlert, setShowPrintAlert] = useState(false);
+  const [error, setError] = useState(false);
+  const [scriptureJson, setScriptureJson] = useState({
+    headers: {},
+    blocks: [],
+  });
+  const [chapterJson, setChapterJson] = useState(null);
+  const [md5sumScriptureJson, setMd5sumScriptureJson] = useState([]);
+  const [currentBookCode, setCurrentBookCode] = useState("zzz");
+  const [bookChangeCount, setBookChangeCount] = useState(0);
+  const [textDir, setTextDir] = useState(
+    metadata?.script_direction
+      ? metadata.script_direction.toLowerCase()
+      : undefined,
+  );
+
+  const sbScriptDir = metadata?.script_direction
+    ? metadata.script_direction.toLowerCase()
+    : undefined;
+  const sbScriptDirSet = sbScriptDir === "ltr" || sbScriptDir === "rtl";
+
+  // Set up 'are you sure you want to leave page' for Electron
+  useEffect(() => {
+    const isElectron = !!window.electronAPI;
+    if (isElectron) {
+      window.electronAPI.setCanClose(!modified);
+    }
+  }, [modified]);
+
+  // Get whole book content
+  useEffect(() => {
+    if (systemBcv.bookCode !== currentBookCode) {
+      const doScriptureJson = async () => {
+        try {
+          setChapterJson(null);
+
+          const usfmResponse = await getText(
+            `/api/burrito/ingredient/raw/${metadata.local_path}?ipath=${systemBcv.bookCode}.usfm`,
+            debugRef.current,
+          );
+
+          if (!usfmResponse.ok) {
+            console.error("Failed to get USFM:", usfmResponse);
+            return;
+          }
+
+          const usfmDraftJson = await usfm2draftJson(usfmResponse.text);
+
+          setScriptureJson(usfmDraftJson);
+
+          const hash = md5sum(JSON.stringify(usfmDraftJson));
+          setMd5sumScriptureJson(hash);
+
+          if (!sbScriptDirSet) {
+            const dir = await TextDir(usfmResponse.text, "usfm");
+            setTextDir(dir);
+          }
+        } catch (error) {
+          console.error("Failed to load/parse USFM:", error);
+          enqueueSnackbar(`${error}`, { variant: "error" });
+          setError(true);
+        }
+      };
+
+      doScriptureJson();
+    }
+  }, [debugRef, systemBcv.bookCode, metadata, currentBookCode, sbScriptDirSet]);
+
+  useEffect(() => {
+    if (scriptureJson && scriptureJson.blocks.length > 0) {
+      setChapterJson(filterByChapter(scriptureJson, systemBcv.chapterNum));
+      setBookChangeCount(bookChangeCount + 1);
+    }
+  }, [scriptureJson, systemBcv.chapterNum]);
+
+  useEffect(() => {
+    if (!sbScriptDirSet) {
+      const contentText = ExtractJsonValues(scriptureJson, ["content"])
+        .toString()
+        .replace(/,/g, "");
+      const dir = TextDir(contentText, "text");
+      if (textDir !== dir) {
+        setTextDir(dir);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scriptureJson, sbScriptDirSet]);
 
   return (
-    <Box sx={{ p: 2 }}>
-      <DraftingEditor
-        metadata={metadata}
-        modified={modified}
-        setModified={setModified}
-        systemBcv={systemBcv}
-        debugRef={debugRef}
-        i18nRef={i18nRef}
-        product={product}
-        typographyRef={typographyRef}
-        currentProjectRef={currentProjectRef}
-        bcvRef={bcvRef}
-      />
-    </Box>
+    <>
+      {!error ? (
+        <>
+          <EditorTools
+            metadata={metadata}
+            modified={modified}
+            setModified={setModified}
+            md5sumScriptureJson={md5sumScriptureJson}
+            setMd5sumScriptureJson={setMd5sumScriptureJson}
+            scriptureJson={scriptureJson}
+            currentBookCode={currentBookCode}
+            setCurrentBookCode={setCurrentBookCode}
+            product={product}
+            systemBcv={systemBcv}
+            debugRef={debugRef}
+            showPrintAlert={showPrintAlert}
+            setShowPrintAlert={setShowPrintAlert}
+            i18nRef={i18nRef}
+            typographyRef={typographyRef}
+            currentProjectRef={currentProjectRef}
+            bcvRef={bcvRef}
+          />
+
+          <Box dir={!sbScriptDirSet ? textDir : undefined}>
+            {chapterJson ? (
+              <EditableBible
+                scriptDir={sbScriptDirSet ? textDir : undefined}
+                chapterJson={chapterJson}
+                scriptureJson={scriptureJson}
+                setScriptureJson={setScriptureJson}
+                key={bookChangeCount}
+                systemBcv={systemBcv}
+                debugRef={debugRef}
+                i18nRef={i18nRef}
+              />
+            ) : (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%",
+                  minHeight: "150px",
+                }}
+              >
+                <CircularProgress size={40} />
+              </Box>
+            )}
+          </Box>
+          {showPrintAlert && (
+            <Snackbar
+              open={showPrintAlert}
+              autoHideDuration={5000}
+              onClose={() => setShowPrintAlert(false)}
+            >
+              <Alert severity="error">
+                {" "}
+                {doI18n(
+                  `pages:core-contenthandler_text_translation:unsaved_changes`,
+                  i18nRef.current,
+                )}
+              </Alert>
+            </Snackbar>
+          )}
+        </>
+      ) : (
+        <Typography>
+          {doI18n(`pages:core-local-workspace:usfm_error`, i18nRef.current)}
+        </Typography>
+      )}
+    </>
   );
 }
 

@@ -566,6 +566,14 @@
     "unspecified_copyright": {
       "en": "Unspecified",
       "fr": "Non spécifié"
+    },
+    "button_preview_text": {
+      "en": "Print as PDF",
+      "fr": "Imprimer en PDF"
+    },
+    "unsaved_changes": {
+      "en": "Save latest changes before printing",
+      "fr": "Sauvegardez les dernières modifications avant d'imprimer"
     }
   }
 }
