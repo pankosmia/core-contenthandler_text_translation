@@ -30,18 +30,21 @@ export default defineConfig(({ mode }) => {
               "react",
               "react-dom",
               "react-router-dom",
-              "pankosmia-rcl",
               "notistack",
-              "proskomma-core",
+              "pankosmia-rcl",
+
+              /^@mui\//,
+              /^@emotion\//,
             ],
+
             output: {
-              name: "textTranslationMuncherRcl",
+              name: "juxtaMunchersRcl",
               globals: {
                 react: "React",
                 "react-dom": "ReactDOM",
                 "react-router-dom": "ReactRouterDOM",
-                "pankosmia-rcl": "pankosmiaRcl",
                 notistack: "notistack",
+                "pankosmia-rcl": "pankosmiaRcl",
               },
             },
           },
