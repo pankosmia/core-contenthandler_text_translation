@@ -28,6 +28,7 @@ export default function ViewableBibleBlock({
   };
 
   const wordMatchesSystemWord = (word) => {
+    if (!word) return false;
     const target = systemWord?.target;
     if (!target) return false;
     return word.target.trim().toLowerCase() === target.trim().toLowerCase();

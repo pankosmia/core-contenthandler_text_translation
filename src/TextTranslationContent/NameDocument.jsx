@@ -81,14 +81,12 @@ export default function NameDocument({
           </Tooltip>
         </Grid>
       </Grid>
-      <Grid size={12}>
-        <PanCopyright
-          optionCopyright={optionCopyright}
-          setOptionCopyright={setOptionCopyright}
-          copyright={copyright}
-          setCopyright={setCopyright}
-        />
-      </Grid>
+      <PanCopyright
+        optionCopyright={optionCopyright}
+        setOptionCopyright={setOptionCopyright}
+        copyright={copyright}
+        setCopyright={setCopyright}
+      />
       <TextField
         id="type"
         required

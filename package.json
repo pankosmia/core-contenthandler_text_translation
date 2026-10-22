@@ -1,6 +1,6 @@
 {
   "name": "core-contenthandler_text_translation",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "private": true,
   "homepage": "/clients/core-contenthandler_text_translation",
   "packageManager": "pnpm@11.20.0",
@@ -14,14 +14,15 @@
     "font-detect-rhl": "^1.1.8",
     "js-yaml": "^4.1.1",
     "jszip": "^3.10.1",
+    "md5": "^2.3.0",
     "notistack": "^3.0.2",
     "pankosmia-lib": "^0.0.3",
+    "pankosmia-usfm-editor-utils": "0.0.5",
     "prop-types": "^15.8.1",
     "proskomma-json-tools": "^0.9.1",
-    "use-file-picker": "^2.1.4",
-    "zip-project": "^1.0.0",
     "use-editable": "^2.3.3",
-    "md5": "^2.3.0"
+    "use-file-picker": "^2.1.4",
+    "zip-project": "^1.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
@@ -36,10 +37,10 @@
     "@mui/material": "9.3.1",
     "notistack": "3.0.2",
     "pankosmia-rcl": "0.8.0",
+    "proskomma-core": "0.11.2",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "react-router-dom": "7.9.4",
-    "proskomma-core": "0.11.2"
+    "react-router-dom": "7.9.4"
   },
   "scripts": {
     "publish": "pnpm run build:package  && cd ./src/components/textTranslationMuncher && npm publish",
