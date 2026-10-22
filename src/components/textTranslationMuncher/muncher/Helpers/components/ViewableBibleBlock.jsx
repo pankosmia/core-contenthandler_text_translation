@@ -35,7 +35,6 @@ export default function ViewableBibleBlock({
   };
 
   const renderContent = (content, allowSnippetHighlight) => {
-    console.log(content, allowSnippetHighlight);
     return content.map((word, i) => {
       const highlightBySnippet =
         allowSnippetHighlight && wordMatchesSnippet(word);
