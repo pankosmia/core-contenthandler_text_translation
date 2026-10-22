@@ -4,7 +4,7 @@ import md5sum from "md5";
 import { postJson } from "pankosmia-lib/http";
 import { doI18n } from "pankosmia-lib/i18n";
 import { enqueueSnackbar } from "notistack";
-import draftJson2usfm from "../usfmToDraft/draftJson2usfm";
+import { draftJson2usfm } from "pankosmia-usfm-editor-utils/serialize";
 import { useEffect } from "react";
 
 function SaveButton({

@@ -28,12 +28,14 @@ export default function ViewableBibleBlock({
   };
 
   const wordMatchesSystemWord = (word) => {
+    if (!word) return false;
     const target = systemWord?.target;
     if (!target) return false;
     return word.target.trim().toLowerCase() === target.trim().toLowerCase();
   };
 
   const renderContent = (content, allowSnippetHighlight) => {
+    console.log(content, allowSnippetHighlight);
     return content.map((word, i) => {
       const highlightBySnippet =
         allowSnippetHighlight && wordMatchesSnippet(word);
