@@ -1,3 +1,4 @@
+#!/bin/sh
 
 FILES=$(git diff --name-only --diff-filter=AMC HEAD)
 
@@ -10,8 +11,7 @@ pnpm build || {
   exit 1
 }
 
-# Stage formatting changes
-echo "$FILES" | xargs git add
-
+# Stage all changes from formatting/build
+git add -A
 
 exit 0
