@@ -17,9 +17,8 @@ import {
   MenuItem,
   FormHelperText,
 } from "@mui/material";
-import ListMenuItem from "../pages/ListMenuItem";
+import ListMenuItem from "./ListMenuItem";
 
-import sx from "../pages/Selection.styles";
 import { i18nContext } from "pankosmia-rcl";
 export default function ContentZip({
   open,

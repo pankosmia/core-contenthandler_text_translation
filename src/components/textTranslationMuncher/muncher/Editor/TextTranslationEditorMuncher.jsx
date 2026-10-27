@@ -4,11 +4,9 @@ import {
   CircularProgress,
   Typography,
   Alert,
-  AlertTitle,
   Snackbar,
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import { getText } from "pankosmia-lib/http";
 import { enqueueSnackbar } from "notistack";
 import usfm2draftJson from "../Helpers/usfmToDraft/usfm2draftJson";
 import filterByChapter from "../Helpers/usfmToDraft/filterByChapter";
@@ -18,6 +16,7 @@ import md5sum from "md5";
 import EditorTools from "../Helpers/components/EditorTools";
 import EditableBible from "../Helpers/components/EditableBible";
 import { doI18n } from "pankosmia-lib/i18n";
+import { getText } from "pankosmia-lib/http";
 
 function TextTranslationEditorMuncher({
   metadata,

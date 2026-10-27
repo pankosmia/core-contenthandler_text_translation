@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import ChapterPicker from "./ChapterPicker";
 import SaveButton from "./SaveButton";
-import BookPicker from "./BookPicker";
+import { PanBookPicker } from "pankosmia-rcl";
 import PreviewText from "./PreviewText";
 import md5sum from "md5";
 import { useEffect, useState } from "react";
@@ -144,7 +144,7 @@ function EditorTools({
         </Grid>
 
         <Grid sx={{ display: "flex" }} gap={1}>
-          <BookPicker
+          <PanBookPicker
             setFirstChapter={getFirstChapterTextTranslation}
             bcvRef={bcvRef}
             debugRef={debugRef}
