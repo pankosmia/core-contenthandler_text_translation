@@ -2,15 +2,15 @@ import { createRoot } from "react-dom/client";
 import { SpaContainer } from "pankosmia-rcl";
 import { createHashRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
-import NewBibleContent from "./pages/NewTextTranslationContent";
-import NewTextTranslationBook from "./pages/NewTextTranslationBook";
+import NewBibleContent from "./pages/New/NewTextTranslationContent";
+import NewTextTranslationBook from "./pages/New/NewTextTranslationBook";
 import UsfmExport from "./pages/Export/UsfmExport";
 import PdfGenerate from "./pages/Export/PdfGenerate";
 import UsfmImport from "./pages/Import/UsfmImport";
 import App from "./App";
 import { styled } from "@mui/material";
 import { SnackbarProvider, MaterialDesignContent } from "notistack";
-import MuncherTest from "./pages/MuncherTest";
+import MuncherTest from "./pages/Test/MuncherTest";
 const router = createHashRouter([
   {
     path: "/",

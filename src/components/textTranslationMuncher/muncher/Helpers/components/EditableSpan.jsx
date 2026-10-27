@@ -91,7 +91,6 @@ export default function EditableSpan({
 
     let end = offset;
     while (end < text.length && /\p{L}/u.test(text[end])) end++;
-
     return text.slice(start, end);
   };
 

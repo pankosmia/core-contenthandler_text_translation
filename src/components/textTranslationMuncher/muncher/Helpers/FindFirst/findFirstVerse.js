@@ -28,7 +28,6 @@ export async function getFirstverseTextTranslation(
   if (!chapterMatch || chapterMatch.index === undefined) {
     return;
   }
-
   // Get everything after the requested chapter.
   const afterChapter = usfmString.slice(
     chapterMatch.index + chapterMatch[0].length,

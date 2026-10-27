@@ -7,10 +7,10 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
-import ChapterPicker from "./ChapterPicker";
+import ChapterPickerNavigation from "../Navigation/ChapterPickerNavigation";
 import SaveButton from "./SaveButton";
-import BookPicker from "./BookPicker";
 import PreviewText from "./PreviewText";
+import BookPickerNavigation from "../Navigation/BookPickerNavigation";
 import md5sum from "md5";
 import { useEffect, useState } from "react";
 import usfm2draftJson from "../usfmToDraft/usfm2draftJson";
@@ -144,14 +144,14 @@ function EditorTools({
         </Grid>
 
         <Grid sx={{ display: "flex" }} gap={1}>
-          <BookPicker
+          <BookPickerNavigation
             setFirstChapter={getFirstChapterTextTranslation}
             bcvRef={bcvRef}
             debugRef={debugRef}
             i18nRef={i18nRef}
             currentProjectRef={currentProjectRef}
           />
-          <ChapterPicker
+          <ChapterPickerNavigation
             chapterNumbers={chapterNumbers}
             repoMetadata={metadata}
             findFirstVerse={getFirstverseTextTranslation}

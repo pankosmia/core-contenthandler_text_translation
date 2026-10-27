@@ -11,9 +11,9 @@ import {
   productContext,
 } from "pankosmia-rcl";
 import { Box, Button } from "@mui/material";
-import WrapperNav from "../components/textTranslationMuncher/wrapperMuncher/WrapperNav";
-import TextTranslationEditorMuncher from "../components/textTranslationMuncher/muncher/Editor/TextTranslationEditorMuncher";
-import TextTranslationViewerMuncher from "../components/textTranslationMuncher/muncher/Viewer/TextTranslationViewerMuncher";
+import WrapperNav from "../../components/textTranslationMuncher/wrapperMuncher/WrapperNav";
+import TextTranslationEditorMuncher from "../../components/textTranslationMuncher/muncher/Editor/TextTranslationEditorMuncher";
+import TextTranslationViewerMuncher from "../../components/textTranslationMuncher/muncher/Viewer/TextTranslationViewerMuncher";
 
 export default function MuncherTest() {
   const { word } = useContext(wordContext);

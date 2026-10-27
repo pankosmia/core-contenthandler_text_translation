@@ -8,12 +8,12 @@ import {
   debugContext,
   Header,
   PanStepperPicker,
+  PanLanguagePicker
 } from "pankosmia-rcl";
-import ErrorDialog from "../TextTranslationContent/ErrorDialog";
-import LanguagePicker from "../TextTranslationContent/LanguagePicker";
-import NameDocument from "../TextTranslationContent/NameDocument";
-import ContentDocument from "../TextTranslationContent/ContentDocument";
-import ContentZip from "../TextTranslationContent/ContentZip";
+import ErrorDialog from "../../components/New/ErrorDialog";
+import NameDocument from "../../components/New/NameDocument";
+import ContentDocument from "../../components/New/ContentDocument";
+import ContentZip from "../../components/New/ContentZip";
 import { useSearchParams } from "react-router-dom";
 import yaml from "js-yaml";
 import JSZip from "jszip";
@@ -156,7 +156,7 @@ export default function NewBibleContent() {
         );
       case 1:
         return (
-          <LanguagePicker
+          <PanLanguagePicker
             currentLanguage={currentLanguage}
             setCurrentLanguage={setCurrentLanguage}
             setIsValid={setLanguageIsValid}
