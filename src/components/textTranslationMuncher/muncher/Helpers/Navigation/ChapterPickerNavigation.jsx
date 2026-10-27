@@ -5,7 +5,7 @@ import { ButtonGroup } from "@mui/material";
 import { useEffect, useState } from "react";
 import { getJson } from "pankosmia-lib/http";
 
-function ChapterPicker({
+function ChapterPickerNavigation({
   repoMetadata,
   chapterNumbers,
   findFirstVerse,
@@ -143,4 +143,4 @@ function ChapterPicker({
   );
 }
 
-export default ChapterPicker;
+export default ChapterPickerNavigation;
