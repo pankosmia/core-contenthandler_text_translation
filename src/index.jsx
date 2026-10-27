@@ -7,25 +7,24 @@ import NewTextTranslationBook from "./pages/New/NewTextTranslationBook";
 import UsfmExport from "./pages/Export/UsfmExport";
 import PdfGenerate from "./pages/Export/PdfGenerate";
 import UsfmImport from "./pages/Import/UsfmImport";
-import App from "./App";
 import { styled } from "@mui/material";
 import { SnackbarProvider, MaterialDesignContent } from "notistack";
 import MuncherTest from "./pages/Test/MuncherTest";
 const router = createHashRouter([
   {
     path: "/",
-    element: <App />,
+    element: <MuncherTest />,
   },
   {
     path: "/createDocument/textTranslation",
     element: <NewBibleContent />,
   },
   {
-    path: "newBook",
+    path: "/newBook",
     element: <NewTextTranslationBook />,
   },
   {
-    path: "importBook",
+    path: "/importBook",
     element: <UsfmImport />,
   },
   {
@@ -35,10 +34,6 @@ const router = createHashRouter([
   {
     path: "/export/pdf",
     element: <PdfGenerate />,
-  },
-  {
-    path: "MuncherTest",
-    element: <MuncherTest />,
   },
 ]);
 function AppLayout() {

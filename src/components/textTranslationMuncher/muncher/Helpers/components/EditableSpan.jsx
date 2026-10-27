@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useEditable } from "use-editable";
 import { updateUnitContent } from "../Controller";
-import { postEmptyJson, postJson } from "pankosmia-lib/http";
+import { postEmpty, postJson } from "pankosmia-lib/http";
 
 import {
   bcvContext as BcvContext,
@@ -35,7 +35,7 @@ export default function EditableSpan({
     }, 100);
 
   const updateBcv = (b, c, v, ev) => {
-    postEmptyJson(
+    postEmpty(
       `/api/navigation/bcv/${b}/${c}/${v}/${ev ? ev : v}`,
       debugRef.current,
     );
