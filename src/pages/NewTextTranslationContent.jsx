@@ -55,6 +55,28 @@ export default function NewBibleContent() {
   const [errorAbbreviation, setErrorAbbreviation] = useState(false);
   const [localBookContent, setLocalBookContent] = useState();
   const [isUsfmValid, setIsUsfmValid] = useState(false);
+  const [copyright, setCopyright] = useState({
+    author_name: "",
+    year: "",
+  });
+  const [optionCopyright, setOptionCopyright] = useState("unspecified");
+
+  function fullCopyright(optionCopyright) {
+    switch (optionCopyright) {
+      case "public-domain":
+        return doI18n(
+          "pages:core-contenthandler_text_translation:public_domain",
+          i18nRef.current,
+        );
+      case "all_rights_reserved":
+        return `${copyright.author_name} ${copyright.year}`;
+      default:
+        return doI18n(
+          "pages:core-contenthandler_text_translation:unspecified_copyright",
+          i18nRef.current,
+        );
+    }
+  }
 
   const steps = [
     `${doI18n("pages:core-contenthandler_text_translation:content_section", i18nRef.current)}`,
@@ -126,6 +148,10 @@ export default function NewBibleContent() {
             errorAbbreviation={errorAbbreviation}
             setErrorAbbreviation={setErrorAbbreviation}
             localRepos={localRepos}
+            copyright={copyright}
+            setCopyright={setCopyright}
+            optionCopyright={optionCopyright}
+            setOptionCopyright={setOptionCopyright}
           />
         );
       case 1:
@@ -250,6 +276,7 @@ export default function NewBibleContent() {
       book_title: contentOption === "book" ? bookTitle : null,
       book_abbr: contentOption === "book" ? bookAbbr : null,
       add_cv: contentOption === "book" ? showVersification : null,
+      copyright: fullCopyright(optionCopyright),
     };
 
     const response = await postJson(

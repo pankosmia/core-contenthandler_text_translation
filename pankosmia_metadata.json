@@ -2,13 +2,18 @@
   "id": "core-contenthandler_text_translation",
   "exclude_from_menu": true,
   "exclude_from_dashboard": true,
-  "minServerVersion": "0.16.1",
+  "minServerVersion": "0.18.15",
   "require": {
     "net": false,
     "debug": true
   },
   "endpoints": {
     "textTranslation": {
+      "edit": {
+        "doc": "main page for workspace",
+        "label": "pages:core-client-workspace:main",
+        "url": "core-local-workspace#"
+      },
       "create_document": [
         {
           "doc": "Create document for textTranslation Project",
@@ -27,18 +32,6 @@
           },
           "label": "pages:content:new_book",
           "url": "/newBook?repoPath=%%REPO_PATH%%"
-        }
-      ],
-      "delete_book": [
-        {
-          "doc": "Delete a book to a textTranslation document",
-          "placeHolders": {
-            "REPO_PATH": {
-              "doc": "The path to the repo in <X>/<Y>/<Z> format"
-            }
-          },
-          "label": "pages:core-contenthandler_text_translation:delete_book",
-          "url": "/deleteBook?repoPath=%%REPO_PATH%%"
         }
       ],
       "import_book": [
@@ -565,6 +558,22 @@
     "change_usfm_file": {
       "en": "To import a new USFM folder, you must first delete the previously imported one",
       "fr": "Pour importer un nouveau dossier USFM, vous devez d'abord supprimer le dossier précédemment importé"
+    },
+    "public_domain": {
+      "en": "Public Domain",
+      "fr": "Domaine Public"
+    },
+    "unspecified_copyright": {
+      "en": "Unspecified",
+      "fr": "Non spécifié"
+    },
+    "button_preview_text": {
+      "en": "Print as PDF",
+      "fr": "Imprimer en PDF"
+    },
+    "unsaved_changes": {
+      "en": "Save latest changes before printing",
+      "fr": "Sauvegardez les dernières modifications avant d'imprimer"
     }
   }
 }

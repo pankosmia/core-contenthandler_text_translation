@@ -1,0 +1,69 @@
+{
+  "name": "pankosmia-text_translation-muncher",
+  "version": "0.2.6",
+  "private": false,
+  "homepage": "https://github.com/pankosmia/core-contenthandler_text_translation",
+  "main": "munchersPackageExport/text_translation-muncher-rcl.umd.js",
+  "module": "munchersPackageExport/text_translation-muncher-rcl.es.js",
+  "files": [
+    "munchersPackageExport"
+  ],
+  "dependencies": {
+    "color": "^5.0.2",
+    "file-saver": "^2.0.5",
+    "font-detect-rhl": "^1.1.8",
+    "js-yaml": "^4.1.1",
+    "jszip": "^3.10.1",
+    "notistack": "^3.0.2",
+    "pankosmia-lib": "^0.0.3",
+    "prop-types": "^15.8.1",
+    "proskomma-json-tools": "^0.9.1",
+    "pankosmia-usfm-editor-utils": "0.0.5",
+    "use-file-picker": "^2.1.4",
+    "zip-project": "^1.0.0",
+    "use-editable": "^2.3.3",
+    "md5": "^2.3.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "husky": "^9.1.7",
+    "prettier": "3.8.1",
+    "vite": "^6.0.7"
+  },
+  "peerDependencies": {
+    "@emotion/react": "11.14.0",
+    "@emotion/styled": "11.14.1",
+    "@mui/icons-material": "9.3.1",
+    "@mui/material": "9.3.1",
+    "notistack": "3.0.2",
+    "pankosmia-rcl": "0.8.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-router-dom": "7.9.4",
+    "proskomma-core": "0.11.2"
+  },
+  "scripts": {
+    "build": "vite build",
+    "build:package": "vite build --mode isMuncher",
+    "dev": "vite",
+    "prepare": "husky"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

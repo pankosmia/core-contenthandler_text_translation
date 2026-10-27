@@ -606,7 +606,6 @@ function PdfGenerate() {
         )}
         isOpen={open}
         closeFn={() => handleClose()}
-        theme={theme}
         fullWidth
         size={"sm"}
       >
