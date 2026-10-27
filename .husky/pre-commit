@@ -4,16 +4,14 @@ FILES=$(git diff --name-only --diff-filter=AMC HEAD)
 # Format changed files
 echo "$FILES" | xargs ./node_modules/.bin/prettier --ignore-unknown --write
 
-# Stage formatting changes
-echo "$FILES" | xargs git add
-
 # Build
 pnpm build || {
   echo "Build failed. Commit aborted."
   exit 1
 }
 
-# Stage any files created/modified by the build
-git add -A
+# Stage formatting changes
+echo "$FILES" | xargs git add
+
 
 exit 0
