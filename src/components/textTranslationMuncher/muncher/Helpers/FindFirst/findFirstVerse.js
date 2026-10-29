@@ -1,4 +1,4 @@
-import { getText, postEmptyJson } from "pankosmia-lib/http";
+import { getText, postEmpty } from "pankosmia-lib/http";
 
 export async function getFirstverseTextTranslation(
   chapter,
@@ -28,7 +28,6 @@ export async function getFirstverseTextTranslation(
   if (!chapterMatch || chapterMatch.index === undefined) {
     return;
   }
-
   // Get everything after the requested chapter.
   const afterChapter = usfmString.slice(
     chapterMatch.index + chapterMatch[0].length,
@@ -42,7 +41,7 @@ export async function getFirstverseTextTranslation(
 
   const firstVerse = verseMatch[1];
 
-  postEmptyJson(
+  postEmpty(
     `/api/navigation/bcv/${bookCode}/${chapter}/${firstVerse}`,
     debugRefCurr,
   );

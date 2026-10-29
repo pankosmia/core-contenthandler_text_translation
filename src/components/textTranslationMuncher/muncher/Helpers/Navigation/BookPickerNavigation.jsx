@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, MenuItem, TextField } from "@mui/material";
 import { getJson } from "pankosmia-lib/http";
 import { doI18n } from "pankosmia-lib/i18n";
-function BookPicker({
+function BookPickerNavigation({
   setFirstChapter,
   bcvRef,
   debugRef,
@@ -67,4 +67,4 @@ function BookPicker({
   );
 }
 
-export default BookPicker;
+export default BookPickerNavigation;

@@ -12,7 +12,7 @@ import {
   PanVersificationPicker,
   PanBookPicker,
 } from "pankosmia-rcl";
-import ErrorDialog from "../TextTranslationContent/ErrorDialog";
+import ErrorDialog from "../../components/New/ErrorDialog";
 
 export default function NewTextTranslationBook() {
   const [showVersification, setShowVersification] = useState(true);

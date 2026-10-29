@@ -13,9 +13,8 @@ import {
 } from "@mui/material";
 import { getAndSetJson } from "pankosmia-lib/http";
 import { doI18n } from "pankosmia-lib/i18n";
-import sx from "../pages/Selection.styles";
-import ListMenuItem from "../pages/ListMenuItem";
-import OptionUsfmImport from "../pages/Import/OptionUsfmImport";
+import ListMenuItem from "./ListMenuItem";
+import OptionUsfmImport from "../Import/OptionUsfmImport";
 import {
   i18nContext,
   PanVersificationPicker,

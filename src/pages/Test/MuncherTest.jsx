@@ -9,11 +9,12 @@ import {
   wordContext,
   snippetContext,
   productContext,
+  Header,
 } from "pankosmia-rcl";
 import { Box, Button } from "@mui/material";
-import WrapperNav from "../components/textTranslationMuncher/wrapperMuncher/WrapperNav";
-import TextTranslationEditorMuncher from "../components/textTranslationMuncher/muncher/Editor/TextTranslationEditorMuncher";
-import TextTranslationViewerMuncher from "../components/textTranslationMuncher/muncher/Viewer/TextTranslationViewerMuncher";
+import WrapperNav from "../../components/textTranslationMuncher/wrapperMuncher/WrapperNav";
+import TextTranslationEditorMuncher from "../../components/textTranslationMuncher/muncher/Editor/TextTranslationEditorMuncher";
+import TextTranslationViewerMuncher from "../../components/textTranslationMuncher/muncher/Viewer/TextTranslationViewerMuncher";
 
 export default function MuncherTest() {
   const { word } = useContext(wordContext);
@@ -63,15 +64,26 @@ export default function MuncherTest() {
       sx={{
         display: "flex",
         flexDirection: "column",
-        margin: 3,
-        height: "98vh",
+        height: "100%",
+        overflow: "hidden",
       }}
     >
-      <WrapperNav flavor={["textTranslation"]} />
+      <Box>
+        <Header
+          titleKey={
+            "pages:core-contenthandler_text_translation:titleMuncherTest"
+          }
+          currentId="content"
+          requireNet={false}
+        />
+      </Box>
+      <Box sx={{ paddingLeft: 2, paddingTop: 10, flexShrink: 0 }}>
+        <WrapperNav flavor={["textTranslation"]} />
+      </Box>
 
       <Box sx={{ display: "flex", width: "100%", overflowY: "scroll" }}>
         {metadata && flavor === "textTranslation" && (
-          <Box sx={{ flex: 1, margin: 5 }}>
+          <Box sx={{ flex: 1, margin: 2 }}>
             <TextTranslationViewerMuncher
               metadata={metadata}
               debugRef={debugRef}

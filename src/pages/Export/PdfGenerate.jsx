@@ -29,9 +29,9 @@ import {
   Header,
 } from "pankosmia-rcl";
 import { enqueueSnackbar } from "notistack";
-import { getCVTexts, getBookName } from "../helpers/cv";
-import GraphiteTest from "./GraphiteTest";
-import TextDir from "../helpers/TextDir";
+import { getCVTexts, getBookName } from "../../components/Export/cv";
+import GraphiteTest from "../../components/textTranslationMuncher/muncher/Helpers/components/GraphiteTest";
+import TextDir from "../../components/Helpers/TextDir";
 import { PanDialog, PanDialogActions } from "pankosmia-rcl";
 
 function PdfGenerate() {
