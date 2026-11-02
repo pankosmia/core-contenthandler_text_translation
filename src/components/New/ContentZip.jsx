@@ -51,7 +51,6 @@ export default function ContentZip({
           id="booksVersification-label"
           required
           htmlFor="booksVersification"
-          sx={sx.inputLabel}
         >
           {doI18n(
             "pages:core-contenthandler_text_translation:versification_scheme",
@@ -74,7 +73,6 @@ export default function ContentZip({
           onChange={(event) => {
             setVersification(event.target.value);
           }}
-          sx={sx.select}
         >
           {versificationCodes.map((listItem, n) => (
             <MenuItem key={n} value={listItem} dense>
