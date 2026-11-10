@@ -10,9 +10,11 @@ import {
   snippetContext,
   productContext,
   Header,
+  AdvancedAppBar,
 } from "pankosmia-rcl";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import WrapperNav from "../../components/textTranslationMuncher/wrapperMuncher/WrapperNav";
+import TextTranslationNavigation from "../../components/textTranslationMuncher/muncher/Navigation/TextTranslationNavigation";
 import TextTranslationEditorMuncher from "../../components/textTranslationMuncher/muncher/Editor/TextTranslationEditorMuncher";
 import TextTranslationViewerMuncher from "../../components/textTranslationMuncher/muncher/Viewer/TextTranslationViewerMuncher";
 
@@ -28,6 +30,8 @@ export default function MuncherTest() {
   const { product } = useContext(productContext);
   const [currentBurrito, setCurrentBurrito] = useState(null);
   const [flavor, setFlavor] = useState(null);
+  const [currentBookCode, setCurrentBookCode] = useState("zzz");
+
   useEffect(() => {
     async function getSummary() {
       if (currentProjectRef.current) {
@@ -55,10 +59,7 @@ export default function MuncherTest() {
     local_path: currentBurrito[0],
     ...currentBurrito[1],
   };
-  const handleCreate = () => {
-    window.location.href =
-      "/clients/core-contenthandler_translation_plan/#/createDocument/translationPlan?returnTypePage=munchertest";
-  };
+  console.log(metadata);
   return (
     <Box
       sx={{
@@ -76,6 +77,22 @@ export default function MuncherTest() {
           currentId="content"
           requireNet={false}
         />
+        <AdvancedAppBar
+          navigation={
+            metadata && (
+              <TextTranslationNavigation
+                metadata={metadata}
+                systemBcv={systemBcv}
+                currentBookCode={currentBookCode}
+                setCurrentBookCode={setCurrentBookCode}
+                debugRef={debugRef}
+                i18nRef={i18nRef}
+                currentProjectRef={currentProjectRef}
+                bcvRef={bcvRef}
+              />
+            )
+          }
+        ></AdvancedAppBar>
       </Box>
       <Box sx={{ paddingLeft: 2, paddingTop: 10, flexShrink: 0 }}>
         <WrapperNav flavor={["textTranslation"]} />
@@ -106,6 +123,7 @@ export default function MuncherTest() {
               typographyRef={typographyRef}
               currentProjectRef={currentProjectRef}
               bcvRef={bcvRef}
+              navigation={false}
             />
           </Box>
         )}

@@ -27,6 +27,7 @@ function TextTranslationEditorMuncher({
   typographyRef,
   currentProjectRef,
   bcvRef,
+  navigation = true,
 }) {
   const [modified, setModified] = useState(false);
   const [showPrintAlert, setShowPrintAlert] = useState(false);
@@ -121,25 +122,27 @@ function TextTranslationEditorMuncher({
     <>
       {!error ? (
         <>
-          <EditorTools
-            metadata={metadata}
-            modified={modified}
-            setModified={setModified}
-            md5sumScriptureJson={md5sumScriptureJson}
-            setMd5sumScriptureJson={setMd5sumScriptureJson}
-            scriptureJson={scriptureJson}
-            currentBookCode={currentBookCode}
-            setCurrentBookCode={setCurrentBookCode}
-            product={product}
-            systemBcv={systemBcv}
-            debugRef={debugRef}
-            showPrintAlert={showPrintAlert}
-            setShowPrintAlert={setShowPrintAlert}
-            i18nRef={i18nRef}
-            typographyRef={typographyRef}
-            currentProjectRef={currentProjectRef}
-            bcvRef={bcvRef}
-          />
+          {navigation && (
+            <EditorTools
+              metadata={metadata}
+              modified={modified}
+              setModified={setModified}
+              md5sumScriptureJson={md5sumScriptureJson}
+              setMd5sumScriptureJson={setMd5sumScriptureJson}
+              scriptureJson={scriptureJson}
+              currentBookCode={currentBookCode}
+              setCurrentBookCode={setCurrentBookCode}
+              product={product}
+              systemBcv={systemBcv}
+              debugRef={debugRef}
+              showPrintAlert={showPrintAlert}
+              setShowPrintAlert={setShowPrintAlert}
+              i18nRef={i18nRef}
+              typographyRef={typographyRef}
+              currentProjectRef={currentProjectRef}
+              bcvRef={bcvRef}
+            />
+          )}
 
           <Box dir={!sbScriptDirSet ? textDir : undefined}>
             {chapterJson ? (
