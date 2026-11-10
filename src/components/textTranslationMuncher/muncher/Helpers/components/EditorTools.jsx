@@ -7,21 +7,15 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
-import ChapterPickerNavigation from "../Navigation/ChapterPickerNavigation";
 import SaveButton from "./SaveButton";
 import PreviewText from "./PreviewText";
-import BookPickerNavigation from "../Navigation/BookPickerNavigation";
 import md5sum from "md5";
-import { useEffect, useState } from "react";
-import usfm2draftJson from "../usfmToDraft/usfm2draftJson";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LayoutIcon from "../layouts/LayoutIcon";
-import { getText } from "pankosmia-lib/http";
 import { doI18n } from "pankosmia-lib/i18n";
-import { getFirstChapterTextTranslation } from "../FindFirst/findFirstChapter";
 import { PrintOutlined } from "@mui/icons-material";
-import { getFirstverseTextTranslation } from "../FindFirst/findFirstVerse";
-
+import TextTranslationNavigation from "../../Navigation/TextTranslationNavigation";
 function EditorTools({
   metadata,
   modified,
@@ -42,43 +36,8 @@ function EditorTools({
   setShowPrintAlert,
 }) {
   const [openModalPreviewText, setOpenModalPreviewText] = useState(false);
-  const [chapterNumbers, setChapterNumbers] = useState([]);
   const navigate = useNavigate();
 
-  // Set up chapter numbers when changing book
-
-  const allChapterNumbers = (usfmJson) => {
-    let chapters = [];
-    for (const block of usfmJson.blocks) {
-      if (block.type === "chapter") {
-        chapters.push(block.chapter);
-      }
-    }
-    return chapters;
-  };
-  useEffect(() => {
-    if (systemBcv.bookCode !== currentBookCode) {
-      const doChapterNumbers = async () => {
-        let usfmResponse = await getText(
-          `/api/burrito/ingredient/raw/${metadata.local_path}?ipath=${systemBcv.bookCode}.usfm`,
-          debugRef.current,
-        );
-        if (usfmResponse.ok) {
-          const usfmDraftJson = await usfm2draftJson(usfmResponse.text);
-          const newChapterNumbers = allChapterNumbers(usfmDraftJson);
-          setCurrentBookCode(systemBcv.bookCode);
-          setChapterNumbers(newChapterNumbers);
-        }
-      };
-      doChapterNumbers().then();
-    }
-  }, [
-    systemBcv.bookCode,
-    metadata,
-    currentBookCode,
-    setCurrentBookCode,
-    debugRef,
-  ]);
   const handlePrintClick = () => {
     if (md5sum(JSON.stringify(scriptureJson)) === md5sumScriptureJson) {
       setShowPrintAlert(false);
@@ -143,24 +102,16 @@ function EditorTools({
           )}
         </Grid>
 
-        <Grid sx={{ display: "flex" }} gap={1}>
-          <BookPickerNavigation
-            setFirstChapter={getFirstChapterTextTranslation}
-            bcvRef={bcvRef}
-            debugRef={debugRef}
-            i18nRef={i18nRef}
-            currentProjectRef={currentProjectRef}
-          />
-          <ChapterPickerNavigation
-            chapterNumbers={chapterNumbers}
-            repoMetadata={metadata}
-            findFirstVerse={getFirstverseTextTranslation}
-            systemBcv={systemBcv}
-            bcvRef={bcvRef}
-            debugRef={debugRef}
-            currentProjectRef={currentProjectRef}
-          />
-        </Grid>
+        <TextTranslationNavigation
+          metadata={metadata}
+          systemBcv={systemBcv}
+          currentBookCode={currentBookCode}
+          setCurrentBookCode={setCurrentBookCode}
+          debugRef={debugRef}
+          i18nRef={i18nRef}
+          currentProjectRef={currentProjectRef}
+          bcvRef={bcvRef}
+        />
         <Grid sx={{ display: "flex" }} gap={1}>
           <Tooltip
             title={doI18n(
