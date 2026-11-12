@@ -77,7 +77,7 @@ export default function MuncherTest() {
           currentId="content"
           requireNet={false}
         />
-        <AdvancedAppBar
+        {/* <AdvancedAppBar
           navigation={
             metadata && (
               <TextTranslationNavigation
@@ -92,7 +92,7 @@ export default function MuncherTest() {
               />
             )
           }
-        ></AdvancedAppBar>
+        /> */}
       </Box>
       <Box sx={{ paddingLeft: 2, paddingTop: 10, flexShrink: 0 }}>
         <WrapperNav flavor={["textTranslation"]} />
@@ -123,7 +123,6 @@ export default function MuncherTest() {
               typographyRef={typographyRef}
               currentProjectRef={currentProjectRef}
               bcvRef={bcvRef}
-              navigation={false}
             />
           </Box>
         )}
