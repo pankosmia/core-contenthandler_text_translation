@@ -148,12 +148,7 @@ export default function ContentDocument({
             )}
           </Typography>
           <FormControl sx={{ width: "100%" }}>
-            <InputLabel
-              id="select-plan-label"
-              required
-              htmlFor="plan"
-              sx={sx.inputLabel}
-            >
+            <InputLabel id="select-plan-label" required htmlFor="plan">
               {doI18n(
                 "pages:core-contenthandler_text_translation:select_plan",
                 i18nRef.current,
@@ -175,7 +170,6 @@ export default function ContentDocument({
               onChange={(event) => {
                 setSelectedPlan(event.target.value);
               }}
-              sx={sx.select}
             >
               {Object.entries(metadataSummaries)
                 .filter((r) => r[1].flavor === "x-translationplan")

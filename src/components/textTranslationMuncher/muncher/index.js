@@ -1,4 +1,8 @@
 import TextTranslationEditorMuncher from "./Editor/TextTranslationEditorMuncher";
 import TextTranslationViewerMuncher from "./Viewer/TextTranslationViewerMuncher";
-
-export { TextTranslationEditorMuncher, TextTranslationViewerMuncher };
+import TextTranslationNavigation from "./Navigation/TextTranslationNavigation";
+export {
+  TextTranslationEditorMuncher,
+  TextTranslationViewerMuncher,
+  TextTranslationNavigation,
+};
