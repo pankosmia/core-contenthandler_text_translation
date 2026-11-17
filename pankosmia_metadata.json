@@ -146,10 +146,8 @@
       "id": "Pratinjau PDF"
     },
     "export_as_usfm": {
-      "en": "Save as USFM",
-      "es": "Guardar como USFM",
-      "fr": "Sauvegarder au format USFM",
-      "id": "Simpan konten sebagai USFM"
+      "en": "Export as USFM",
+      "fr": "Exporter au format USFM"
     },
     "export_as_zip": {
       "en": "Save as ZIP",
@@ -175,10 +173,8 @@
       "id": "Simpan sebagai ZIP"
     },
     "export_usfm": {
-      "en": "Save as USFM",
-      "es": "Guardar como USFM",
-      "fr": "Sauvegarder au format USFM",
-      "id": "Simpan sebagai USFM"
+      "en": "Export as USFM",
+      "fr": "Exporter au format USFM"
     },
     "export_pdf": {
       "en": "Save as PDF",
@@ -575,6 +571,14 @@
     "unsaved_changes": {
       "en": "Save latest changes before printing",
       "fr": "Sauvegardez les dernières modifications avant d'imprimer"
+    },
+    "export_as_usfm_books": {
+      "en": "Select one or more books to export from {document_name} *",
+      "fr": "Sélectionnez un ou plusieurs livres à exporter à partir de {document_name} *"
+    },
+    "export_usfm_button": {
+      "en": "Export",
+      "fr": "Exporter"
     }
   }
 }
