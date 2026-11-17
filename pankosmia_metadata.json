@@ -28,7 +28,7 @@
               "doc": "The path to the repo in <X>/<Y>/<Z> format"
             }
           },
-          "label": "pages:content:new_book",
+          "label": "pages:core-contenthandler_text_translation:new_book",
           "url": "/newBook?repoPath=%%REPO_PATH%%"
         }
       ],
@@ -40,7 +40,7 @@
               "doc": "The path to the repo in <X>/<Y>/<Z> format"
             }
           },
-          "label": "pages:content:import_book",
+          "label": "pages:core-contenthandler_text_translation:import_book",
           "url": "/importBook?repoPath=%%REPO_PATH%%"
         }
       ],
@@ -56,7 +56,7 @@
                       "doc": "The path to the repo in <X>/<Y>/<Z> format"
                     }
                   },
-                  "label": "pages:content:export_usfm",
+                  "label": "pages:core-contenthandler_text_translation:export_as_usfm",
                   "url": "/export/usfm?repoPath=%%REPO_PATH%%"
                 }
               ],
@@ -68,7 +68,7 @@
                       "doc": "The path to the repo in <X>/<Y>/<Z> format"
                     }
                   },
-                  "label": "pages:content:export_pdf",
+                  "label": "pages:core-contenthandler_text_translation:export_pdf",
                   "url": "/export/pdf?repoPath=%%REPO_PATH%%"
                 }
               ]
@@ -177,10 +177,8 @@
       "fr": "Exporter au format USFM"
     },
     "export_pdf": {
-      "en": "Save as PDF",
-      "es": "Guardar como PDF",
-      "fr": "Sauvegarder au format PDF",
-      "id": "Simpan sebagai PDF"
+      "en": "Export as PDF",
+      "fr": "Export au format PDF"
     },
     "show_by_verse": {
       "en": "Format verse-by-verse",
@@ -579,6 +577,10 @@
     "export_usfm_button": {
       "en": "Export",
       "fr": "Exporter"
+    },
+    "import_book": {
+      "en": "Import Book",
+      "fr": "Importer livre"
     }
   }
 }
