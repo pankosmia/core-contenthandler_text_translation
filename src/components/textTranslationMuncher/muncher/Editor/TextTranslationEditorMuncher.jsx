@@ -39,7 +39,6 @@ function TextTranslationEditorMuncher({
   const [chapterJson, setChapterJson] = useState(null);
   const [md5sumScriptureJson, setMd5sumScriptureJson] = useState([]);
   const [currentBookCode, setCurrentBookCode] = useState("zzz");
-  const [bookChangeCount, setBookChangeCount] = useState(0);
   const [textDir, setTextDir] = useState(
     metadata?.script_direction
       ? metadata.script_direction.toLowerCase()
@@ -101,7 +100,6 @@ function TextTranslationEditorMuncher({
   useEffect(() => {
     if (scriptureJson && scriptureJson.blocks.length > 0) {
       setChapterJson(filterByChapter(scriptureJson, systemBcv.chapterNum));
-      setBookChangeCount(bookChangeCount + 1);
     }
   }, [scriptureJson, systemBcv.chapterNum]);
 
@@ -151,7 +149,7 @@ function TextTranslationEditorMuncher({
                 chapterJson={chapterJson}
                 scriptureJson={scriptureJson}
                 setScriptureJson={setScriptureJson}
-                key={bookChangeCount}
+                key={`${systemBcv.bookCode}-${systemBcv.chapterNum}`}
                 systemBcv={systemBcv}
                 debugRef={debugRef}
                 i18nRef={i18nRef}
