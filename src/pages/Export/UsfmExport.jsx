@@ -1,29 +1,32 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import {
   Box,
-  DialogContent,
-  DialogContentText,
-  List,
-  ListItem,
-  ListItemText,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
   Typography,
-  useTheme,
 } from "@mui/material";
 import { getText, getJson } from "pankosmia-lib/http";
 import { doI18n } from "pankosmia-lib/i18n";
-import { debugContext, i18nContext, Header } from "pankosmia-rcl";
+import {
+  debugContext,
+  i18nContext,
+  Header,
+  PanBasicDialog,
+  PanDialogActionsArray,
+} from "pankosmia-rcl";
 import { enqueueSnackbar } from "notistack";
 import { saveAs } from "file-saver";
-import { PanDialog, PanDialogActions } from "pankosmia-rcl";
-import Color from "color";
 
 function UsfmExport() {
   const { i18nRef } = useContext(i18nContext);
   const { debugRef } = useContext(debugContext);
   const [selectedBooks, setSelectedBooks] = useState([]);
+  const [noBooksSelected, setNoBooksSelected] = useState(false);
   const [bookCodes, setBookCodes] = useState([]);
   const [bookNames, setBookNames] = useState([]);
   const [repoPath, setRepoPath] = useState([]);
+  const [documentName, setDocumentName] = useState("");
   const [open, setOpen] = useState(true);
   const hash = window.location.hash;
   const query = hash.includes("?") ? hash.split("?") : "";
@@ -31,6 +34,7 @@ function UsfmExport() {
   const path = repoPathQuery.get("repoPath");
   const typePageQuery = new URLSearchParams(query[2]);
   const returnTypePage = typePageQuery.get("returnTypePage");
+  const confirmationRef = useRef(null);
 
   const getProjectSummaries = async () => {
     setRepoPath(path);
@@ -42,6 +46,7 @@ function UsfmExport() {
       const data = summariesResponse.json;
       const bookCode = data.book_codes;
       setBookNames(bookCode);
+      setDocumentName(data.name);
     } else {
       console.error(" Erreur lors de la récupération des données.");
     }
@@ -72,21 +77,29 @@ function UsfmExport() {
     return true;
   };
 
-  // Lighten secondary.main color
-  const theme = useTheme();
-  const lightenedColor = Color(theme.palette.secondary.main).lighten(0.8).hex();
-  const lightenedColorHover = Color(theme.palette.secondary.main)
-    .lighten(0.999)
-    .hex();
-
   const handleToggle = (item) => {
+    setNoBooksSelected(false);
     setSelectedBooks((prev) =>
       prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item],
     );
   };
-
+  const handleExport = async () => {
+    if (selectedBooks.length === 0) {
+      setNoBooksSelected(true);
+      confirmationRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+      return;
+    }
+    setNoBooksSelected(false);
+    for (const bookCode of selectedBooks) {
+      await usfmExportOneBook(bookCode);
+    }
+  };
   const handleClose = async () => {
     setOpen(false);
+    setSelectedBooks([]);
     if (returnTypePage === "dashboard") {
       await new Promise((resolve) =>
         setTimeout(() => {
@@ -141,93 +154,61 @@ function UsfmExport() {
         requireNet={false}
       />
 
-      <PanDialog
+      <PanBasicDialog
         titleLabel={doI18n(
           "pages:core-contenthandler_text_translation:export_as_usfm",
           i18nRef.current,
         )}
         closeFn={() => handleClose()}
         isOpen={open}
-        fullWidth={true}
-        size={"sm"}
-      >
-        <DialogContent sx={{ mt: 1 }} style={{ overflow: "hidden" }}>
-          <Box /* sx={{ maxHeight: "269px" }} */>
-            <DialogContentText>
-              <Typography>
-                {doI18n(
-                  "pages:core-contenthandler_text_translation:pick_one_or_more_books_export",
-                  i18nRef.current,
-                )}
-              </Typography>
-              {selectedBooks.length > 0 && (
-                <Typography sx={{ ml: 2 }}>
-                  <em>
-                    {`${selectedBooks.length}/${bookNames.length} ${doI18n("pages:content:books_selected", i18nRef.current)}`}
-                  </em>
-                </Typography>
-              )}
-            </DialogContentText>
-            <List dense style={{ /* maxHeight: 300, */ overflowY: "auto" }}>
-              {bookCodes
-                .filter((item) => bookNames.includes(item))
-                .map((bookName) => (
-                  <ListItem
-                    key={bookName}
-                    button
-                    onClick={() => handleToggle(bookName)}
-                    sx={{
-                      backgroundColor: selectedBooks.includes(bookName)
-                        ? lightenedColor
-                        : "transparent",
-                      "&:hover": {
-                        backgroundColor: selectedBooks.includes(bookName)
-                          ? lightenedColorHover
-                          : "action.hover",
-                      },
-                    }}
-                  >
-                    <ListItemText
-                      primary={
-                        `${bookName} - ` +
-                        doI18n(`scripture:books:${bookName}`, i18nRef.current)
-                      }
-                    />
-                  </ListItem>
-                ))}
-            </List>
-          </Box>
-        </DialogContent>
-        <PanDialogActions
-          closeOnAction={false}
-          closeFn={() => {
-            setSelectedBooks([]);
-            handleClose();
-          }}
-          closeLabel={doI18n("pages:content:cancel", i18nRef.current)}
-          actionFn={async () => {
-            if (!selectedBooks || selectedBooks.length === 0) {
-              enqueueSnackbar(
-                doI18n(
-                  "pages:core-contenthandler_text_translation:no_books_selected",
-                  i18nRef.current,
-                ),
-                { variant: "warning" },
-              );
-            } else {
-              for (let b of selectedBooks) {
-                await usfmExportOneBook(b);
-              }
-            }
-            handleClose();
-          }}
-          actionLabel={doI18n(
-            "pages:core-contenthandler_text_translation:export_label",
+        actionsButtonArray={PanDialogActionsArray({
+          actionLabel: doI18n(
+            "pages:core-contenthandler_text_translation:export_usfm_button",
             i18nRef.current,
-          )}
-          isDisabled={selectedBooks.length === 0}
-        />
-      </PanDialog>
+          ),
+          closeFn: () => handleClose(),
+          closeLabel: doI18n(
+            "pages:core-contenthandler_text_translation:cancel",
+            i18nRef.current,
+          ),
+          closeOnAction: false,
+          actionFn: handleExport,
+        })}
+        dividers={true}
+      >
+        <Typography
+          ref={confirmationRef}
+          color={noBooksSelected && "error"}
+          variant="body1"
+          sx={{ p: 0 }}
+        >
+          {noBooksSelected
+            ? doI18n(
+                "pages:core-contenthandler_text_translation:export_as_usfm_books",
+                i18nRef.current,
+              ).replace("{document_name}", documentName)
+            : doI18n(
+                "pages:core-contenthandler_text_translation:export_as_usfm_books",
+                i18nRef.current,
+              ).replace("{document_name}", documentName)}
+        </Typography>
+        <FormGroup>
+          {bookCodes
+            .filter((item) => bookNames.includes(item))
+            .map((bookName) => (
+              <FormControlLabel
+                key={bookName}
+                control={
+                  <Checkbox
+                    checked={selectedBooks.includes(bookName)}
+                    onChange={() => handleToggle(bookName)}
+                  />
+                }
+                label={doI18n(`scripture:books:${bookName}`, i18nRef.current)}
+              />
+            ))}
+        </FormGroup>
+      </PanBasicDialog>
     </Box>
   );
 }
