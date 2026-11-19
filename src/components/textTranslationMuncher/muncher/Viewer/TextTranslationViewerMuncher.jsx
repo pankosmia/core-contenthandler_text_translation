@@ -9,6 +9,8 @@ import "./TextTranslationViewerMuncher.css";
 import TextDir from "../Helpers/TextDir";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { doI18n } from "pankosmia-lib/i18n";
 
 function TextTranslationViewerMuncher({
   metadata,
@@ -16,10 +18,12 @@ function TextTranslationViewerMuncher({
   systemBcv,
   word,
   snippet,
+  i18nRef,
 }) {
   const [bookData, setBookData] = useState(null);
   const [viewerData, setViewerData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [bookLoadError, setBookLoadError] = useState(null);
   const [textDir, setTextDir] = useState(
     metadata?.script_direction
       ? metadata.script_direction.toLowerCase()
@@ -34,6 +38,8 @@ function TextTranslationViewerMuncher({
   useEffect(() => {
     const getUsfm = async () => {
       setIsLoading(true);
+      setViewerData(null);
+      setBookLoadError(null);
       let usfmResponse = await getText(
         `/api/burrito/ingredient/raw/${metadata.local_path}?ipath=${systemBcv.bookCode}.usfm`,
         debugRef.current,
@@ -46,6 +52,7 @@ function TextTranslationViewerMuncher({
           setTextDir(dir);
         }
       } else {
+        setBookLoadError(usfmResponse.status);
         console.error("usfmResponse failed");
       }
       setIsLoading(false);
@@ -55,7 +62,7 @@ function TextTranslationViewerMuncher({
 
   const chapterData = viewerData
     ? filterByChapter(viewerData, systemBcv.chapterNum)
-    : [];
+    : { blocks: [] };
 
   if (isLoading) {
     return (
@@ -73,17 +80,36 @@ function TextTranslationViewerMuncher({
       </Box>
     );
   }
+  if (bookLoadError !== null) {
+    return (
+      <Typography>
+        {doI18n(
+          "pages:core-contenthandler_text_translation:book_not_found",
+          i18nRef.current,
+        )}
+      </Typography>
+    );
+  }
+  if (chapterData.blocks.length === 0) {
+    return (
+      <Typography>
+        {doI18n(
+          "pages:core-contenthandler_text_translation:book_not_found_verse",
+          i18nRef.current,
+        )}
+      </Typography>
+    );
+  }
+
   // If SB does not specify direction then it is set here, otherwise it has already been set per SB in WorkspaceCard
   return (
-    Object.keys(chapterData).length > 0 && (
-      <ViewableBible
-        chapterJson={chapterData}
-        dir={!sbScriptDirSet ? textDir : undefined}
-        systemBcv={systemBcv}
-        word={word}
-        snippet={snippet}
-      />
-    )
+    <ViewableBible
+      chapterJson={chapterData}
+      dir={!sbScriptDirSet ? textDir : undefined}
+      systemBcv={systemBcv}
+      word={word}
+      snippet={snippet}
+    />
   );
 }
 export default TextTranslationViewerMuncher;
