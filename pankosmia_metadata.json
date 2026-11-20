@@ -583,6 +583,14 @@
     "import_book": {
       "en": "Import Book",
       "fr": "Importer livre"
+    },
+    "book_not_found_verse": {
+      "en": "No content available for this verse.",
+      "fr": "Aucun contenu disponible pour ce verset."
+    },
+    "book_not_found": {
+      "en": "No content available for this book.",
+      "fr": "Aucun contenu disponible pour ce livre."
     }
   }
 }
