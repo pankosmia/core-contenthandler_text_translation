@@ -41,6 +41,7 @@ export default function EditableGraft({
         />
         <span
           contentEditable="plaintext-only"
+          suppressContentEditableWarning
           className={`span_edit_graft ${incomingBlock.tag}`}
           ref={editorRef}
           style={{

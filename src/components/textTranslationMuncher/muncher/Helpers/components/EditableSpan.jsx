@@ -100,6 +100,7 @@ export default function EditableSpan({
       ref={editorRef}
       className="span_edit_verses"
       contentEditable="plaintext-only"
+      suppressContentEditableWarning
       style={{
         paddingRight: value.trim() === "" ? "20px" : "0",
         backgroundColor: value.trim() === "" ? "#CCC" : "#FFF",
