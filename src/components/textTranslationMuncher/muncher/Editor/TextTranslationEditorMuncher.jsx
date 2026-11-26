@@ -6,7 +6,7 @@ import {
   Alert,
   Snackbar,
 } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { enqueueSnackbar } from "notistack";
 import usfm2draftJson from "../Helpers/usfmToDraft/usfm2draftJson";
 import filterByChapter from "../Helpers/usfmToDraft/filterByChapter";
@@ -68,20 +68,27 @@ function TextTranslationEditorMuncher({
     }
   }, [modified]);
 
+  // Own load tracking: currentBookCode is only updated when the navigation is rendered
+  const loadedBookRef = useRef(null);
+  const localPath = metadata?.local_path;
+
   // Get whole book content
   useEffect(() => {
-    if (systemBcv.bookCode !== currentBookCode) {
+    const bookKey = `${localPath}/${systemBcv.bookCode}`;
+    if (loadedBookRef.current !== bookKey) {
+      loadedBookRef.current = bookKey;
       const doScriptureJson = async () => {
         try {
           setChapterJson(null);
 
           const usfmResponse = await getText(
-            `/api/burrito/ingredient/raw/${metadata.local_path}?ipath=${systemBcv.bookCode}.usfm`,
+            `/api/burrito/ingredient/raw/${localPath}?ipath=${systemBcv.bookCode}.usfm`,
             debugRef.current,
           );
 
           if (!usfmResponse.ok) {
             console.error("Failed to get USFM:", usfmResponse);
+            loadedBookRef.current = null;
             return;
           }
 
@@ -114,12 +121,11 @@ function TextTranslationEditorMuncher({
 
       doScriptureJson();
     }
-  }, [debugRef, systemBcv.bookCode, metadata, currentBookCode, sbScriptDirSet]);
+  }, [debugRef, systemBcv.bookCode, localPath, sbScriptDirSet]);
 
   useEffect(() => {
     if (scriptureJson && scriptureJson.blocks.length > 0) {
       setChapterJson(filterByChapter(scriptureJson, systemBcv.chapterNum));
-      setBookChangeCount(bookChangeCount + 1);
     }
   }, [scriptureJson, systemBcv.chapterNum]);
 
@@ -171,7 +177,7 @@ function TextTranslationEditorMuncher({
                 chapterJson={chapterJson}
                 scriptureJson={scriptureJson}
                 setScriptureJson={setScriptureJson}
-                key={bookChangeCount}
+                key={`${systemBcv.bookCode}-${systemBcv.chapterNum}`}
                 systemBcv={systemBcv}
                 debugRef={debugRef}
                 i18nRef={i18nRef}

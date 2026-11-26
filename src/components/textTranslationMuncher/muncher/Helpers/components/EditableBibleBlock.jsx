@@ -23,12 +23,9 @@ export default function EditableBibleBlock({
           scriptureJson.blocks[position[0]].units &&
           scriptureJson.blocks[position[0]].units.map((u, i) => {
             return (
-              <span style={{ display: "inline-block" }}>
-                <span key={i} className="marks_verses_label">
-                  {u.verses}
-                </span>
+              <span key={i} style={{ display: "inline-block" }}>
+                <span className="marks_verses_label">{u.verses}</span>
                 <EditableSpan
-                  key={i}
                   debugRef={debugRef}
                   systemBcv={systemBcv}
                   scriptureJson={scriptureJson}
