@@ -18,6 +18,14 @@ import EditableBible from "../Helpers/components/EditableBible";
 import { doI18n } from "pankosmia-lib/i18n";
 import { getText } from "pankosmia-lib/http";
 
+const getContentText = (json) => ExtractJsonValues(json, ["content"]).join("");
+
+const stripPrepopulated = (text, contents) =>
+  contents.reduce(
+    (acc, content) => (content ? acc.replace(content, "") : acc),
+    text,
+  );
+
 function TextTranslationEditorMuncher({
   metadata,
   systemBcv,
@@ -39,6 +47,8 @@ function TextTranslationEditorMuncher({
   const [chapterJson, setChapterJson] = useState(null);
   const [md5sumScriptureJson, setMd5sumScriptureJson] = useState([]);
   const [currentBookCode, setCurrentBookCode] = useState("zzz");
+  const [bookChangeCount, setBookChangeCount] = useState(0);
+  const [idRemContents, setIdRemContents] = useState([]);
   const [textDir, setTextDir] = useState(
     metadata?.script_direction
       ? metadata.script_direction.toLowerCase()
@@ -84,15 +94,24 @@ function TextTranslationEditorMuncher({
 
           const usfmDraftJson = await usfm2draftJson(usfmResponse.text);
 
+          if (!sbScriptDirSet) {
+            const newIdRemContents = [
+              ...usfmResponse.text.matchAll(/^\\(?:id|rem) ([^\r\n]*)/gm),
+            ].map((match) => match[1]);
+            setIdRemContents(newIdRemContents);
+
+            const contentText = stripPrepopulated(
+              getContentText(usfmDraftJson),
+              newIdRemContents,
+            );
+            const dir = TextDir(contentText, "text");
+            setTextDir(dir);
+          }
+
           setScriptureJson(usfmDraftJson);
 
           const hash = md5sum(JSON.stringify(usfmDraftJson));
           setMd5sumScriptureJson(hash);
-
-          if (!sbScriptDirSet) {
-            const dir = await TextDir(usfmResponse.text, "usfm");
-            setTextDir(dir);
-          }
         } catch (error) {
           console.error("Failed to load/parse USFM:", error);
           enqueueSnackbar(`${error}`, { variant: "error" });
@@ -111,17 +130,19 @@ function TextTranslationEditorMuncher({
   }, [scriptureJson, systemBcv.chapterNum]);
 
   useEffect(() => {
-    if (!sbScriptDirSet) {
-      const contentText = ExtractJsonValues(scriptureJson, ["content"])
-        .toString()
-        .replace(/,/g, "");
-      const dir = TextDir(contentText, "text");
-      if (textDir !== dir) {
-        setTextDir(dir);
-      }
+    if (sbScriptDirSet) return;
+
+    const contentText = stripPrepopulated(
+      getContentText(scriptureJson),
+      idRemContents,
+    );
+
+    const dir = TextDir(contentText, "text");
+    if (textDir !== dir) {
+      setTextDir(dir);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scriptureJson, sbScriptDirSet]);
+  }, [scriptureJson, sbScriptDirSet, idRemContents]);
 
   return (
     <>
